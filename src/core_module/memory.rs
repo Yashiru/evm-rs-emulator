@@ -1,8 +1,6 @@
 use std::ptr;
 use super::utils::errors::ExecutionError;
 
-use std::mem::size_of_val;
-
 #[derive(Debug)]
 pub struct Memory {
     pub heap: Vec<u8>,
@@ -33,6 +31,19 @@ impl Memory {
         Ok(data)
     }
 
+    // Load bytes from memory
+    pub unsafe fn write(&mut self, address: usize, data: Vec<u8>) -> Result<(), ExecutionError> {
+        // check if memory should be extended
+        if address + data.len() > self.heap.len() {
+            self.extend(address + data.len() - self.heap.len());
+        }
+
+        let ptr = self.heap.as_mut_ptr().add(address);
+        ptr::copy(data.as_ptr(), ptr, data.len());
+
+        Ok(())
+    }
+
     // Load 32 bytes from memory
     pub unsafe fn mload(&self, address: usize) -> Result<[u8; 32], ExecutionError> {
         if address + 32 > self.heap.len() {
@@ -58,6 +69,6 @@ impl Memory {
 
     // Get the memory size
     pub fn msize(&self) -> usize {
-        size_of_val(&self.heap)
+        self.heap.len()
     }
 }
