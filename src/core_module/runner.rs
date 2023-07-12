@@ -346,6 +346,13 @@ impl Runner {
             0x5b => op_codes::flow::jumpdest(self),
             0xfd => op_codes::flow::revert(self),
 
+            /* ------------------------------- Log OpCodes ------------------------------ */
+            0xa0 => op_codes::log::log0(self),
+            0xa1 => op_codes::log::log1(self),
+            0xa2 => op_codes::log::log2(self),
+            0xa3 => op_codes::log::log3(self),
+            0xa4 => op_codes::log::log4(self),
+
 
             // Default case
             _ => {
