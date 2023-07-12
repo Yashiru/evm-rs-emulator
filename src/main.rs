@@ -4,7 +4,7 @@ use core_module::utils::{errors::ExecutionError, self};
 use hex;
 
 
-fn main() -> Result<(), ExecutionError>  {
+fn main() -> Result<(), ()>  {
     // Create a new interpreter
     let mut interpreter = core_module::runner::Runner::new();
     
@@ -15,12 +15,12 @@ fn main() -> Result<(), ExecutionError>  {
             let bytecode = hex::decode(file_content.trim()).expect("Decoding failed");
             
             // Interpret the bytecode
-            interpreter.interpret(bytecode, Some(true))
+            interpreter.interpret(bytecode, Some(true));
         },
-        Err(error) => {
-            println!("Error: {}", error);
-            Err(utils::errors::ExecutionError::InvalidFile)
+        Err(_) => {
+            return Err(());
         }
     }
 
+    Ok(())
 }
