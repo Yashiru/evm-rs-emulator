@@ -64,11 +64,23 @@ pub fn revert(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // jump
 pub fn jump(runner: &mut Runner) -> Result<(), ExecutionError> {
+    let mut bytes = [0u8; 32];
     let jump_address = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    jump_address.to_big_endian(&mut bytes);
 
     // Check if the address is out of bounds
     if jump_address.as_usize() > runner.bytecode.len() {
         return Err(ExecutionError::OutOfBoundsByteCode);
+    }
+
+    if runner.debug.is_some() && runner.debug.unwrap() {
+        let hex = utils::debug::to_hex_string(bytes);
+
+        println!(
+            "{:<14} 〰️ [ {} ]",
+            "JUMP".bright_green(),
+            hex
+        );
     }
 
     // Set the program counter to the jump address
@@ -78,7 +90,10 @@ pub fn jump(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // jumpi
 pub fn jumpi(runner: &mut Runner) -> Result<(), ExecutionError> {
+    let mut bytes = [0u8; 32];
     let jump_address = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    jump_address.to_big_endian(&mut bytes);
+
     let condition = U256::from_big_endian(&unsafe { runner.stack.pop()? });
 
     // Check if the address is out of bounds
@@ -87,13 +102,23 @@ pub fn jumpi(runner: &mut Runner) -> Result<(), ExecutionError> {
     }
 
     // Check if the condition is true
-    if condition != U256::zero() {
+    if !condition.is_zero() {
         // Set the program counter to the jump address
         runner.set_pc(jump_address.as_usize());
     }
     else{
         // Increment the program counter
         runner.increment_pc(1);
+    }
+
+    if runner.debug.is_some() && runner.debug.unwrap() {
+        let hex = utils::debug::to_hex_string(bytes);
+
+        println!(
+            "{:<14} 〰️ [ {} ]",
+            if condition.is_zero() { "JUMPI".green() } else { "JUMPI".bright_red() },
+            hex
+        );
     }
 
     Ok(())
