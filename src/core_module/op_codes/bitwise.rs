@@ -3,7 +3,7 @@ use crate::core_module::utils;
 use crate::core_module::utils::errors::ExecutionError;
 
 // Primitive types
-use ethers::types::{U256};
+use ethers::types::U256;
 use ethers::utils::keccak256;
 
 // Colored output

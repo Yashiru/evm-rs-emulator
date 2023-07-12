@@ -1,5 +1,5 @@
-use std::ptr;
 use super::utils::errors::ExecutionError;
+use std::ptr;
 
 #[derive(Debug)]
 pub struct Memory {
@@ -7,9 +7,13 @@ pub struct Memory {
 }
 
 impl Memory {
-    pub fn new(size: usize) -> Self {
+    pub fn new(data: Option<Vec<u8>>) -> Self {
         Self {
-            heap: vec![0; size],
+            heap: if data.is_some() {
+                data.unwrap()
+            } else {
+                vec![0; 0]
+            },
         }
     }
 
@@ -49,7 +53,7 @@ impl Memory {
         if address + 32 > self.heap.len() {
             return Err(ExecutionError::OutOfBoundsMemory);
         }
-    
+
         let ptr = self.heap.as_ptr().add(address);
         Ok(ptr::read(ptr as *const [u8; 32]))
     }

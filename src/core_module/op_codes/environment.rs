@@ -11,7 +11,7 @@ use ethers::utils::keccak256;
 use colored::*;
 
 pub fn address(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let address = [[0; 12].to_vec(), [0x11u8; 20].to_vec()]
+    let address = [[0; 12].to_vec(), runner.address.to_vec()]
         .concat()
         .as_slice()
         .try_into()
@@ -33,16 +33,10 @@ pub fn address(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn balance(runner: &mut Runner) -> Result<(), ExecutionError> {
-    unsafe { runner.stack.pop()? };
+    let address: [u8; 32] = unsafe { runner.stack.pop()? };
 
-    let balance = [
-        [0; 23].to_vec(),
-        [0x05, 0x6B, 0xC7, 0x5E, 0x2D, 0x63, 0x10, 0x00, 0x00].to_vec(),
-    ]
-    .concat()
-    .as_slice()
-    .try_into()
-    .unwrap();
+    let balance_slot = keccak256([utils::constants::balance_slot().to_vec(), address.to_vec()].concat());
+    let balance = unsafe { runner.storage.sload(balance_slot)? };
 
     let result = unsafe { runner.stack.push(balance) };
 
@@ -60,7 +54,7 @@ pub fn balance(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn origin(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let origin = [[0; 12].to_vec(), [0x22u8; 20].to_vec()]
+    let origin = [[0; 12].to_vec(), runner.origin.to_vec()]
         .concat()
         .as_slice()
         .try_into()
@@ -82,7 +76,7 @@ pub fn origin(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn caller(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let caller = [[0; 12].to_vec(), [0x33u8; 20].to_vec()]
+    let caller = [[0; 12].to_vec(), runner.caller.to_vec()]
         .concat()
         .as_slice()
         .try_into()
@@ -104,19 +98,10 @@ pub fn caller(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn callvalue(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let callvalue = [
-        [0; 24].to_vec(),
-        [0x6B, 0xC7, 0x5E, 0x2D, 0x63, 0x10, 0x00, 0x00].to_vec(),
-    ]
-    .concat()
-    .as_slice()
-    .try_into()
-    .unwrap();
-
-    let result = unsafe { runner.stack.push(callvalue) };
+    let result = unsafe { runner.stack.push(runner.callvalue) };
 
     if runner.debug.is_some() && runner.debug.unwrap() {
-        let hex: String = utils::debug::to_hex_string(callvalue);
+        let hex: String = utils::debug::to_hex_string(runner.callvalue);
         println!("{:<14} 👉 [ {} ]", "CALLVALUE".bright_blue(), hex);
     }
 
@@ -384,7 +369,7 @@ pub fn blockhash(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn coinbase(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let coinbase = [[0; 12].to_vec(), [0x44u8; 20].to_vec()]
+    let coinbase = [[0; 12].to_vec(), [0xc0u8; 20].to_vec()]
         .concat()
         .as_slice()
         .try_into()

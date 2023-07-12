@@ -19,7 +19,7 @@ use colored::*;
 /// use bytecode_rs::core_module::op_codes::math::unsigned::sdiv;
 /// use bytecode_rs::core_module::runner::Runner;
 ///
-/// let mut runner = Runner::new();
+/// let mut runner = Runner::new([0xaa; 20], None, None, None);
 /// runner.stack.push([0x01, 0x00, 0x00, 0x00].to_vec()).unwrap();
 /// runner.stack.push([0x00, 0x00, 0x00, 0x00].to_vec()).unwrap();
 ///
@@ -71,7 +71,7 @@ pub fn sdiv(runner: &mut Runner) -> Result<(), ExecutionError> {
 /// use bytecode_rs::core_module::op_codes::math::unsigned::smodulo;
 /// use bytecode_rs::core_module::runner::Runner;
 ///
-/// let mut runner = Runner::new();
+/// let mut runner = Runner::new([0xaa; 20], None, None, None);
 /// runner.stack.push([0x01, 0x00, 0x00, 0x00].to_vec()).unwrap();
 /// runner.stack.push([0x00, 0x00, 0x00, 0x00].to_vec()).unwrap();
 ///

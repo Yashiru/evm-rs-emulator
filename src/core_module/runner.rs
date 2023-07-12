@@ -9,19 +9,34 @@ use super::utils::errors::ExecutionError;
 use colored::*;
 
 pub struct Runner {
+    // Execution
     pub pc: usize,
+    pub bytecode: Vec<u8>,
+    pub debug: Option<bool>,
+
+    // Environment
     pub gas: u64,
+    pub origin: [u8; 20],
+    pub caller: [u8; 20],
+    pub callvalue: [u8; 32],
+    pub address: [u8; 20],
+
+    // Data
     pub storage: Storage,
     pub heap: Memory,
     pub calldata: Memory,
     pub returndata: Memory,
     pub stack: Stack,
-    pub bytecode: Vec<u8>,
-    pub debug: Option<bool>,
 }
 
 impl Runner {
-    pub fn new() -> Self {
+    pub fn new(
+        caller: [u8; 20],
+        origin: Option<[u8; 20]>,
+        address: Option<[u8; 20]>,
+        callvalue: Option<[u8; 32]>,
+        calldata: Option<Vec<u8>>,
+    ) -> Self {
         Self {
             // Set the program counter to 0
             pc: 0,
@@ -29,13 +44,33 @@ impl Runner {
             // Create a new storage
             storage: Storage::new(),
             // Create an empty memory
-            heap: Memory::new(0),
+            heap: Memory::new(None),
             // Create an empty memory for the call data
-            calldata: Memory::new(1024),
+            calldata: Memory::new(calldata),
             // Create an empty memory for the return data
-            returndata: Memory::new(1024),
+            returndata: Memory::new(None),
             // Create a new stack
             stack: Stack::new(),
+            // Set the caller
+            caller,
+            // Set the address
+            address: if address.is_some() {
+                address.unwrap()
+            } else {
+                [0x5fu8; 20]
+            },
+            // Set the call value
+            callvalue: if callvalue.is_some() {
+                callvalue.unwrap()
+            } else {
+                [0u8; 32]
+            },
+            // Set the origin
+            origin: if origin.is_some() {
+                origin.unwrap()
+            } else {
+                caller
+            },
             // Create a new empty bytecode
             bytecode: Vec::new(),
             // Set debug mode to false
@@ -68,25 +103,19 @@ impl Runner {
 
         // Set the bytecode
         self.debug = debug;
-        
-        // Mock calldata
-        unsafe {self.calldata.write(32, [0x01, 0x02, 0x03, 0x04, 0x05, 0x06].to_vec())?;}
 
         // Mock returndata
-        unsafe {self.returndata.write(0, [0x01, 0x02, 0x03, 0x04, 0x05, 0x06].to_vec())?;}
+        unsafe {
+            self.returndata
+                .write(0, [0x01, 0x02, 0x03, 0x04, 0x05, 0x06].to_vec())?;
+        }
 
         /* -------------------------------------------------------------------------- */
         /*                             Print debug header                             */
         /* -------------------------------------------------------------------------- */
-        let border_line =
-            "╔══════════════════════════════════════════════════════════════════════════╗".blue();
-        let footer_line =
-            "╚══════════════════════════════════════════════════════════════════════════╝\n".blue();
 
         if debug.is_some() && debug.unwrap() {
-            println!("{}", border_line.clone().bright_magenta());
-            println!("{}", "  Program start".bright_green());
-            println!("{}", footer_line.clone().bright_magenta());
+            self.debug_header();
         }
 
         /* -------------------------------------------------------------------------- */
@@ -118,58 +147,18 @@ impl Runner {
         /*                             Print debug footer                             */
         /* -------------------------------------------------------------------------- */
 
+        if debug.is_some() && debug.unwrap() {
+            // Debug stack
+            self.debug_stack();
+
+            // Debug memory
+            self.debug_memory();
+
+            // Debug storage
+            self.debug_storage();
+        }
         // Check if debug mode is enabled
         if debug.is_some() && debug.unwrap() {
-            println!("\n\n{}", border_line.clone().truecolor(0, 255, 255));
-            println!("{}", "  Final stack".bright_yellow());
-            println!("{}", footer_line.clone().truecolor(0, 255, 255));
-
-            self.stack.stack.reverse();
-
-            // Print all the stack 32 bytes elements with a space between each bytes
-            for (_, element) in self.stack.stack.iter().enumerate() {
-                let hex: String = utils::debug::to_hex_string(*element);
-                println!("{}", hex);
-            }
-
-            println!("\n{}", border_line.clone().truecolor(0, 255, 150));
-            println!("{}", "  Final memory heap".bright_yellow());
-            println!("{}", footer_line.clone().truecolor(0, 255, 150));
-
-            // Print the memory heap 32 bytes by 32 bytes with a space between each bytes
-            for chunk in self.heap.heap.chunks(32) {
-                let padded_chunk: Vec<u8>;
-            
-                if chunk.len() < 32 {
-                    // If the chunk size is less than 32, create a new vector with enough zeros to reach a total size of 32
-                    padded_chunk = [chunk.to_vec(), vec![0u8; 32 - chunk.len()]].concat();
-                } else {
-                    // If the chunk size is exactly 32, use it as is
-                    padded_chunk = chunk.to_vec();
-                }
-            
-                let hex: String = utils::debug::to_hex_string(padded_chunk.as_slice().try_into().unwrap());
-                println!("{}", hex);
-            }
-
-            // Print out the storage
-            println!("\n{}", border_line.clone().truecolor(0, 150, 255));
-            println!("{}", "  Final storage".bright_yellow());
-            println!("{}", footer_line.clone().truecolor(0, 150, 255));
-
-            for (slot, value) in self.storage.state.iter() {
-                println!("┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐");
-                // Print the slot
-                let hex: String = utils::debug::to_hex_string(slot.to_owned());
-                println!("│ {}:  {} │", "Slot".bright_blue(), hex);
-
-                // Print the value
-                let hex: String = utils::debug::to_hex_string(value.to_owned());
-                println!("│ {}: {} │", "Value".magenta(), hex);
-
-                println!("└────────────────────────────────────────────────────────────────────────────────────────────────────────┘\n");
-            }
-
             println!("\n\n");
         }
 
@@ -353,12 +342,171 @@ impl Runner {
             0xa3 => op_codes::log::log3(self),
             0xa4 => op_codes::log::log4(self),
 
-
             // Default case
             _ => {
                 // Return an error
                 return Err(ExecutionError::InvalidOpcode(opcode));
             }
+        }
+    }
+
+    fn debug_header(&self) {
+        let border_line =
+            "╔═════════════════════════════════════════════════════════════════════════════════════════════════╗";
+        let footer_line =
+            "╚═════════════════════════════════════════════════════════════════════════════════════════════════╝\n";
+
+
+        /* -------------------------------------------------------------------------- */
+        /*                                   Header                                   */
+        /* -------------------------------------------------------------------------- */
+
+        println!("{}", border_line.clone().bright_magenta());
+        println!(
+            "{} {:<95} {}",
+            "║".bright_magenta(),
+            "CALL START".green(),
+            "║".bright_magenta()
+        );
+        println!(
+            "{} {:<95} {}",
+            "║".bright_magenta(),
+            "",
+            "║".bright_magenta()
+        );
+
+        /* -------------------------------------------------------------------------- */
+        /*                              Contract address                              */
+        /* -------------------------------------------------------------------------- */
+
+        println!("{} {:<95} {}", "║".bright_magenta(), "", "║".bright_magenta());
+        println!("{} {:<95} {}", "║".bright_magenta(), "To".cyan(), "║".bright_magenta());
+        let hex_address = utils::debug::to_hex_string([[0; 12].to_vec(), self.address.to_vec()].concat().try_into().unwrap());
+        println!("{} {:<95} {}", "║".bright_magenta(), hex_address, "║".bright_magenta());
+
+        /* -------------------------------------------------------------------------- */
+        /*                                  Calldata                                  */
+        /* -------------------------------------------------------------------------- */
+        println!("{} {:<95} {}", "║".bright_magenta(), "", "║".bright_magenta());
+        println!(
+            "{} {:<95} {}",
+            "║".bright_magenta(),
+            "Call data".cyan(),
+            "║".bright_magenta()
+        );
+
+        // Print the memory heap 32 bytes by 32 bytes with a space between each bytes
+        for chunk in self.calldata.heap.chunks(32) {
+            let padded_chunk: Vec<u8>;
+
+            if chunk.len() < 32 {
+                // If the chunk size is less than 32, create a new vector with enough zeros to reach a total size of 32
+                padded_chunk = [chunk.to_vec(), vec![0u8; 32 - chunk.len()]].concat();
+            } else {
+                // If the chunk size is exactly 32, use it as is
+                padded_chunk = chunk.to_vec();
+            }
+
+            let hex: String =
+                utils::debug::to_hex_string(padded_chunk.as_slice().try_into().unwrap());
+            println!("{} {} {}", "║".bright_magenta(), hex, "║".bright_magenta());
+        }
+
+        if self.calldata.heap.is_empty() {
+            println!("{} {:<95} {}", "║".bright_magenta(), "No calldata.".truecolor(80, 80, 80), "║".bright_magenta());
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /*                                 Call value                                 */
+        /* -------------------------------------------------------------------------- */
+
+        println!("{} {:<95} {}", "║".bright_magenta(), "", "║".bright_magenta());
+        println!("{} {:<95} {}", "║".bright_magenta(), "Call value".cyan(), "║".bright_magenta());
+        let hex_callvalue = utils::debug::to_hex_string(self.callvalue);
+        println!("{} {:<95} {}", "║".bright_magenta(), hex_callvalue, "║".bright_magenta());
+
+        println!("{}", footer_line.clone().bright_magenta());
+    }
+
+    fn debug_stack(&self) {
+        let border_line =
+            "╔══════════════════════════════════════════════════════════════════════════╗";
+        let footer_line =
+            "╚══════════════════════════════════════════════════════════════════════════╝\n";
+
+        println!("\n\n{}", border_line.clone().truecolor(0, 255, 255));
+        println!("{}", "  Final stack".bright_yellow());
+        println!("{}", footer_line.clone().truecolor(0, 255, 255));
+
+        let mut reversed_stack = self.stack.stack.clone();
+        reversed_stack.reverse();
+
+        // Print all the stack 32 bytes elements with a space between each bytes
+        for (_, element) in reversed_stack.iter().enumerate() {
+            let hex: String = utils::debug::to_hex_string(*element);
+            println!("{}", hex);
+        }
+    }
+
+    fn debug_memory(&self) {
+        let border_line =
+            "╔══════════════════════════════════════════════════════════════════════════╗";
+        let footer_line =
+            "╚══════════════════════════════════════════════════════════════════════════╝\n";
+
+        println!("\n{}", border_line.clone().truecolor(0, 255, 150));
+        println!("{}", "  Final memory heap".bright_yellow());
+        println!("{}", footer_line.clone().truecolor(0, 255, 150));
+
+        // Print the memory heap 32 bytes by 32 bytes with a space between each bytes
+        for chunk in self.heap.heap.chunks(32) {
+            let padded_chunk: Vec<u8>;
+
+            if chunk.len() < 32 {
+                // If the chunk size is less than 32, create a new vector with enough zeros to reach a total size of 32
+                padded_chunk = [chunk.to_vec(), vec![0u8; 32 - chunk.len()]].concat();
+            } else {
+                // If the chunk size is exactly 32, use it as is
+                padded_chunk = chunk.to_vec();
+            }
+
+            let hex: String =
+                utils::debug::to_hex_string(padded_chunk.as_slice().try_into().unwrap());
+            println!("{}", hex);
+        }
+
+        if self.calldata.heap.is_empty() {
+            println!("🚧 {} 🚧", "Empty memory".red());
+        }
+    }
+
+    fn debug_storage(&self) {
+        let border_line =
+            "╔══════════════════════════════════════════════════════════════════════════╗";
+        let footer_line =
+            "╚══════════════════════════════════════════════════════════════════════════╝\n";
+
+        // Print out the storage
+        println!("\n{}", border_line.clone().truecolor(0, 150, 255));
+        println!("{}", "  Final storage".bright_yellow());
+        println!("{}", footer_line.clone().truecolor(0, 150, 255));
+
+        for (slot, value) in self.storage.state.iter() {
+            println!("┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐");
+            // Print the slot
+            let hex: String = utils::debug::to_hex_string(slot.to_owned());
+            println!("│ {}:  {} │", "Slot".bright_blue(), hex);
+
+            // Print the value
+            let hex: String = utils::debug::to_hex_string(value.to_owned());
+            println!("│ {}: {} │", "Value".magenta(), hex);
+
+            println!("└────────────────────────────────────────────────────────────────────────────────────────────────────────┘\n");
+        }
+
+        // Check if hash map is empty
+        if self.storage.state.is_empty() {
+            println!("🚧 {} 🚧", "Empty storage".red());
         }
     }
 }
@@ -369,7 +517,7 @@ mod tests {
 
     #[test]
     fn test_push0() {
-        let mut runner = Runner::new();
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
         let _ = runner.interpret(vec![0x5f, 0x5f, 0x5f], Some(true));
 
         assert_eq!(unsafe { runner.stack.pop().unwrap() }, [0u8; 32]);
@@ -379,7 +527,7 @@ mod tests {
 
     #[test]
     fn test_push1() {
-        let mut runner = Runner::new();
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
         let _ = runner.interpret(vec![0x60, 0x01, 0x60, 0x02, 0x60, 0x03], Some(true));
 
         assert_eq!(
