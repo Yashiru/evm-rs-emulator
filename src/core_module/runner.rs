@@ -1,15 +1,20 @@
-use super::utils::errors::ExecutionError;
+use ethers::types::U256;
+
 use super::memory::Memory;
-use super::stack::Stack;
 use super::op_codes;
+use super::stack::Stack;
+use super::storage::Storage;
 use super::utils;
+use super::utils::errors::ExecutionError;
 
 // Colored output
 use colored::*;
 
 pub struct Runner {
     pub pc: usize,
+    pub storage: Storage,
     pub heap: Memory,
+    pub returndata: Memory,
     pub stack: Stack,
     pub bytecode: Vec<u8>,
     pub debug: Option<bool>,
@@ -20,8 +25,12 @@ impl Runner {
         Self {
             // Set the program counter to 0
             pc: 0,
-            // Create an empty memory size
+            // Create a new storage
+            storage: Storage::new(),
+            // Create an empty memory
             heap: Memory::new(0),
+            // Create an empty memory for the return data
+            returndata: Memory::new(0),
             // Create a new stack
             stack: Stack::new(),
             // Create a new empty bytecode
@@ -92,8 +101,10 @@ impl Runner {
         // Check if debug mode is enabled
         if debug.is_some() && debug.unwrap() {
             println!("\n\n{}", border_line.clone().truecolor(0, 255, 255));
-            println!("{}", "  Final stack".bright_green());
+            println!("{}", "  Final stack".bright_yellow());
             println!("{}", footer_line.clone().truecolor(0, 255, 255));
+
+            self.stack.stack.reverse();
 
             // Print all the stack 32 bytes elements with a space between each bytes
             for (_, element) in self.stack.stack.iter().enumerate() {
@@ -101,14 +112,42 @@ impl Runner {
                 println!("{}", hex);
             }
 
-            println!("\n{}", border_line.truecolor(0, 255, 150));
-            println!("{}", "  Final memory heap".bright_green());
-            println!("{}", footer_line.truecolor(0, 255, 150));
+            println!("\n{}", border_line.clone().truecolor(0, 255, 150));
+            println!("{}", "  Final memory heap".bright_yellow());
+            println!("{}", footer_line.clone().truecolor(0, 255, 150));
 
             // Print the memory heap 32 bytes by 32 bytes with a space between each bytes
-            for (_, element) in self.heap.heap.chunks(32).enumerate() {
-                let hex: String = utils::debug::to_hex_string(element.try_into().unwrap());
+            for chunk in self.heap.heap.chunks(32) {
+                let padded_chunk: Vec<u8>;
+            
+                if chunk.len() < 32 {
+                    // If the chunk size is less than 32, create a new vector with enough zeros to reach a total size of 32
+                    padded_chunk = [chunk.to_vec(), vec![0u8; 32 - chunk.len()]].concat();
+                } else {
+                    // If the chunk size is exactly 32, use it as is
+                    padded_chunk = chunk.to_vec();
+                }
+            
+                let hex: String = utils::debug::to_hex_string(padded_chunk.as_slice().try_into().unwrap());
                 println!("{}", hex);
+            }
+
+            // Print out the storage
+            println!("\n{}", border_line.clone().truecolor(0, 150, 255));
+            println!("{}", "  Final storage".bright_yellow());
+            println!("{}", footer_line.clone().truecolor(0, 150, 255));
+
+            for (slot, value) in self.storage.state.iter() {
+                println!("┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐");
+                // Print the slot
+                let hex: String = utils::debug::to_hex_string(slot.to_owned());
+                println!("│ {}:  {} │", "Slot".bright_blue(), hex);
+
+                // Print the value
+                let hex: String = utils::debug::to_hex_string(value.to_owned());
+                println!("│ {}: {} │", "Value".magenta(), hex);
+
+                println!("└────────────────────────────────────────────────────────────────────────────────────────────────────────┘\n");
             }
 
             println!("\n\n");
@@ -126,7 +165,7 @@ impl Runner {
                 "PC".yellow(),
                 self.pc,
                 "OpCode".yellow(),
-                self.bytecode[self.pc-1],
+                self.bytecode[self.pc - 1],
                 error.as_ref().unwrap().to_string().red()
             );
             return Err(error.unwrap());
@@ -142,16 +181,16 @@ impl Runner {
             0x00 => self.stop(),
 
             /* ------------------------- Math operations OpCodes ------------------------ */
-            0x01 => op_codes::math::signed::add(self),
-            0x02 => op_codes::math::signed::mul(self),
-            0x03 => op_codes::math::signed::sub(self),
-            0x04 => op_codes::math::signed::div(self),
-            0x06 => op_codes::math::signed::modulo(self),
-            0x08 => op_codes::math::signed::addmod(self),
-            0x09 => op_codes::math::signed::mulmod(self),
-            0x0a => op_codes::math::signed::exp(self),
-            0x05 => op_codes::math::unsigned::sdiv(self),
-            0x07 => op_codes::math::unsigned::smodulo(self),
+            0x01 => op_codes::arithmetic::unsigned::add(self),
+            0x02 => op_codes::arithmetic::unsigned::mul(self),
+            0x03 => op_codes::arithmetic::unsigned::sub(self),
+            0x04 => op_codes::arithmetic::unsigned::div(self),
+            0x06 => op_codes::arithmetic::unsigned::modulo(self),
+            0x08 => op_codes::arithmetic::unsigned::addmod(self),
+            0x09 => op_codes::arithmetic::unsigned::mulmod(self),
+            0x0a => op_codes::arithmetic::unsigned::exp(self),
+            0x05 => op_codes::arithmetic::signed::sdiv(self),
+            0x07 => op_codes::arithmetic::signed::smodulo(self),
 
             /* ------------------------------ Push OpCodes ------------------------------ */
             0x50 => op_codes::stack::pop::pop(self),
@@ -231,6 +270,29 @@ impl Runner {
             0x52 => op_codes::memory::mstore(self),
             0x59 => op_codes::memory::msize(self),
 
+            /* ----------------------------- Storage OpCodes ---------------------------- */
+            0x54 => op_codes::storage::sload(self),
+            0x55 => op_codes::storage::sstore(self),
+
+            /* --------------------------- Comparison OpCodes --------------------------- */
+            0x10 => op_codes::comparison::lt(self),
+            0x11 => op_codes::comparison::gt(self),
+            0x12 => op_codes::comparison::slt(self),
+            0x13 => op_codes::comparison::sgt(self),
+            0x14 => op_codes::comparison::eq(self),
+            0x15 => op_codes::comparison::iszero(self),
+
+            /* ----------------------- Bitwise Operations OpCodes ----------------------- */
+            0x16 => op_codes::bitwise::and(self),
+            0x17 => op_codes::bitwise::or(self),
+            0x18 => op_codes::bitwise::xor(self),
+            0x19 => op_codes::bitwise::not(self),
+            0x1b => op_codes::bitwise::shl(self),
+            0x1c => op_codes::bitwise::shr(self),
+            0x20 => op_codes::bitwise::sha(self),
+
+
+
             // Default case
             _ => {
                 // Return an error
@@ -270,9 +332,9 @@ mod tests {
         let mut runner = Runner::new();
         let _ = runner.interpret(vec![0x5f, 0x5f, 0x5f], Some(true));
 
-        assert_eq!(unsafe {runner.stack.pop().unwrap()}, [0u8; 32]);
-        assert_eq!(unsafe {runner.stack.pop().unwrap()}, [0u8; 32]);
-        assert_eq!(unsafe {runner.stack.pop().unwrap()}, [0u8; 32]);
+        assert_eq!(unsafe { runner.stack.pop().unwrap() }, [0u8; 32]);
+        assert_eq!(unsafe { runner.stack.pop().unwrap() }, [0u8; 32]);
+        assert_eq!(unsafe { runner.stack.pop().unwrap() }, [0u8; 32]);
     }
 
     #[test]
@@ -280,8 +342,26 @@ mod tests {
         let mut runner = Runner::new();
         let _ = runner.interpret(vec![0x60, 0x01, 0x60, 0x02, 0x60, 0x03], Some(true));
 
-        assert_eq!(unsafe {runner.stack.pop().unwrap()}, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3]);
-        assert_eq!(unsafe {runner.stack.pop().unwrap()}, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]);
-        assert_eq!(unsafe {runner.stack.pop().unwrap()}, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]);
+        assert_eq!(
+            unsafe { runner.stack.pop().unwrap() },
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 3
+            ]
+        );
+        assert_eq!(
+            unsafe { runner.stack.pop().unwrap() },
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 2
+            ]
+        );
+        assert_eq!(
+            unsafe { runner.stack.pop().unwrap() },
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 1
+            ]
+        );
     }
 }

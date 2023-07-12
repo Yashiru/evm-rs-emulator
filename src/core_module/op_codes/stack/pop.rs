@@ -14,7 +14,7 @@ pub fn pop(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{} 👉 [ {} ]", "POP".magenta(), hex);
+        println!("{:<14} ⛔️ [ {} ]", "POP".bright_blue(), hex);
     }
 
     // Increment PC

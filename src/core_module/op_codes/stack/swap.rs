@@ -32,7 +32,7 @@ pub fn swap1(runner: &mut Runner) -> Result<(), ExecutionError> {
             })
             .collect::<Vec<String>>()
             .join(" ");
-        println!("{}{} 👉 [ {} <=> {} ]", "SWAP".magenta(), "1".green(), hex1, hex2);
+        println!("{}{:<10} 🔁 [ {} ↔️  {} ]", "SWAP".bright_blue(), "1".magenta(), hex1, hex2);
     }
 
     // Increment PC
@@ -67,7 +67,7 @@ pub fn swap2(runner: &mut Runner) -> Result<(), ExecutionError> {
             })
             .collect::<Vec<String>>()
             .join(" ");
-        println!("{}{} 👉 [ {} <=> {} ]", "SWAP".magenta(), "2".green(), hex1, hex2);
+        println!("{}{:<10} 🔁 [ {} ↔️  {} ]", "SWAP".bright_blue(), "2".magenta(), hex1, hex2);
     }
 
     // Increment PC
@@ -102,7 +102,7 @@ pub fn swap3(runner: &mut Runner) -> Result<(), ExecutionError> {
             })
             .collect::<Vec<String>>()
             .join(" ");
-        println!("{}{} 👉 [ {} <=> {} ]", "SWAP".magenta(), "3".green(), hex1, hex2);
+        println!("{}{:<10} 🔁 [ {} ↔️  {} ]", "SWAP".bright_blue(), "3".magenta(), hex1, hex2);
     }
 
     // Increment PC
@@ -137,7 +137,7 @@ pub fn swap4(runner: &mut Runner) -> Result<(), ExecutionError> {
             })
             .collect::<Vec<String>>()
             .join(" ");
-        println!("{}{} 👉 [ {} <=> {} ]", "SWAP".magenta(), "4".green(), hex1, hex2);
+        println!("{}{:<10} 🔁 [ {} ↔️  {} ]", "SWAP".bright_blue(), "4".magenta(), hex1, hex2);
     }
 
     // Increment PC
@@ -172,7 +172,7 @@ pub fn swap5(runner: &mut Runner) -> Result<(), ExecutionError> {
             })
             .collect::<Vec<String>>()
             .join(" ");
-        println!("{}{} 👉 [ {} <=> {} ]", "SWAP".magenta(), "5".green(), hex1, hex2);
+        println!("{}{:<10} 🔁 [ {} ↔️  {} ]", "SWAP".bright_blue(), "5".magenta(), hex1, hex2);
     }
 
     // Increment PC
@@ -207,7 +207,7 @@ pub fn swap6(runner: &mut Runner) -> Result<(), ExecutionError> {
             })
             .collect::<Vec<String>>()
             .join(" ");
-        println!("{}{} 👉 [ {} <=> {} ]", "SWAP".magenta(), "6".green(), hex1, hex2);
+        println!("{}{:<10} 🔁 [ {} ↔️  {} ]", "SWAP".bright_blue(), "6".magenta(), hex1, hex2);
     }
 
     // Increment PC
@@ -242,7 +242,7 @@ pub fn swap7(runner: &mut Runner) -> Result<(), ExecutionError> {
             })
             .collect::<Vec<String>>()
             .join(" ");
-        println!("{}{} 👉 [ {} <=> {} ]", "SWAP".magenta(), "7".green(), hex1, hex2);
+        println!("{}{:<10} 🔁 [ {} ↔️  {} ]", "SWAP".bright_blue(), "7".magenta(), hex1, hex2);
     }
 
     // Increment PC
@@ -277,7 +277,7 @@ pub fn swap8(runner: &mut Runner) -> Result<(), ExecutionError> {
             })
             .collect::<Vec<String>>()
             .join(" ");
-        println!("{}{} 👉 [ {} <=> {} ]", "SWAP".magenta(), "8".green(), hex1, hex2);
+        println!("{}{:<10} 🔁 [ {} ↔️  {} ]", "SWAP".bright_blue(), "8".magenta(), hex1, hex2);
     }
 
     // Increment PC
@@ -312,7 +312,7 @@ pub fn swap9(runner: &mut Runner) -> Result<(), ExecutionError> {
             })
             .collect::<Vec<String>>()
             .join(" ");
-        println!("{}{} 👉 [ {} <=> {} ]", "SWAP".magenta(), "9".green(), hex1, hex2);
+        println!("{}{:<10} 🔁 [ {} ↔️  {} ]", "SWAP".bright_blue(), "9".magenta(), hex1, hex2);
     }
 
     // Increment PC
@@ -347,7 +347,7 @@ pub fn swap10(runner: &mut Runner) -> Result<(), ExecutionError> {
             })
             .collect::<Vec<String>>()
             .join(" ");
-        println!("{}{} 👉 [ {} <=> {} ]", "SWAP".magenta(), "10".green(), hex1, hex2);
+        println!("{}{:<10} 🔁 [ {} ↔️  {} ]", "SWAP".bright_blue(), "10".magenta(), hex1, hex2);
     }
 
     // Increment PC
@@ -382,7 +382,7 @@ pub fn swap11(runner: &mut Runner) -> Result<(), ExecutionError> {
             })
             .collect::<Vec<String>>()
             .join(" ");
-        println!("{}{} 👉 [ {} <=> {} ]", "SWAP".magenta(), "11".green(), hex1, hex2);
+        println!("{}{:<10} 🔁 [ {} ↔️  {} ]", "SWAP".bright_blue(), "11".magenta(), hex1, hex2);
     }
 
     // Increment PC
@@ -417,7 +417,7 @@ pub fn swap12(runner: &mut Runner) -> Result<(), ExecutionError> {
             })
             .collect::<Vec<String>>()
             .join(" ");
-        println!("{}{} 👉 [ {} <=> {} ]", "SWAP".magenta(), "12".green(), hex1, hex2);
+        println!("{}{:<10} 🔁 [ {} ↔️  {} ]", "SWAP".bright_blue(), "12".magenta(), hex1, hex2);
     }
 
     // Increment PC
@@ -452,7 +452,7 @@ pub fn swap13(runner: &mut Runner) -> Result<(), ExecutionError> {
             })
             .collect::<Vec<String>>()
             .join(" ");
-        println!("{}{} 👉 [ {} <=> {} ]", "SWAP".magenta(), "13".green(), hex1, hex2);
+        println!("{}{:<10} 🔁 [ {} ↔️  {} ]", "SWAP".bright_blue(), "13".magenta(), hex1, hex2);
     }
 
     // Increment PC
@@ -487,7 +487,7 @@ pub fn swap14(runner: &mut Runner) -> Result<(), ExecutionError> {
             })
             .collect::<Vec<String>>()
             .join(" ");
-        println!("{}{} 👉 [ {} <=> {} ]", "SWAP".magenta(), "14".green(), hex1, hex2);
+        println!("{}{:<10} 🔁 [ {} ↔️  {} ]", "SWAP".bright_blue(), "14".magenta(), hex1, hex2);
     }
 
     // Increment PC
@@ -522,7 +522,7 @@ pub fn swap15(runner: &mut Runner) -> Result<(), ExecutionError> {
             })
             .collect::<Vec<String>>()
             .join(" ");
-        println!("{}{} 👉 [ {} <=> {} ]", "SWAP".magenta(), "15".green(), hex1, hex2);
+        println!("{}{:<10} 🔁 [ {} ↔️  {} ]", "SWAP".bright_blue(), "15".magenta(), hex1, hex2);
     }
 
     // Increment PC
@@ -557,7 +557,7 @@ pub fn swap16(runner: &mut Runner) -> Result<(), ExecutionError> {
             })
             .collect::<Vec<String>>()
             .join(" ");
-        println!("{}{} 👉 [ {} <=> {} ]", "SWAP".magenta(), "16".green(), hex1, hex2);
+        println!("{}{:<10} 🔁 [ {} ↔️  {} ]", "SWAP".bright_blue(), "16".magenta(), hex1, hex2);
     }
 
     // Increment PC

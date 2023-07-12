@@ -15,7 +15,7 @@ pub fn dup1(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{}{} 👉 [ {} ]", "DUP".magenta(), "1".green(), hex);
+        println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "1".magenta(), hex);
     }
 
     // Increment PC
@@ -32,7 +32,7 @@ pub fn dup2(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{}{} 👉 [ {} ]", "DUP".magenta(), "2".green(), hex);
+        println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "2".magenta(), hex);
     }
 
     // Increment PC
@@ -49,7 +49,7 @@ pub fn dup3(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{}{} 👉 [ {} ]", "DUP".magenta(), "3".green(), hex);
+        println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "3".magenta(), hex);
     }
 
     // Increment PC
@@ -66,7 +66,7 @@ pub fn dup4(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{}{} 👉 [ {} ]", "DUP".magenta(), "4".green(), hex);
+        println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "4".magenta(), hex);
     }
 
     // Increment PC
@@ -83,7 +83,7 @@ pub fn dup5(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{}{} 👉 [ {} ]", "DUP".magenta(), "5".green(), hex);
+        println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "5".magenta(), hex);
     }
 
     // Increment PC
@@ -100,7 +100,7 @@ pub fn dup6(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{}{} 👉 [ {} ]", "DUP".magenta(), "6".green(), hex);
+        println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "6".magenta(), hex);
     }
 
     // Increment PC
@@ -117,7 +117,7 @@ pub fn dup7(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{}{} 👉 [ {} ]", "DUP".magenta(), "7".green(), hex);
+        println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "7".magenta(), hex);
     }
 
     // Increment PC
@@ -134,7 +134,7 @@ pub fn dup8(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{}{} 👉 [ {} ]", "DUP".magenta(), "8".green(), hex);
+        println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "8".magenta(), hex);
     }
 
     // Increment PC
@@ -151,7 +151,7 @@ pub fn dup9(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{}{} 👉 [ {} ]", "DUP".magenta(), "9".green(), hex);
+        println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "9".magenta(), hex);
     }
 
     // Increment PC
@@ -168,7 +168,7 @@ pub fn dup10(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{}{} 👉 [ {} ]", "DUP".magenta(), "10".green(), hex);
+        println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "10".magenta(), hex);
     }
 
     // Increment PC
@@ -185,7 +185,7 @@ pub fn dup11(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{}{} 👉 [ {} ]", "DUP".magenta(), "11".green(), hex);
+        println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "11".magenta(), hex);
     }
 
     // Increment PC
@@ -202,7 +202,7 @@ pub fn dup12(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{}{} 👉 [ {} ]", "DUP".magenta(), "12".green(), hex);
+        println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "12".magenta(), hex);
     }
 
     // Increment PC
@@ -219,7 +219,7 @@ pub fn dup13(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{}{} 👉 [ {} ]", "DUP".magenta(), "13".green(), hex);
+        println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "13".magenta(), hex);
     }
 
     // Increment PC
@@ -236,7 +236,7 @@ pub fn dup14(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{}{} 👉 [ {} ]", "DUP".magenta(), "14".green(), hex);
+        println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "14".magenta(), hex);
     }
 
     // Increment PC
@@ -253,7 +253,7 @@ pub fn dup15(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{}{} 👉 [ {} ]", "DUP".magenta(), "15".green(), hex);
+        println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "15".magenta(), hex);
     }
 
     // Increment PC
@@ -270,7 +270,7 @@ pub fn dup16(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
-        println!("{}{} 👉 [ {} ]", "DUP".magenta(), "16".green(), hex);
+        println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "16".magenta(), hex);
     }
 
     // Increment PC

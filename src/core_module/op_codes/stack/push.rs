@@ -27,9 +27,9 @@ pub fn push(runner: &mut Runner, data_len: usize) -> Result<(), ExecutionError> 
         if runner.debug.is_some() && runner.debug.unwrap() {
             let hex: String = utils::debug::to_hex_string(padded);
             println!(
-                "{}{} 👉 [ {} ]",
-                "PUSH".magenta(),
-                data_len.to_string().green(),
+                "{}{:<10} 👉 [ {} ]",
+                "PUSH".bright_blue(),
+                data_len.to_string().magenta(),
                 hex
             );
         }
