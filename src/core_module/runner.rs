@@ -23,7 +23,7 @@ pub struct Runner {
 
     // Data
     pub storage: Storage,
-    pub heap: Memory,
+    pub memory: Memory,
     pub calldata: Memory,
     pub returndata: Memory,
     pub stack: Stack,
@@ -44,7 +44,7 @@ impl Runner {
             // Create a new storage
             storage: Storage::new(),
             // Create an empty memory
-            heap: Memory::new(None),
+            memory: Memory::new(None),
             // Create an empty memory for the call data
             calldata: Memory::new(calldata),
             // Create an empty memory for the return data
@@ -343,10 +343,7 @@ impl Runner {
             0xa4 => op_codes::log::log4(self),
 
             // Default case
-            _ => {
-                // Return an error
-                return Err(ExecutionError::InvalidOpcode(opcode));
-            }
+            _ => op_codes::system::invalid(self)
         }
     }
 
@@ -430,12 +427,12 @@ impl Runner {
 
     fn debug_stack(&self) {
         let border_line =
-            "╔══════════════════════════════════════════════════════════════════════════╗";
+            "\n╔══════════════════════════════════════════════════════════════════════════╗";
         let footer_line =
             "╚══════════════════════════════════════════════════════════════════════════╝\n";
 
         println!("\n\n{}", border_line.clone().truecolor(0, 255, 255));
-        println!("{}", "  Final stack".bright_yellow());
+        println!("{} {:<72} {}", "║".truecolor(0, 255, 255), "Final stack".bright_yellow(), "║".truecolor(0, 255, 255));
         println!("{}", footer_line.clone().truecolor(0, 255, 255));
 
         let mut reversed_stack = self.stack.stack.clone();
@@ -450,16 +447,16 @@ impl Runner {
 
     fn debug_memory(&self) {
         let border_line =
-            "╔══════════════════════════════════════════════════════════════════════════╗";
+            "\n╔══════════════════════════════════════════════════════════════════════════╗";
         let footer_line =
             "╚══════════════════════════════════════════════════════════════════════════╝\n";
 
         println!("\n{}", border_line.clone().truecolor(0, 255, 150));
-        println!("{}", "  Final memory heap".bright_yellow());
+        println!("{} {:<72} {}", "║".truecolor(0, 255, 150), "Final memory heap".bright_yellow(), "║".truecolor(0, 255, 150));
         println!("{}", footer_line.clone().truecolor(0, 255, 150));
 
         // Print the memory heap 32 bytes by 32 bytes with a space between each bytes
-        for chunk in self.heap.heap.chunks(32) {
+        for chunk in self.memory.heap.chunks(32) {
             let padded_chunk: Vec<u8>;
 
             if chunk.len() < 32 {
@@ -475,20 +472,20 @@ impl Runner {
             println!("{}", hex);
         }
 
-        if self.calldata.heap.is_empty() {
+        if self.memory.heap.is_empty() {
             println!("🚧 {} 🚧", "Empty memory".red());
         }
     }
 
     fn debug_storage(&self) {
         let border_line =
-            "╔══════════════════════════════════════════════════════════════════════════╗";
+            "\n╔══════════════════════════════════════════════════════════════════════════╗";
         let footer_line =
             "╚══════════════════════════════════════════════════════════════════════════╝\n";
 
         // Print out the storage
         println!("\n{}", border_line.clone().truecolor(0, 150, 255));
-        println!("{}", "  Final storage".bright_yellow());
+        println!("{} {:<72} {}", "║".truecolor(0, 150, 255), "Final storage".bright_yellow(), "║".truecolor(0, 150, 255));
         println!("{}", footer_line.clone().truecolor(0, 150, 255));
 
         for (slot, value) in self.storage.state.iter() {
