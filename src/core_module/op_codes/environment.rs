@@ -164,7 +164,7 @@ pub fn calldatacopy(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     let calldata = unsafe { runner.calldata.read(_offset, _size)? };
 
-    let result = unsafe { runner.heap.write(dest_offset, calldata) };
+    let result = unsafe { runner.memory.write(dest_offset, calldata) };
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -309,7 +309,7 @@ pub fn returndatacopy(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     let returndata = unsafe { runner.returndata.read(_offset, _size)? };
 
-    let result = unsafe { runner.heap.write(dest_offset, returndata) };
+    let result = unsafe { runner.memory.write(dest_offset, returndata) };
 
     if result.is_err() {
         return Err(result.unwrap_err());

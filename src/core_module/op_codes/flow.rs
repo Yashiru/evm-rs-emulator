@@ -33,11 +33,11 @@ pub fn revert(runner: &mut Runner) -> Result<(), ExecutionError> {
     let size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
 
     // Check if the address is out of bounds
-    if offset.as_usize() + size.as_usize() > runner.heap.heap.len() {
+    if offset.as_usize() + size.as_usize() > runner.memory.heap.len() {
         return Err(ExecutionError::OutOfBoundsMemory);
     }
 
-    let revert_data = unsafe { runner.heap.read(offset.as_usize(), size.as_usize()) };
+    let revert_data = unsafe { runner.memory.read(offset.as_usize(), size.as_usize()) };
 
     let err;
     let hex;
@@ -53,7 +53,7 @@ pub fn revert(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         println!(
-            "{:<14} 💢 [ {} ]",
+            "\n{:<14} 💥 [ {} ]",
             "REVERT".red(),
             hex
         );

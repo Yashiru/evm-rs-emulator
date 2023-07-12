@@ -13,11 +13,11 @@ pub fn log0(runner: &mut Runner) -> Result<(), ExecutionError> {
     let size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
 
     // Check if the address is out of bounds
-    if offset.as_usize() + size.as_usize() > runner.heap.heap.len() {
+    if offset.as_usize() + size.as_usize() > runner.memory.heap.len() {
         return Err(ExecutionError::OutOfBoundsMemory);
     }
 
-    let log_data = unsafe { runner.heap.read(offset.as_usize(), size.as_usize())? };
+    let log_data = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let hex = utils::debug::vec_to_hex_string(log_data);
@@ -63,11 +63,11 @@ pub fn log1(runner: &mut Runner) -> Result<(), ExecutionError> {
     println!("size: {:?}", size);
 
     // Check if the address is out of bounds
-    if offset.as_usize() + size.as_usize() > runner.heap.heap.len() {
+    if offset.as_usize() + size.as_usize() > runner.memory.heap.len() {
         return Err(ExecutionError::OutOfBoundsMemory);
     }
 
-    let log_data = unsafe { runner.heap.read(offset.as_usize(), size.as_usize())? };
+    let log_data = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let data_hex = utils::debug::vec_to_hex_string(log_data);
@@ -120,11 +120,11 @@ pub fn log2(runner: &mut Runner) -> Result<(), ExecutionError> {
     raw_topic2.to_big_endian(&mut topic2);
 
     // Check if the address is out of bounds
-    if offset.as_usize() + size.as_usize() > runner.heap.heap.len() {
+    if offset.as_usize() + size.as_usize() > runner.memory.heap.len() {
         return Err(ExecutionError::OutOfBoundsMemory);
     }
 
-    let log_data = unsafe { runner.heap.read(offset.as_usize(), size.as_usize())? };
+    let log_data = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let data_hex = utils::debug::vec_to_hex_string(log_data);
@@ -190,11 +190,11 @@ pub fn log3(runner: &mut Runner) -> Result<(), ExecutionError> {
     raw_topic3.to_big_endian(&mut topic3);
 
     // Check if the address is out of bounds
-    if offset.as_usize() + size.as_usize() > runner.heap.heap.len() {
+    if offset.as_usize() + size.as_usize() > runner.memory.heap.len() {
         return Err(ExecutionError::OutOfBoundsMemory);
     }
 
-    let log_data = unsafe { runner.heap.read(offset.as_usize(), size.as_usize())? };
+    let log_data = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let data_hex = utils::debug::vec_to_hex_string(log_data);
@@ -273,11 +273,11 @@ pub fn log4(runner: &mut Runner) -> Result<(), ExecutionError> {
     raw_topic4.to_big_endian(&mut topic4);
 
     // Check if the address is out of bounds
-    if offset.as_usize() + size.as_usize() > runner.heap.heap.len() {
+    if offset.as_usize() + size.as_usize() > runner.memory.heap.len() {
         return Err(ExecutionError::OutOfBoundsMemory);
     }
 
-    let log_data = unsafe { runner.heap.read(offset.as_usize(), size.as_usize())? };
+    let log_data = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
 
     if runner.debug.is_some() && runner.debug.unwrap() {
         let data_hex = utils::debug::vec_to_hex_string(log_data);

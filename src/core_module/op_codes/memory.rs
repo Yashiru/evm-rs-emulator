@@ -12,7 +12,7 @@ use colored::*;
 pub fn mload(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     let address = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let word = unsafe { runner.heap.mload(address.low_u32() as usize)? };
+    let word = unsafe { runner.memory.mload(address.low_u32() as usize)? };
     unsafe {
         let result = runner.stack
             .push(word);
@@ -41,7 +41,7 @@ pub fn mstore(runner: &mut Runner) -> Result<(), ExecutionError> {
     let address = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let data = unsafe { runner.stack.pop()? };
 
-    let result = unsafe { runner.heap.mstore(address.low_u32() as usize, data) };
+    let result = unsafe { runner.memory.mstore(address.low_u32() as usize, data) };
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -62,7 +62,7 @@ pub fn mstore(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 pub fn msize(runner: &mut Runner) -> Result<(), ExecutionError> {
     let mut bytes_msize = [0u8; 32];
-    U256::from(runner.heap.msize() as u64).to_big_endian(&mut bytes_msize);
+    U256::from(runner.memory.msize() as u64).to_big_endian(&mut bytes_msize);
 
     let result = unsafe { runner.stack.push(bytes_msize) };
 

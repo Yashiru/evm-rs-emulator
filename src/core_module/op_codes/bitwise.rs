@@ -189,7 +189,7 @@ pub fn sha(runner: &mut Runner) -> Result<(), ExecutionError> {
         let offset = U256::from_big_endian(&pop1).as_usize();
         let size = U256::from_big_endian(&pop2).as_usize();
 
-        let data_to_hash = runner.heap.read(offset, size);
+        let data_to_hash = runner.memory.read(offset, size);
 
         if data_to_hash.is_err() {
             return Err(data_to_hash.unwrap_err());
