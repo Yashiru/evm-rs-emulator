@@ -8,6 +8,7 @@ pub enum ExecutionError {
     StackTooSmall,
     StackTooDeep,
     InvalidOpcode(u8),
+    InvalidFile,
 }
 
 impl fmt::Display for ExecutionError {
@@ -25,6 +26,8 @@ impl fmt::Display for ExecutionError {
                 write!(f, "Stack too deep. Maximum stack size is 1024 words"),
             ExecutionError::InvalidOpcode(value) => 
                 write!(f, "Invalid opcode: {}", value),
+            ExecutionError::InvalidFile => 
+                write!(f, "Invalid file"),
         }
     }
 }

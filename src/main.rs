@@ -1,20 +1,26 @@
 mod core_module;
+use std::fs;
+use core_module::utils::{errors::ExecutionError, self};
+use hex;
 
-fn main() {
+
+fn main() -> Result<(), ExecutionError>  {
     // Create a new interpreter
     let mut interpreter = core_module::runner::Runner::new();
-
-    // Create a new bytecode
-    let bytecode = vec![0x60, 0x02, 0x60, 0xa, 0x05];
-
-
-    // Interpret the bytecode
-    let result = interpreter.interpret(bytecode, Some(true));
+    
+    let result = fs::read_to_string("./bytecode.bin");
 
     match result {
-        Ok(_) => {
-            println!("Interpretation successful!");
+        Ok(file_content) => {
+            let bytecode = hex::decode(file_content.trim()).expect("Decoding failed");
+            
+            // Interpret the bytecode
+            interpreter.interpret(bytecode, Some(true))
         },
-        Err(_) => { }
+        Err(error) => {
+            println!("Error: {}", error);
+            Err(utils::errors::ExecutionError::InvalidFile)
+        }
     }
+
 }
