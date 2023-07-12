@@ -1,3 +1,4 @@
+
 use crate::core_module::utils::errors::ExecutionError;
 use crate::core_module::runner::Runner;
 use crate::core_module::utils;
@@ -43,7 +44,6 @@ pub fn sdiv(runner: &mut Runner) -> Result<(), ExecutionError> {
 
         let result = runner.stack.push(result_bytes);
 
-
         if result.is_err() {
             return Err(result.unwrap_err());
         }
@@ -51,8 +51,8 @@ pub fn sdiv(runner: &mut Runner) -> Result<(), ExecutionError> {
         if runner.debug.is_some() && runner.debug.unwrap() {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
-                "{} 👉 [ {} ]",
-                "SDIV".magenta(),
+                "{:<14} 👉 [ {} ]",
+                "SDIV".bright_blue(),
                 hex
             );
         }
@@ -104,8 +104,8 @@ pub fn smodulo(runner: &mut Runner) -> Result<(), ExecutionError> {
         if runner.debug.is_some() && runner.debug.unwrap() {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
-                "{} 👉 [ {} ]",
-                "SMOD".magenta(),
+                "{:<14} 👉 [ {} ]",
+                "SMOD".bright_blue(),
                 hex
             );
         }

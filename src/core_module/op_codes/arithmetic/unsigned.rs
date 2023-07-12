@@ -39,8 +39,8 @@ pub fn add(runner: &mut Runner) -> Result<(), ExecutionError> {
         if runner.debug.is_some() && runner.debug.unwrap() {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
-                "{} 👉 [ {} ]",
-                "ADD".magenta(),
+                "{:<14} 👉 [ {} ]",
+                "ADD".bright_blue(),
                 hex
             );
         }
@@ -82,8 +82,8 @@ pub fn mul(runner: &mut Runner) -> Result<(), ExecutionError> {
         if runner.debug.is_some() && runner.debug.unwrap() {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
-                "{} 👉 [ {} ]",
-                "MUL".magenta(),
+                "{:<14} 👉 [ {} ]",
+                "MUL".bright_blue(),
                 hex
             );
         }
@@ -124,8 +124,8 @@ pub fn sub(runner: &mut Runner) -> Result<(), ExecutionError> {
         if runner.debug.is_some() && runner.debug.unwrap() {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
-                "{} 👉 [ {} ]",
-                "SUB".magenta(),
+                "{:<14} 👉 [ {} ]",
+                "SUB".bright_blue(),
                 hex
             );
         }
@@ -168,8 +168,8 @@ pub fn modulo(runner: &mut Runner) -> Result<(), ExecutionError> {
         if runner.debug.is_some() && runner.debug.unwrap() {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
-                "{} 👉 [ {} ]",
-                "MOD".magenta(),
+                "{:<14} 👉 [ {} ]",
+                "MOD".bright_blue(),
                 hex
             );
         }
@@ -213,8 +213,8 @@ pub fn div(runner: &mut Runner) -> Result<(), ExecutionError> {
         if runner.debug.is_some() && runner.debug.unwrap() {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
-                "{} 👉 [ {} ]",
-                "DIV".magenta(),
+                "{:<14} 👉 [ {} ]",
+                "DIV".bright_blue(),
                 hex
             );
         }
@@ -260,8 +260,8 @@ pub fn addmod(runner: &mut Runner) -> Result<(), ExecutionError> {
         if runner.debug.is_some() && runner.debug.unwrap() {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
-                "{} 👉 [ {} ]",
-                "ADDMOD".magenta(),
+                "{:<14} 👉 [ {} ]",
+                "ADDMOD".bright_blue(),
                 hex
             );
         }
@@ -307,8 +307,8 @@ pub fn mulmod(runner: &mut Runner) -> Result<(), ExecutionError> {
         if runner.debug.is_some() && runner.debug.unwrap() {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
-                "{} 👉 [ {} ]",
-                "MULMOD".magenta(),
+                "{:<14} 👉 [ {} ]",
+                "MULMOD".bright_blue(),
                 hex
             );
         }
@@ -349,8 +349,8 @@ pub fn exp(runner: &mut Runner) -> Result<(), ExecutionError> {
         if runner.debug.is_some() && runner.debug.unwrap() {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
-                "{} 👉 [ {} ]",
-                "EXP".magenta(),
+                "{:<14} 👉 [ {} ]",
+                "EXP".bright_blue(),
                 hex
             );
         }
