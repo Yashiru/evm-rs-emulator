@@ -1,4 +1,5 @@
 use std::fmt;
+use super::debug;
 
 #[derive(Debug)]
 pub enum ExecutionError {
@@ -9,6 +10,8 @@ pub enum ExecutionError {
     StackTooDeep,
     InvalidOpcode(u8),
     InvalidFile,
+    Revert(Vec<u8>),
+    RevertWithoutData
 }
 
 impl fmt::Display for ExecutionError {
@@ -28,6 +31,12 @@ impl fmt::Display for ExecutionError {
                 write!(f, "Invalid opcode: {}", value),
             ExecutionError::InvalidFile => 
                 write!(f, "Invalid file"),
+            ExecutionError::RevertWithoutData => 
+                write!(f, "Execution revert without data"),
+            ExecutionError::Revert(data) => {
+                let hex = super::debug::vec_to_hex_string(data.to_owned());
+                write!(f, "Execution revert with data: {}", hex)
+            },
         }
     }
 }
