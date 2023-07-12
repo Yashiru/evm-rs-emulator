@@ -1,5 +1,3 @@
-use ethers::types::U256;
-
 use super::memory::Memory;
 use super::op_codes;
 use super::stack::Stack;
@@ -12,8 +10,10 @@ use colored::*;
 
 pub struct Runner {
     pub pc: usize,
+    pub gas: u64,
     pub storage: Storage,
     pub heap: Memory,
+    pub calldata: Memory,
     pub returndata: Memory,
     pub stack: Stack,
     pub bytecode: Vec<u8>,
@@ -25,12 +25,15 @@ impl Runner {
         Self {
             // Set the program counter to 0
             pc: 0,
+            gas: 30_000_000,
             // Create a new storage
             storage: Storage::new(),
             // Create an empty memory
             heap: Memory::new(0),
+            // Create an empty memory for the call data
+            calldata: Memory::new(1024),
             // Create an empty memory for the return data
-            returndata: Memory::new(0),
+            returndata: Memory::new(1024),
             // Create a new stack
             stack: Stack::new(),
             // Create a new empty bytecode
@@ -45,6 +48,16 @@ impl Runner {
         Ok(())
     }
 
+    // Set the program counter
+    pub fn set_pc(&mut self, value: usize) {
+        self.pc = value;
+    }
+
+    // Set the program counter
+    pub fn get_pc(&mut self) -> usize {
+        self.pc
+    }
+
     pub fn interpret(
         &mut self,
         bytecode: Vec<u8>,
@@ -52,8 +65,15 @@ impl Runner {
     ) -> Result<(), ExecutionError> {
         // Set the bytecode
         self.bytecode = bytecode;
+
         // Set the bytecode
         self.debug = debug;
+        
+        // Mock calldata
+        unsafe {self.calldata.write(32, [0x01, 0x02, 0x03, 0x04, 0x05, 0x06].to_vec())?;}
+
+        // Mock returndata
+        unsafe {self.returndata.write(0, [0x01, 0x02, 0x03, 0x04, 0x05, 0x06].to_vec())?;}
 
         /* -------------------------------------------------------------------------- */
         /*                             Print debug header                             */
@@ -159,13 +179,13 @@ impl Runner {
 
         if error.is_some() {
             println!(
-                "{} {:?}\n  {}: {}\n  {}: {}\n  {}",
+                "{} {}\n  {}: 0x{:X}\n  {}: 0x{:X}\n  {}",
                 "ERROR:".red(),
-                error.as_ref().unwrap(),
+                "Runtime error".red(),
                 "PC".yellow(),
                 self.pc,
                 "OpCode".yellow(),
-                self.bytecode[self.pc - 1],
+                self.bytecode[self.pc],
                 error.as_ref().unwrap().to_string().red()
             );
             return Err(error.unwrap());
@@ -178,7 +198,7 @@ impl Runner {
     fn interpret_op_code(&mut self, opcode: u8) -> Result<(), ExecutionError> {
         match opcode {
             /* ---------------------------- Execution OpCodes --------------------------- */
-            0x00 => self.stop(),
+            0x00 => op_codes::flow::stop(self),
 
             /* ------------------------- Math operations OpCodes ------------------------ */
             0x01 => op_codes::arithmetic::unsigned::add(self),
@@ -291,6 +311,40 @@ impl Runner {
             0x1c => op_codes::bitwise::shr(self),
             0x20 => op_codes::bitwise::sha(self),
 
+            /* ---------------------------- Environment OpCodes ------------------------- */
+            0x30 => op_codes::environment::address(self),
+            0x31 => op_codes::environment::balance(self),
+            0x32 => op_codes::environment::origin(self),
+            0x33 => op_codes::environment::caller(self),
+            0x34 => op_codes::environment::callvalue(self),
+            0x35 => op_codes::environment::calldataload(self),
+            0x36 => op_codes::environment::calldatasize(self),
+            0x37 => op_codes::environment::calldatacopy(self),
+            0x38 => op_codes::environment::codesize(self),
+            0x39 => op_codes::environment::codecopy(self),
+            0x3a => op_codes::environment::gasprice(self),
+            0x3b => op_codes::environment::extcodesize(self),
+            0x3c => op_codes::environment::extcodecopy(self),
+            0x3d => op_codes::environment::returndatasize(self),
+            0x3e => op_codes::environment::returndatacopy(self),
+            0x3f => op_codes::environment::extcodehash(self),
+            0x40 => op_codes::environment::blockhash(self),
+            0x41 => op_codes::environment::coinbase(self),
+            0x42 => op_codes::environment::timestamp(self),
+            0x43 => op_codes::environment::number(self),
+            0x44 => op_codes::environment::difficulty(self),
+            0x45 => op_codes::environment::gaslimit(self),
+            0x46 => op_codes::environment::chainid(self),
+            0x47 => op_codes::environment::selfbalance(self),
+            0x48 => op_codes::environment::basefee(self),
+
+            /* ------------------------------ Flow OpCodes ------------------------------ */
+            0x56 => op_codes::flow::jump(self),
+            0x57 => op_codes::flow::jumpi(self),
+            0x58 => op_codes::flow::pc(self),
+            0x5a => op_codes::flow::gas(self),
+            0x5b => op_codes::flow::jumpdest(self),
+            0xfd => op_codes::flow::revert(self),
 
 
             // Default case
@@ -299,27 +353,6 @@ impl Runner {
                 return Err(ExecutionError::InvalidOpcode(opcode));
             }
         }
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /*                              Execution OpCodes                             */
-    /* -------------------------------------------------------------------------- */
-
-    // Stop execution
-    pub fn stop(&mut self) -> Result<(), ExecutionError> {
-        // Set the program counter to the end of the bytecode
-        self.pc = self.bytecode.len();
-        Ok(())
-    }
-
-    // Revert datas from memory heap
-    pub fn revert(&mut self, address: usize, size: usize) -> Result<Vec<u8>, ExecutionError> {
-        // Check if the address is out of bounds
-        if address + size > self.heap.heap.len() {
-            return Err(ExecutionError::OutOfBoundsMemory);
-        }
-
-        unsafe { self.heap.read(address, size) }
     }
 }
 
