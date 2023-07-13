@@ -272,7 +272,6 @@ pub fn extcodecopy(runner: &mut Runner) -> Result<(), ExecutionError> {
     unsafe {runner.stack.push(code)?};
 
     if runner.debug.is_some() && runner.debug.unwrap() {
-        let hex: String = utils::debug::to_hex_string(code);
         println!("{}", "EXTCODECOPY".bright_blue());
     }
 

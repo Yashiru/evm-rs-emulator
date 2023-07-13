@@ -1,9 +1,10 @@
 mod core_module;
 use std::fs;
+use core_module::utils::errors::ExecutionError;
 use hex;
 
 
-fn main() -> Result<(), ()>  {
+fn main() -> Result<(), ExecutionError>  {
     // Create a new interpreter
     let mut interpreter = core_module::runner::Runner::new([0xaa; 20], None, None, None, None);
     
@@ -14,10 +15,11 @@ fn main() -> Result<(), ()>  {
             let bytecode = hex::decode(file_content.trim()).expect("Decoding failed");
             
             // Interpret the bytecode
-            interpreter.interpret(bytecode, Some(true));
+            let _ = interpreter.interpret(bytecode, Some(true));
+
         },
         Err(_) => {
-            return Err(());
+            return Err(ExecutionError::InvalidFile);
         }
     }
 

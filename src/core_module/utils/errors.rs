@@ -1,5 +1,4 @@
 use std::fmt;
-use super::debug;
 
 #[derive(Debug)]
 pub enum ExecutionError {
@@ -8,7 +7,6 @@ pub enum ExecutionError {
     EmptyByteCode,
     StackTooSmall,
     StackTooDeep,
-    InvalidOpcode(u8),
     InvalidFile,
     Revert(Vec<u8>),
     RevertWithoutData
@@ -27,8 +25,6 @@ impl fmt::Display for ExecutionError {
                 write!(f, "Attempted to read out of stacks bounds"),
             ExecutionError::StackTooDeep => 
                 write!(f, "Stack too deep. Maximum stack size is 1024 words"),
-            ExecutionError::InvalidOpcode(value) => 
-                write!(f, "Invalid opcode: {}", value),
             ExecutionError::InvalidFile => 
                 write!(f, "Invalid file"),
             ExecutionError::RevertWithoutData => 

@@ -1,11 +1,9 @@
 use crate::core_module::runner::Runner;
 use crate::core_module::utils;
 use crate::core_module::utils::errors::ExecutionError;
-use std::time::{SystemTime, UNIX_EPOCH};
 
 // Primitive types
 use ethers::types::U256;
-use ethers::utils::keccak256;
 
 // Colored output
 use colored::*;
@@ -108,7 +106,7 @@ pub fn jumpi(runner: &mut Runner) -> Result<(), ExecutionError> {
     }
     else{
         // Increment the program counter
-        runner.increment_pc(1);
+        let _ = runner.increment_pc(1);
     }
 
     if runner.debug.is_some() && runner.debug.unwrap() {
@@ -134,8 +132,7 @@ pub fn pc(runner: &mut Runner) -> Result<(), ExecutionError> {
     unsafe { runner.stack.push(bytes)? };
 
     // Increment the program counter
-    runner.increment_pc(1);
-    Ok(())
+    runner.increment_pc(1)
 }
 
 // gas
@@ -148,13 +145,11 @@ pub fn gas(runner: &mut Runner) -> Result<(), ExecutionError> {
     unsafe { runner.stack.push(bytes)? };
 
     // Increment the program counter
-    runner.increment_pc(1);
-    Ok(())
+    runner.increment_pc(1)
 }
 
 // jumpdest
 pub fn jumpdest(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Increment the program counter
-    runner.increment_pc(1);
-    Ok(())
+    runner.increment_pc(1)
 }
