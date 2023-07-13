@@ -1,5 +1,7 @@
 use crate::core_module::runner::Runner;
 use crate::core_module::utils;
+use crate::core_module::utils::bytes32::pad_to_32_bytes;
+use crate::core_module::utils::environment::get_balance;
 use crate::core_module::utils::errors::ExecutionError;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -34,11 +36,12 @@ pub fn address(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 pub fn balance(runner: &mut Runner) -> Result<(), ExecutionError> {
     let address: [u8; 32] = unsafe { runner.stack.pop()? };
+    let address: [u8; 20] = address[12..].try_into().unwrap();
 
     let balance_slot = keccak256([utils::constants::balance_slot().to_vec(), address.to_vec()].concat());
-    let balance = unsafe { runner.storage.sload(balance_slot)? };
+    let balance = get_balance(address, runner)?;
 
-    let result = unsafe { runner.stack.push(balance) };
+    let result = unsafe { runner.stack.push(pad_to_32_bytes(&balance)) };
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -140,7 +143,7 @@ pub fn calldatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
     size.reverse();
 
     // Convert the usize to bytes in little-endian order
-    let calldatasize = [[0u8; 24].to_vec(), size.to_vec()].concat().as_slice().try_into().unwrap();
+    let calldatasize = pad_to_32_bytes(&size);
 
     let result = unsafe { runner.stack.push(calldatasize) };
 
@@ -284,7 +287,7 @@ pub fn returndatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
     size.reverse();
 
     // Convert the usize to bytes in little-endian order
-    let returndatasize = [[0u8; 24].to_vec(), size.to_vec()].concat().as_slice().try_into().unwrap();
+    let returndatasize = pad_to_32_bytes(&size);
 
     let result = unsafe { runner.stack.push(returndatasize) };
 
@@ -402,7 +405,7 @@ pub fn timestamp(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Convert the timestamp to bytes in big-endian order
     let timestamp_bytes = timestamp_secs.to_be_bytes();
 
-    let bytes = [[0; 24].to_vec(), timestamp_bytes.to_vec()].concat().as_slice().try_into().unwrap();
+    let bytes = pad_to_32_bytes(&timestamp_bytes);
 
     let result = unsafe { runner.stack.push(bytes) };
 
@@ -421,7 +424,7 @@ pub fn timestamp(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Can be mocked with a fork
 pub fn number(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let number = [[0u8; 28].to_vec(), [0xff; 4].to_vec()].concat().as_slice().try_into().unwrap();
+    let number = pad_to_32_bytes(&[0xff; 4]);
 
     let result = unsafe { runner.stack.push(number) };
 
@@ -440,7 +443,7 @@ pub fn number(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Can be mocked with a fork
 pub fn difficulty(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let difficulty = [[0u8; 24].to_vec(), [0x45; 8].to_vec()].concat().as_slice().try_into().unwrap();
+    let difficulty = pad_to_32_bytes(&[0x45; 8]);
 
     let result = unsafe { runner.stack.push(difficulty) };
 
@@ -459,7 +462,7 @@ pub fn difficulty(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Can be mocked with a fork
 pub fn gaslimit(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let gaslimit = [[0u8; 28].to_vec(), [0x01, 0xC9, 0xC3, 0x80].to_vec()].concat().as_slice().try_into().unwrap();
+    let gaslimit = pad_to_32_bytes(&[0x01, 0xC9, 0xC3, 0x80]);
 
     let result = unsafe { runner.stack.push(gaslimit) };
 
@@ -478,7 +481,7 @@ pub fn gaslimit(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Can be mocked with a fork
 pub fn chainid(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let chainid = [[0u8; 31].to_vec(), [0x01].to_vec()].concat().as_slice().try_into().unwrap();
+    let chainid = pad_to_32_bytes(&[0x01]);
 
     let result = unsafe { runner.stack.push(chainid) };
 
@@ -496,16 +499,17 @@ pub fn chainid(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn selfbalance(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let selfbalance = [[0u8; 25].to_vec(), [0xbb; 7].to_vec()].concat().as_slice().try_into().unwrap();
+    let balance_slot = keccak256([utils::constants::balance_slot().to_vec(), runner.address.to_vec()].concat());
+    let balance = get_balance(runner.address, runner)?;
 
-    let result = unsafe { runner.stack.push(selfbalance) };
+    let result = unsafe { runner.stack.push(balance) };
 
     if result.is_err() {
         return Err(result.unwrap_err());
     }
 
     if runner.debug.is_some() && runner.debug.unwrap() {
-        let hex: String = utils::debug::to_hex_string(selfbalance);
+        let hex: String = utils::debug::to_hex_string(balance);
         println!("{:<14} 👉 [ {} ]", "SELFBALANCE".bright_blue(), hex);
     }
 

@@ -287,7 +287,7 @@ mod tests {
 
     #[test]
     fn test_dup1() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
         let _ = runner.interpret(vec![0x60, 0xff, 0x80], Some(true));
         assert_eq!(runner.stack.stack.len(), 2);
@@ -296,7 +296,7 @@ mod tests {
 
     #[test]
     fn test_dup2() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
         let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x81], Some(true));
         assert_eq!(runner.stack.stack.len(), 3);
@@ -305,7 +305,7 @@ mod tests {
 
     #[test]
     fn test_dup3() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
         let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x82], Some(true));
         assert_eq!(runner.stack.stack.len(), 4);
@@ -314,7 +314,7 @@ mod tests {
 
     #[test]
     fn test_dup4() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
         let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x83], Some(true));
         assert_eq!(runner.stack.stack.len(), 5);
@@ -323,7 +323,7 @@ mod tests {
 
     #[test]
     fn test_dup5() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
         let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x84], Some(true));
         assert_eq!(runner.stack.stack.len(), 6);
@@ -332,7 +332,7 @@ mod tests {
 
     #[test]
     fn test_dup6() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
         let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x85], Some(true));
         assert_eq!(runner.stack.stack.len(), 7);
@@ -341,7 +341,7 @@ mod tests {
 
     #[test]
     fn test_dup7() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
         let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x86], Some(true));
         assert_eq!(runner.stack.stack.len(), 8);
@@ -350,7 +350,7 @@ mod tests {
 
     #[test]
     fn test_dup8() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
         let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x87], Some(true));
         assert_eq!(runner.stack.stack.len(), 9);
@@ -359,7 +359,7 @@ mod tests {
 
     #[test]
     fn test_dup9() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
         let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x88], Some(true));
         assert_eq!(runner.stack.stack.len(), 10);
@@ -368,7 +368,7 @@ mod tests {
 
     #[test]
     fn test_dup10() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
         let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x89], Some(true));
         assert_eq!(runner.stack.stack.len(), 11);
@@ -377,7 +377,7 @@ mod tests {
 
     #[test]
     fn test_dup11() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
         let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8a], Some(true));
         assert_eq!(runner.stack.stack.len(), 12);
@@ -386,7 +386,7 @@ mod tests {
 
     #[test]
     fn test_dup12() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
         let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8b], Some(true));
         assert_eq!(runner.stack.stack.len(), 13);
@@ -395,7 +395,7 @@ mod tests {
 
     #[test]
     fn test_dup13() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
         let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8c], Some(true));
         assert_eq!(runner.stack.stack.len(), 14);
@@ -404,7 +404,7 @@ mod tests {
 
     #[test]
     fn test_dup14() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
         let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8d], Some(true));
         assert_eq!(runner.stack.stack.len(), 15);
@@ -413,7 +413,7 @@ mod tests {
 
     #[test]
     fn test_dup15() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
         let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8e], Some(true));
         assert_eq!(runner.stack.stack.len(), 16);
@@ -422,7 +422,7 @@ mod tests {
 
     #[test]
     fn test_dup16() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
         let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8f], Some(true));
         assert_eq!(runner.stack.stack.len(), 17);

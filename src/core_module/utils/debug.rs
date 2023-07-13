@@ -11,6 +11,15 @@ pub fn to_hex_string(bytes: [u8; 32]) -> String {
     .join(" ")
 }
 
+pub fn to_hex_address(bytes: [u8; 20]) -> String {
+    format!("0x{}", bytes.iter()
+    .map(|b| match format!("{:02x}", b) {
+        s => s.to_string(),
+    })
+    .collect::<Vec<String>>()
+    .join("")).truecolor(80, 180, 255).to_string()
+}
+
 pub fn vec_to_hex_string(bytes: Vec<u8>) -> String {
     bytes.iter()
     .map(|b| match format!("{:02x}", b) {

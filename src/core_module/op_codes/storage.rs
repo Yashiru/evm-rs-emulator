@@ -8,7 +8,7 @@ use colored::*;
 // Load 32 bytes from memory
 pub fn sload(runner: &mut Runner) -> Result<(), ExecutionError> {
     let address = unsafe { runner.stack.pop()? };
-    let word = unsafe { runner.storage.sload(address)? };
+    let word = runner.state.sload(runner.address, address)?;
 
     unsafe {
         let result = runner.stack
@@ -37,7 +37,7 @@ pub fn sstore(runner: &mut Runner) -> Result<(), ExecutionError> {
     let address = unsafe { runner.stack.pop()? };
     let word = unsafe { runner.stack.pop()? };
 
-    let result = unsafe { runner.storage.sstore(address, word) };
+    let result = runner.state.sstore(runner.address, address, word);
 
     if result.is_err() {
         return Err(result.unwrap_err());

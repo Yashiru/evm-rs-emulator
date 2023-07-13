@@ -1,9 +1,14 @@
+use crate::core_module::utils::bytes32::pad_to_32_bytes;
+
 use super::memory::Memory;
 use super::op_codes;
 use super::stack::Stack;
-use super::storage::Storage;
+use super::state::EvmState;
 use super::utils;
+use super::utils::environment::init_account;
 use super::utils::errors::ExecutionError;
+
+use ethers::types::U256;
 
 // Colored output
 use colored::*;
@@ -22,7 +27,7 @@ pub struct Runner {
     pub address: [u8; 20],
 
     // Data
-    pub storage: Storage,
+    pub state: EvmState,
     pub memory: Memory,
     pub calldata: Memory,
     pub returndata: Memory,
@@ -36,13 +41,18 @@ impl Runner {
         address: Option<[u8; 20]>,
         callvalue: Option<[u8; 32]>,
         calldata: Option<Vec<u8>>,
+        state: Option<EvmState>
     ) -> Self {
-        Self {
+        let mut instance = Self {
             // Set the program counter to 0
             pc: 0,
             gas: 30_000_000,
             // Create a new storage
-            storage: Storage::new(),
+            state: if state.is_some() {
+                state.unwrap()
+            } else {
+                EvmState::new()
+            },
             // Create an empty memory
             memory: Memory::new(None),
             // Create an empty memory for the call data
@@ -75,7 +85,20 @@ impl Runner {
             bytecode: Vec::new(),
             // Set debug mode to false
             debug: None,
-        }
+        };
+
+        // Initialize accounts in the EVM state
+        let _ = init_account(instance.address, &mut instance);
+        let _ = init_account(instance.caller, &mut instance);
+        let _ = init_account(instance.origin, &mut instance);
+
+        // Set caller balance to 1000
+        let mut result_bytes = [0u8; 32];
+        U256::from("3635C9ADC5DEA00000").to_big_endian(&mut result_bytes);
+        instance.state.accounts.get_mut(&instance.caller).unwrap().balance = result_bytes;
+
+        // Return the instance
+        instance
     }
     // Increment the program counter
     pub fn increment_pc(&mut self, size: usize) -> Result<(), ExecutionError> {
@@ -129,6 +152,7 @@ impl Runner {
             println!("{}: {}", "ERROR: ".red(), ExecutionError::EmptyByteCode);
             return Err(ExecutionError::EmptyByteCode);
         }
+        
 
         // Interpret the bytecode
         while self.pc < self.bytecode.len() {
@@ -342,6 +366,9 @@ impl Runner {
             0xa3 => op_codes::log::log3(self),
             0xa4 => op_codes::log::log4(self),
 
+            /* ----------------------------- System OpCodes ----------------------------- */
+            0xf0 => op_codes::system::create(self),
+
             // Default case
             _ => op_codes::system::invalid(self)
         }
@@ -378,7 +405,7 @@ impl Runner {
 
         println!("{} {:<95} {}", "║".bright_magenta(), "", "║".bright_magenta());
         println!("{} {:<95} {}", "║".bright_magenta(), "To".cyan(), "║".bright_magenta());
-        let hex_address = utils::debug::to_hex_string([[0; 12].to_vec(), self.address.to_vec()].concat().try_into().unwrap());
+        let hex_address = utils::debug::to_hex_string(pad_to_32_bytes(&self.address));
         println!("{} {:<95} {}", "║".bright_magenta(), hex_address, "║".bright_magenta());
 
         /* -------------------------------------------------------------------------- */
@@ -427,12 +454,12 @@ impl Runner {
 
     fn debug_stack(&self) {
         let border_line =
-            "\n╔══════════════════════════════════════════════════════════════════════════╗";
+            "\n╔═══════════════════════════════════════════════════════════════════════════════════════════════════════╗";
         let footer_line =
-            "╚══════════════════════════════════════════════════════════════════════════╝\n";
+            "╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝\n";
 
         println!("\n\n{}", border_line.clone().truecolor(0, 255, 255));
-        println!("{} {:<72} {}", "║".truecolor(0, 255, 255), "Final stack".bright_yellow(), "║".truecolor(0, 255, 255));
+        println!("{} {:<101} {}", "║".truecolor(0, 255, 255), "Final stack".bright_yellow(), "║".truecolor(0, 255, 255));
         println!("{}", footer_line.clone().truecolor(0, 255, 255));
 
         let mut reversed_stack = self.stack.stack.clone();
@@ -447,12 +474,12 @@ impl Runner {
 
     fn debug_memory(&self) {
         let border_line =
-            "\n╔══════════════════════════════════════════════════════════════════════════╗";
+            "\n╔═══════════════════════════════════════════════════════════════════════════════════════════════════════╗";
         let footer_line =
-            "╚══════════════════════════════════════════════════════════════════════════╝\n";
+            "╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝\n";
 
         println!("\n{}", border_line.clone().truecolor(0, 255, 150));
-        println!("{} {:<72} {}", "║".truecolor(0, 255, 150), "Final memory heap".bright_yellow(), "║".truecolor(0, 255, 150));
+        println!("{} {:<101} {}", "║".truecolor(0, 255, 150), "Final memory heap".bright_yellow(), "║".truecolor(0, 255, 150));
         println!("{}", footer_line.clone().truecolor(0, 255, 150));
 
         // Print the memory heap 32 bytes by 32 bytes with a space between each bytes
@@ -478,33 +505,7 @@ impl Runner {
     }
 
     fn debug_storage(&self) {
-        let border_line =
-            "\n╔══════════════════════════════════════════════════════════════════════════╗";
-        let footer_line =
-            "╚══════════════════════════════════════════════════════════════════════════╝\n";
-
-        // Print out the storage
-        println!("\n{}", border_line.clone().truecolor(0, 150, 255));
-        println!("{} {:<72} {}", "║".truecolor(0, 150, 255), "Final storage".bright_yellow(), "║".truecolor(0, 150, 255));
-        println!("{}", footer_line.clone().truecolor(0, 150, 255));
-
-        for (slot, value) in self.storage.state.iter() {
-            println!("┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐");
-            // Print the slot
-            let hex: String = utils::debug::to_hex_string(slot.to_owned());
-            println!("│ {}:  {} │", "Slot".bright_blue(), hex);
-
-            // Print the value
-            let hex: String = utils::debug::to_hex_string(value.to_owned());
-            println!("│ {}: {} │", "Value".magenta(), hex);
-
-            println!("└────────────────────────────────────────────────────────────────────────────────────────────────────────┘\n");
-        }
-
-        // Check if hash map is empty
-        if self.storage.state.is_empty() {
-            println!("🚧 {} 🚧", "Empty storage".red());
-        }
+        self.state.debug_state();
     }
 }
 
@@ -514,7 +515,7 @@ mod tests {
 
     #[test]
     fn test_push0() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
         let _ = runner.interpret(vec![0x5f, 0x5f, 0x5f], Some(true));
 
         assert_eq!(unsafe { runner.stack.pop().unwrap() }, [0u8; 32]);
@@ -524,7 +525,7 @@ mod tests {
 
     #[test]
     fn test_push1() {
-        let mut runner = Runner::new([0xaa; 20], None, None, None, None);
+        let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
         let _ = runner.interpret(vec![0x60, 0x01, 0x60, 0x02, 0x60, 0x03], Some(true));
 
         assert_eq!(
