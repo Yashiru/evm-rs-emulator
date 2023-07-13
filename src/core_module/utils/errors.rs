@@ -24,6 +24,7 @@ pub enum ExecutionError {
     InvalidFile,
     Revert(Vec<u8>),
     RevertWithoutData,
+    NotImplemented(u8)
 }
 
 impl fmt::Display for ExecutionError {
@@ -47,6 +48,7 @@ impl fmt::Display for ExecutionError {
             ExecutionError::InsufficientBalance => write!(f, "Insufficient balance to transfer"),
             ExecutionError::NotEmptyStack => write!(f, "Stack is not empty after the call"),
             ExecutionError::ContractCreationFailed => write!(f, "Contract creation failed, the constructor reverted"),
+            ExecutionError::NotImplemented(op_code) => write!(f, "Op code 0x{:X} not implemented", op_code),
             ExecutionError::Revert(data) => {
                 let hex = super::debug::vec_to_hex_string(data.to_owned());
                 write!(f, "Execution revert with data: {}", hex)

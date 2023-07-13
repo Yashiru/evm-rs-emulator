@@ -53,7 +53,7 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Call the contract to run its constructor
     let temp_debug_level = runner.debug_level;
     runner.debug_level = Some(0);
-    let call_result = runner.call(contract_address, value, Vec::new(), runner.gas);
+    let call_result = runner.call(contract_address, value, Vec::new(), runner.gas, false);
     runner.debug_level = temp_debug_level;
 
     // Check if the call failed
@@ -121,12 +121,12 @@ pub fn call(runner: &mut Runner) -> Result<(), ExecutionError> {
         value,
         calldata,
         U256::from_big_endian(&gas).as_u64(),
+        false
     );
 
     if call_result.is_err() {
         unsafe { runner.stack.push(pad_to_32_bytes(&[0x00]))? };
-    }
-    else{
+    } else {
         unsafe { runner.stack.push(pad_to_32_bytes(&[0x01]))? };
     }
 
@@ -141,6 +141,97 @@ pub fn call(runner: &mut Runner) -> Result<(), ExecutionError> {
                 "CALL FAILED".red()
             } else {
                 "CALL SUCCEEDED".green()
+            },
+            if call_result.is_err() { "❌" } else { "✅" },
+            address_hex,
+            "Returndata".bright_blue(),
+            returndata_hex
+        );
+    }
+
+    let mut return_data: Vec<u8> = runner.returndata.heap.clone();
+
+    // Complete return data with zeros if returndata is smaller than returndata_size
+    if return_data.len() < returndata_size.as_usize() {
+        return_data.extend(vec![0; returndata_size.as_usize() - return_data.len()]);
+    }
+
+    return_data = return_data[0..returndata_size.as_usize()].to_vec();
+
+    // Write the return data to memory
+    unsafe {
+        runner
+            .memory
+            .write(returndata_offset.as_usize(), return_data)?
+    };
+
+    // Increment PC
+    runner.increment_pc(1)
+}
+
+pub fn callcode(_: &mut Runner) -> Result<(), ExecutionError> {
+    Err(ExecutionError::NotImplemented(0xF2))
+}
+
+pub fn delegatecall(runner: &mut Runner) -> Result<(), ExecutionError> {
+    // Get the values on the stack
+    let gas = unsafe { runner.stack.pop()? };
+    let to = unsafe { runner.stack.pop()? };
+    let calldata_offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let calldata_size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let returndata_offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let returndata_size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+
+    // Check if the address is out of bounds
+    if calldata_offset.as_usize() + calldata_size.as_usize() > runner.memory.heap.len() {
+        return Err(ExecutionError::OutOfBoundsMemory);
+    }
+
+    // Load the input data from memory
+    let calldata = unsafe {
+        runner
+            .memory
+            .read(calldata_offset.as_usize(), calldata_size.as_usize())?
+    };
+
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
+        let address_hex: String = utils::debug::to_hex_address(bytes32_to_address(&to));
+        let calldata_hex: String = utils::debug::vec_to_hex_string(calldata.clone());
+        println!(
+            "\n{} 👉 {}\n  {}: {}\n",
+            "DELEGATE".yellow(),
+            address_hex,
+            "Calldata".bright_blue(),
+            calldata_hex
+        );
+    }
+
+    // Call the contract
+    let call_result = runner.call(
+        bytes32_to_address(&to),
+        [0u8; 32],
+        calldata,
+        U256::from_big_endian(&gas).as_u64(),
+        true
+    );
+
+    if call_result.is_err() {
+        unsafe { runner.stack.push(pad_to_32_bytes(&[0x00]))? };
+    } else {
+        unsafe { runner.stack.push(pad_to_32_bytes(&[0x01]))? };
+    }
+
+    let return_data = runner.returndata.heap.clone();
+
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
+        let address_hex: String = utils::debug::to_hex_address(runner.address);
+        let returndata_hex: String = utils::debug::vec_to_hex_string(return_data.clone());
+        println!(
+            "\n{} {} {}\n  {}: {}\n",
+            if call_result.is_err() {
+                "DELEGATECALL FAILED".red()
+            } else {
+                "DELEGATECALL SUCCEEDED".green()
             },
             if call_result.is_err() { "❌" } else { "✅" },
             address_hex,

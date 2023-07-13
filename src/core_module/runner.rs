@@ -366,8 +366,9 @@ impl Runner {
             /* ----------------------------- System OpCodes ----------------------------- */
             0xf0 => op_codes::system::create(self),
             0xf1 => op_codes::system::call(self),
-            // 0xf2 => op_codes::system::callcode(self),
+            0xf2 => op_codes::system::callcode(self),
             0xf3 => op_codes::system::return_(self),
+            0xf4 => op_codes::system::delegatecall(self),
 
             // Default case
             _ => op_codes::system::invalid(self)
@@ -381,6 +382,7 @@ impl Runner {
         value: [u8; 32],
         calldata: Vec<u8>,
         gas: u64,
+        delegate: bool
     ) -> Result<(), ExecutionError> {
         let mut error: Option<ExecutionError> = None;
 
@@ -397,9 +399,11 @@ impl Runner {
         let initial_bytecode = self.bytecode.clone();
 
         // Update runner state
-        self.caller = self.address.clone();
-        self.callvalue = value;
-        self.address = to;
+        if !delegate {
+            self.caller = self.address.clone();
+            self.callvalue = value;
+            self.address = to;
+        }
         self.calldata = Memory::new(Some(calldata));
         self.returndata = Memory::new(None);
         self.memory = Memory::new(None);
@@ -422,9 +426,11 @@ impl Runner {
         let return_data = self.returndata.heap.clone();
         
         // Restore the initial runner state
-        self.caller = initial_caller;
-        self.callvalue = initial_callvalue;
-        self.address = initial_address;
+        if !delegate {
+            self.caller = initial_caller;
+            self.callvalue = initial_callvalue;
+            self.address = initial_address;
+        }
         self.calldata = initial_calldata;
         self.returndata = initial_returndata;
         self.memory = initial_memory;
@@ -443,6 +449,7 @@ impl Runner {
         // Return Ok
         Ok(())
     }
+
 
     /* -------------------------------------------------------------------------- */
     /*                               Debug functions                              */
