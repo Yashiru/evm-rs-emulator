@@ -65,3 +65,11 @@ impl Stack {
         Ok([word1, word2])
     }
 }
+
+impl Clone for Stack {
+    fn clone(&self) -> Self {
+        Self {
+            stack: self.stack.clone(),
+        }
+    }
+}

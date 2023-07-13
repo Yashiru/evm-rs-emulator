@@ -14,7 +14,7 @@ pub fn stop(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.set_pc(runner.bytecode.len());
 
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         println!(
             "{:<14} {}",
             "STOP".bright_blue(),
@@ -49,7 +49,7 @@ pub fn revert(runner: &mut Runner) -> Result<(), ExecutionError> {
         err = ExecutionError::RevertWithoutData;
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         println!(
             "\n{:<14} 💥 [ {} ]",
             "REVERT".red(),
@@ -71,7 +71,7 @@ pub fn jump(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(ExecutionError::OutOfBoundsByteCode);
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex = utils::debug::to_hex_string(bytes);
 
         println!(
@@ -109,7 +109,7 @@ pub fn jumpi(runner: &mut Runner) -> Result<(), ExecutionError> {
         let _ = runner.increment_pc(1);
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex = utils::debug::to_hex_string(bytes);
 
         println!(

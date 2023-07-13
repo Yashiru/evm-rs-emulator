@@ -31,7 +31,7 @@ pub fn iszero(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!("{:<14} 👉 [ {} ]", "ISZERO".bright_blue(), hex);
         }
@@ -66,7 +66,7 @@ pub fn eq(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!("{:<14} 👉 [ {} ]", "EQ".bright_blue(), hex);
         }
@@ -101,7 +101,7 @@ pub fn lt(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!("{:<14} 👉 [ {} ]", "LT".bright_blue(), hex);
         }
@@ -136,7 +136,7 @@ pub fn gt(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!("{:<14} 👉 [ {} ]", "GT".bright_blue(), hex);
         }
@@ -171,7 +171,7 @@ pub fn slt(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!("{:<14} 👉 [ {} ]", "SLT".bright_blue(), hex);
         }
@@ -206,7 +206,7 @@ pub fn sgt(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!("{:<14} 👉 [ {} ]", "SGT".bright_blue(), hex);
         }

@@ -13,7 +13,7 @@ pub fn dup1(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "1".magenta(), hex);
     }
@@ -30,7 +30,7 @@ pub fn dup2(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "2".magenta(), hex);
     }
@@ -47,7 +47,7 @@ pub fn dup3(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "3".magenta(), hex);
     }
@@ -64,7 +64,7 @@ pub fn dup4(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "4".magenta(), hex);
     }
@@ -81,7 +81,7 @@ pub fn dup5(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "5".magenta(), hex);
     }
@@ -98,7 +98,7 @@ pub fn dup6(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "6".magenta(), hex);
     }
@@ -115,7 +115,7 @@ pub fn dup7(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "7".magenta(), hex);
     }
@@ -132,7 +132,7 @@ pub fn dup8(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "8".magenta(), hex);
     }
@@ -149,7 +149,7 @@ pub fn dup9(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "9".magenta(), hex);
     }
@@ -166,7 +166,7 @@ pub fn dup10(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "10".magenta(), hex);
     }
@@ -183,7 +183,7 @@ pub fn dup11(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "11".magenta(), hex);
     }
@@ -200,7 +200,7 @@ pub fn dup12(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "12".magenta(), hex);
     }
@@ -217,7 +217,7 @@ pub fn dup13(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "13".magenta(), hex);
     }
@@ -234,7 +234,7 @@ pub fn dup14(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "14".magenta(), hex);
     }
@@ -251,7 +251,7 @@ pub fn dup15(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "15".magenta(), hex);
     }
@@ -268,7 +268,7 @@ pub fn dup16(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{}{:<11} 👉 [ {} ]", "DUP".bright_blue(), "16".magenta(), hex);
     }
@@ -289,7 +289,7 @@ mod tests {
     fn test_dup1() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
-        let _ = runner.interpret(vec![0x60, 0xff, 0x80], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff, 0x80], Some(2));
         assert_eq!(runner.stack.stack.len(), 2);
         assert_eq!(runner.stack.stack.first(), runner.stack.stack.last());
     }
@@ -298,7 +298,7 @@ mod tests {
     fn test_dup2() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
-        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x81], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x81], Some(2));
         assert_eq!(runner.stack.stack.len(), 3);
         assert_eq!(runner.stack.stack.first(), runner.stack.stack.last());
     }
@@ -307,7 +307,7 @@ mod tests {
     fn test_dup3() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
-        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x82], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x82], Some(2));
         assert_eq!(runner.stack.stack.len(), 4);
         assert_eq!(runner.stack.stack.first(), runner.stack.stack.last());
     }
@@ -316,7 +316,7 @@ mod tests {
     fn test_dup4() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
-        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x83], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x83], Some(2));
         assert_eq!(runner.stack.stack.len(), 5);
         assert_eq!(runner.stack.stack.first(), runner.stack.stack.last());
     }
@@ -325,7 +325,7 @@ mod tests {
     fn test_dup5() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
-        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x84], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x84], Some(2));
         assert_eq!(runner.stack.stack.len(), 6);
         assert_eq!(runner.stack.stack.first(), runner.stack.stack.last());
     }
@@ -334,7 +334,7 @@ mod tests {
     fn test_dup6() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
-        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x85], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x85], Some(2));
         assert_eq!(runner.stack.stack.len(), 7);
         assert_eq!(runner.stack.stack.first(), runner.stack.stack.last());
     }
@@ -343,7 +343,7 @@ mod tests {
     fn test_dup7() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
-        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x86], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x86], Some(2));
         assert_eq!(runner.stack.stack.len(), 8);
         assert_eq!(runner.stack.stack.first(), runner.stack.stack.last());
     }
@@ -352,7 +352,7 @@ mod tests {
     fn test_dup8() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
-        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x87], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x87], Some(2));
         assert_eq!(runner.stack.stack.len(), 9);
         assert_eq!(runner.stack.stack.first(), runner.stack.stack.last());
     }
@@ -361,7 +361,7 @@ mod tests {
     fn test_dup9() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
-        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x88], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x88], Some(2));
         assert_eq!(runner.stack.stack.len(), 10);
         assert_eq!(runner.stack.stack.first(), runner.stack.stack.last());
     }
@@ -370,7 +370,7 @@ mod tests {
     fn test_dup10() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
-        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x89], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x89], Some(2));
         assert_eq!(runner.stack.stack.len(), 11);
         assert_eq!(runner.stack.stack.first(), runner.stack.stack.last());
     }
@@ -379,7 +379,7 @@ mod tests {
     fn test_dup11() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
-        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8a], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8a], Some(2));
         assert_eq!(runner.stack.stack.len(), 12);
         assert_eq!(runner.stack.stack.first(), runner.stack.stack.last());
     }
@@ -388,7 +388,7 @@ mod tests {
     fn test_dup12() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
-        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8b], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8b], Some(2));
         assert_eq!(runner.stack.stack.len(), 13);
         assert_eq!(runner.stack.stack.first(), runner.stack.stack.last());
     }
@@ -397,7 +397,7 @@ mod tests {
     fn test_dup13() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
-        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8c], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8c], Some(2));
         assert_eq!(runner.stack.stack.len(), 14);
         assert_eq!(runner.stack.stack.first(), runner.stack.stack.last());
     }
@@ -406,7 +406,7 @@ mod tests {
     fn test_dup14() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
-        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8d], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8d], Some(2));
         assert_eq!(runner.stack.stack.len(), 15);
         assert_eq!(runner.stack.stack.first(), runner.stack.stack.last());
     }
@@ -415,7 +415,7 @@ mod tests {
     fn test_dup15() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
-        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8e], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8e], Some(2));
         assert_eq!(runner.stack.stack.len(), 16);
         assert_eq!(runner.stack.stack.first(), runner.stack.stack.last());
     }
@@ -424,7 +424,7 @@ mod tests {
     fn test_dup16() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
 
-        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8f], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x60, 0x01, 0x8f], Some(2));
         assert_eq!(runner.stack.stack.len(), 17);
         assert_eq!(runner.stack.stack.first(), runner.stack.stack.last());
     }

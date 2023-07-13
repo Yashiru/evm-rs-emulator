@@ -11,10 +11,7 @@ fn main() -> Result<(), ExecutionError> {
             0x89, 0xa2, 0x60, 0x51, 0xf7, 0x4c,
         ],
         None,
-        Some([
-            0x9b, 0xbf, 0xed, 0x68, 0x89, 0x32, 0x2e, 0x01, 0x6e, 0x0a, 0x02, 0xee, 0x45, 0x9d,
-            0x30, 0x6f, 0xc1, 0x95, 0x45, 0xd8,
-        ]),
+        Some([0xab; 20]),
         None,
         None,
         None,
@@ -27,7 +24,7 @@ fn main() -> Result<(), ExecutionError> {
             let bytecode = hex::decode(file_content.trim()).expect("Decoding failed");
 
             // Interpret the bytecode
-            let _ = interpreter.interpret(bytecode, Some(true));
+            let _ = interpreter.interpret(bytecode, Some(3));
         }
         Err(_) => {
             return Err(ExecutionError::InvalidFile);

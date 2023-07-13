@@ -12,7 +12,7 @@ pub fn pop(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(result.unwrap());
         println!("{:<14} ⛔️ [ {} ]", "POP".bright_blue(), hex);
     }

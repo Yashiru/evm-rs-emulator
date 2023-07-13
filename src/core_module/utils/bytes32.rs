@@ -7,6 +7,12 @@ pub fn pad_to_32_bytes(bytes: &[u8]) -> [u8; 32] {
     padded
 }
 
+pub fn bytes32_to_address(bytes: &[u8; 32]) -> [u8; 20] {
+    let mut address = [0u8; 20];
+    address.copy_from_slice(&bytes[12..]);
+    address
+}
+
 // Remove zero padding from a [u8; 32]
 pub fn strip_zero_padding(arr: &[u8; 32]) -> &[u8] {
     let start = arr.iter().position(|&x| x != 0).unwrap_or(0);
@@ -26,16 +32,16 @@ pub fn u64_to_u256_array(n: u64) -> [u8; 32] {
 /*                               Math operations                              */
 /* -------------------------------------------------------------------------- */
 
-pub fn add(arr: [u8; 32], number: u64) -> [u8; 32] {
-    // Convert the [u8; 32] into U256
-    let num = U256::from_big_endian(&arr);
+// pub fn add(arr: [u8; 32], number: u64) -> [u8; 32] {
+//     // Convert the [u8; 32] into U256
+//     let num = U256::from_big_endian(&arr);
 
-    // Add
-    let num = num + U256::from(number);
+//     // Add
+//     let num = num + U256::from(number);
 
-    // Convert back to [u8; 32]
-    let mut result = [0u8; 32];
-    num.to_big_endian(&mut result);
+//     // Convert back to [u8; 32]
+//     let mut result = [0u8; 32];
+//     num.to_big_endian(&mut result);
 
-    result
-}
+//     result
+// }

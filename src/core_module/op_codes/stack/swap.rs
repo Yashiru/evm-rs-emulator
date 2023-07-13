@@ -12,7 +12,7 @@ pub fn swap1(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let words = result.unwrap();
 
         let hex1: String = words[0]
@@ -47,7 +47,7 @@ pub fn swap2(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let words = result.unwrap();
 
         let hex1: String = words[0]
@@ -82,7 +82,7 @@ pub fn swap3(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let words = result.unwrap();
 
         let hex1: String = words[0]
@@ -117,7 +117,7 @@ pub fn swap4(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let words = result.unwrap();
 
         let hex1: String = words[0]
@@ -152,7 +152,7 @@ pub fn swap5(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let words = result.unwrap();
 
         let hex1: String = words[0]
@@ -187,7 +187,7 @@ pub fn swap6(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let words = result.unwrap();
 
         let hex1: String = words[0]
@@ -222,7 +222,7 @@ pub fn swap7(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let words = result.unwrap();
 
         let hex1: String = words[0]
@@ -257,7 +257,7 @@ pub fn swap8(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let words = result.unwrap();
 
         let hex1: String = words[0]
@@ -292,7 +292,7 @@ pub fn swap9(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let words = result.unwrap();
 
         let hex1: String = words[0]
@@ -327,7 +327,7 @@ pub fn swap10(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let words = result.unwrap();
 
         let hex1: String = words[0]
@@ -362,7 +362,7 @@ pub fn swap11(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let words = result.unwrap();
 
         let hex1: String = words[0]
@@ -397,7 +397,7 @@ pub fn swap12(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let words = result.unwrap();
 
         let hex1: String = words[0]
@@ -432,7 +432,7 @@ pub fn swap13(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let words = result.unwrap();
 
         let hex1: String = words[0]
@@ -467,7 +467,7 @@ pub fn swap14(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let words = result.unwrap();
 
         let hex1: String = words[0]
@@ -502,7 +502,7 @@ pub fn swap15(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let words = result.unwrap();
 
         let hex1: String = words[0]
@@ -537,7 +537,7 @@ pub fn swap16(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let words = result.unwrap();
 
         let hex1: String = words[0]

@@ -19,7 +19,7 @@ pub fn log0(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     let log_data = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex = utils::debug::vec_to_hex_string(log_data);
 
         println!("{}", "┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐".cyan());
@@ -69,7 +69,7 @@ pub fn log1(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     let log_data = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let data_hex = utils::debug::vec_to_hex_string(log_data);
         let topic1_hex = utils::debug::to_hex_string(topic1);
 
@@ -126,7 +126,7 @@ pub fn log2(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     let log_data = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let data_hex = utils::debug::vec_to_hex_string(log_data);
         let topic1_hex = utils::debug::to_hex_string(topic1);
         let topic2_hex = utils::debug::to_hex_string(topic2);
@@ -196,7 +196,7 @@ pub fn log3(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     let log_data = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let data_hex = utils::debug::vec_to_hex_string(log_data);
         let topic1_hex = utils::debug::to_hex_string(topic1);
         let topic2_hex = utils::debug::to_hex_string(topic2);
@@ -279,7 +279,7 @@ pub fn log4(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     let log_data = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let data_hex = utils::debug::vec_to_hex_string(log_data);
         let topic1_hex = utils::debug::to_hex_string(topic1);
         let topic2_hex = utils::debug::to_hex_string(topic2);

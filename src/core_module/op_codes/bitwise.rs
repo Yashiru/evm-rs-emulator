@@ -26,7 +26,7 @@ pub fn not(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!("{:<14} 👉 [ {} ]", "NOT".bright_blue(), hex);
         }
@@ -55,7 +55,7 @@ pub fn xor(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!("{:<14} 👉 [ {} ]", "XOR".bright_blue(), hex);
         }
@@ -84,7 +84,7 @@ pub fn or(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!("{:<14} 👉 [ {} ]", "OR".bright_blue(), hex);
         }
@@ -113,7 +113,7 @@ pub fn and(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!("{:<14} 👉 [ {} ]", "AND".bright_blue(), hex);
         }
@@ -142,7 +142,7 @@ pub fn shl(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!("{:<14} 👉 [ {} ]", "SHL".bright_blue(), hex);
         }
@@ -171,7 +171,7 @@ pub fn shr(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!("{:<14} 👉 [ {} ]", "SHR".bright_blue(), hex);
         }
@@ -199,7 +199,7 @@ pub fn sha(runner: &mut Runner) -> Result<(), ExecutionError> {
 
         runner.stack.push(bytes)?;
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(bytes);
             println!("{:<14} 👉 [ {} ]", "SHA".bright_blue(), hex);
         }

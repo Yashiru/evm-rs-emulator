@@ -17,7 +17,7 @@ pub struct Runner {
     // Execution
     pub pc: usize,
     pub bytecode: Vec<u8>,
-    pub debug: Option<bool>,
+    pub debug_level: Option<u8>,
 
     // Environment
     pub gas: u64,
@@ -84,7 +84,7 @@ impl Runner {
             // Create a new empty bytecode
             bytecode: Vec::new(),
             // Set debug mode to false
-            debug: None,
+            debug_level: None,
         };
 
         // Initialize accounts in the EVM state
@@ -119,25 +119,19 @@ impl Runner {
     pub fn interpret(
         &mut self,
         bytecode: Vec<u8>,
-        debug: Option<bool>,
+        debug: Option<u8>,
     ) -> Result<(), ExecutionError> {
         // Set the bytecode
         self.bytecode = bytecode;
 
         // Set the bytecode
-        self.debug = debug;
-
-        // Mock returndata
-        unsafe {
-            self.returndata
-                .write(0, [0x01, 0x02, 0x03, 0x04, 0x05, 0x06].to_vec())?;
-        }
+        self.debug_level = debug;
 
         /* -------------------------------------------------------------------------- */
         /*                             Print debug header                             */
         /* -------------------------------------------------------------------------- */
 
-        if debug.is_some() && debug.unwrap() {
+        if debug.is_some() && debug.unwrap() >= 2 {
             self.debug_header();
         }
 
@@ -171,26 +165,29 @@ impl Runner {
         /*                             Print debug footer                             */
         /* -------------------------------------------------------------------------- */
 
-        if debug.is_some() && debug.unwrap() {
+        if debug.is_some() && debug.unwrap() >= 2 {
+            println!("{}\n", "END".red())
+        }
+
+        if debug.is_some() && debug.unwrap() >= 3 {
             // Debug stack
             self.debug_stack();
 
             // Debug memory
             self.debug_memory();
+        }
 
+        if debug.is_some() && debug.unwrap() >= 4 {
             // Debug storage
             self.debug_storage();
         }
-        // Check if debug mode is enabled
-        if debug.is_some() && debug.unwrap() {
-            println!("\n\n");
-        }
+
 
         /* -------------------------------------------------------------------------- */
         /*                            Print execution error                           */
         /* -------------------------------------------------------------------------- */
 
-        if error.is_some() {
+        if error.is_some() && debug.unwrap() >= 1 {
             println!(
                 "{} {}\n  {}: 0x{:X}\n  {}: 0x{:X}\n  {}",
                 "ERROR:".red(),
@@ -368,11 +365,88 @@ impl Runner {
 
             /* ----------------------------- System OpCodes ----------------------------- */
             0xf0 => op_codes::system::create(self),
+            0xf1 => op_codes::system::call(self),
+            // 0xf2 => op_codes::system::callcode(self),
+            0xf3 => op_codes::system::return_(self),
 
             // Default case
             _ => op_codes::system::invalid(self)
         }
     }
+
+    // Make a call to a contract
+    pub fn call(
+        &mut self,
+        to: [u8; 20],
+        value: [u8; 32],
+        calldata: Vec<u8>,
+        gas: u64,
+    ) -> Result<(), ExecutionError> {
+        let mut error: Option<ExecutionError> = None;
+
+        // Store the initial runner state
+        let initial_caller = self.caller.clone();
+        let initial_callvalue = self.callvalue.clone();
+        let initial_address = self.address.clone();
+        let initial_calldata = self.calldata.clone();
+        let initial_returndata = self.returndata.clone();
+        let initial_memory = self.memory.clone();
+        let initial_stack = self.stack.clone();
+        let initial_pc = self.pc.clone();
+        let initial_debug_level = self.debug_level.clone();
+        let initial_bytecode = self.bytecode.clone();
+
+        // Update runner state
+        self.caller = self.address.clone();
+        self.callvalue = value;
+        self.address = to;
+        self.calldata = Memory::new(Some(calldata));
+        self.returndata = Memory::new(None);
+        self.memory = Memory::new(None);
+        self.stack = Stack::new();
+        self.pc = 0;
+        self.debug_level = if self.debug_level.is_some() && self.debug_level.unwrap() > 1 { Some(1) } else { Some (0) };
+
+        // Set the gas
+        self.gas = gas;
+
+        // Interpret the bytecode
+        self.interpret(self.state.get_code_at(to)?.to_owned(), self.debug_level)?;
+
+        // Check if the call was successful
+        if !self.stack.stack.is_empty() {
+            error = Some(ExecutionError::NotEmptyStack);
+        }
+
+        // Get the return data
+        let return_data = self.returndata.heap.clone();
+        
+        // Restore the initial runner state
+        self.caller = initial_caller;
+        self.callvalue = initial_callvalue;
+        self.address = initial_address;
+        self.calldata = initial_calldata;
+        self.returndata = initial_returndata;
+        self.memory = initial_memory;
+        self.stack = initial_stack;
+        self.pc = initial_pc;
+        self.debug_level = initial_debug_level;
+        self.bytecode = initial_bytecode;
+
+        // Write the return data to the initial state
+        self.returndata.heap = return_data;
+
+        if error.is_some() {
+            return Err(error.unwrap());
+        }
+
+        // Return Ok
+        Ok(())
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                               Debug functions                              */
+    /* -------------------------------------------------------------------------- */
 
     fn debug_header(&self) {
         let border_line =
@@ -403,51 +477,10 @@ impl Runner {
         /*                              Contract address                              */
         /* -------------------------------------------------------------------------- */
 
-        println!("{} {:<95} {}", "║".bright_magenta(), "", "║".bright_magenta());
-        println!("{} {:<95} {}", "║".bright_magenta(), "To".cyan(), "║".bright_magenta());
+        println!("{} {:<95} {}", "║".bright_magenta(), "ADDRESS".cyan(), "║".bright_magenta());
         let hex_address = utils::debug::to_hex_string(pad_to_32_bytes(&self.address));
         println!("{} {:<95} {}", "║".bright_magenta(), hex_address, "║".bright_magenta());
 
-        /* -------------------------------------------------------------------------- */
-        /*                                  Calldata                                  */
-        /* -------------------------------------------------------------------------- */
-        println!("{} {:<95} {}", "║".bright_magenta(), "", "║".bright_magenta());
-        println!(
-            "{} {:<95} {}",
-            "║".bright_magenta(),
-            "Call data".cyan(),
-            "║".bright_magenta()
-        );
-
-        // Print the memory heap 32 bytes by 32 bytes with a space between each bytes
-        for chunk in self.calldata.heap.chunks(32) {
-            let padded_chunk: Vec<u8>;
-
-            if chunk.len() < 32 {
-                // If the chunk size is less than 32, create a new vector with enough zeros to reach a total size of 32
-                padded_chunk = [chunk.to_vec(), vec![0u8; 32 - chunk.len()]].concat();
-            } else {
-                // If the chunk size is exactly 32, use it as is
-                padded_chunk = chunk.to_vec();
-            }
-
-            let hex: String =
-                utils::debug::to_hex_string(padded_chunk.as_slice().try_into().unwrap());
-            println!("{} {} {}", "║".bright_magenta(), hex, "║".bright_magenta());
-        }
-
-        if self.calldata.heap.is_empty() {
-            println!("{} {:<95} {}", "║".bright_magenta(), "No calldata.".truecolor(80, 80, 80), "║".bright_magenta());
-        }
-
-        /* -------------------------------------------------------------------------- */
-        /*                                 Call value                                 */
-        /* -------------------------------------------------------------------------- */
-
-        println!("{} {:<95} {}", "║".bright_magenta(), "", "║".bright_magenta());
-        println!("{} {:<95} {}", "║".bright_magenta(), "Call value".cyan(), "║".bright_magenta());
-        let hex_callvalue = utils::debug::to_hex_string(self.callvalue);
-        println!("{} {:<95} {}", "║".bright_magenta(), hex_callvalue, "║".bright_magenta());
 
         println!("{}", footer_line.clone().bright_magenta());
     }
@@ -502,6 +535,8 @@ impl Runner {
         if self.memory.heap.is_empty() {
             println!("🚧 {} 🚧", "Empty memory".red());
         }
+
+        println!();
     }
 
     fn debug_storage(&self) {
@@ -516,7 +551,7 @@ mod tests {
     #[test]
     fn test_push0() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
-        let _ = runner.interpret(vec![0x5f, 0x5f, 0x5f], Some(true));
+        let _ = runner.interpret(vec![0x5f, 0x5f, 0x5f], Some(1));
 
         assert_eq!(unsafe { runner.stack.pop().unwrap() }, [0u8; 32]);
         assert_eq!(unsafe { runner.stack.pop().unwrap() }, [0u8; 32]);
@@ -526,7 +561,7 @@ mod tests {
     #[test]
     fn test_push1() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
-        let _ = runner.interpret(vec![0x60, 0x01, 0x60, 0x02, 0x60, 0x03], Some(true));
+        let _ = runner.interpret(vec![0x60, 0x01, 0x60, 0x02, 0x60, 0x03], Some(1));
 
         assert_eq!(
             unsafe { runner.stack.pop().unwrap() },

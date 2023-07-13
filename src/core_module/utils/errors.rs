@@ -12,6 +12,10 @@ pub enum ExecutionError {
     EmptyByteCode,
     InsufficientBalance,
 
+    // Flow errors
+    NotEmptyStack,
+    ContractCreationFailed,
+
     // Stack errors
     StackTooSmall,
     StackTooDeep,
@@ -41,6 +45,8 @@ impl fmt::Display for ExecutionError {
             ExecutionError::CodeNotFound => write!(f, "Trying to access non-existent account code"),
             ExecutionError::RevertWithoutData => write!(f, "Execution revert without data"),
             ExecutionError::InsufficientBalance => write!(f, "Insufficient balance to transfer"),
+            ExecutionError::NotEmptyStack => write!(f, "Stack is not empty after the call"),
+            ExecutionError::ContractCreationFailed => write!(f, "Contract creation failed, the constructor reverted"),
             ExecutionError::Revert(data) => {
                 let hex = super::debug::vec_to_hex_string(data.to_owned());
                 write!(f, "Execution revert with data: {}", hex)

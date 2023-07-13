@@ -22,7 +22,7 @@ pub fn mload(runner: &mut Runner) -> Result<(), ExecutionError> {
         }
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(word);
         println!(
             "{:<14} 👉 [ {} ]",
@@ -47,7 +47,7 @@ pub fn mstore(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(data);
         println!(
             "{:<14} ⛔️ [ {} ]",
@@ -70,7 +70,7 @@ pub fn msize(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(bytes_msize);
         println!(
             "{:<14} 👉 [ {} ]",

@@ -25,7 +25,7 @@ pub fn address(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(address);
         println!("{:<14} 👉 [ {} ]", "ADDRESS".bright_blue(), hex);
     }
@@ -38,7 +38,6 @@ pub fn balance(runner: &mut Runner) -> Result<(), ExecutionError> {
     let address: [u8; 32] = unsafe { runner.stack.pop()? };
     let address: [u8; 20] = address[12..].try_into().unwrap();
 
-    let balance_slot = keccak256([utils::constants::balance_slot().to_vec(), address.to_vec()].concat());
     let balance = get_balance(address, runner)?;
 
     let result = unsafe { runner.stack.push(pad_to_32_bytes(&balance)) };
@@ -47,7 +46,7 @@ pub fn balance(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(balance);
         println!("{:<14} 👉 [ {} ]", "BALANCE".bright_blue(), hex);
     }
@@ -69,7 +68,7 @@ pub fn origin(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(origin);
         println!("{:<14} 👉 [ {} ]", "ORIGIN".bright_blue(), hex);
     }
@@ -91,7 +90,7 @@ pub fn caller(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(caller);
         println!("{:<14} 👉 [ {} ]", "CALLER".bright_blue(), hex);
     }
@@ -103,7 +102,7 @@ pub fn caller(runner: &mut Runner) -> Result<(), ExecutionError> {
 pub fn callvalue(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = unsafe { runner.stack.push(runner.callvalue) };
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(runner.callvalue);
         println!("{:<14} 👉 [ {} ]", "CALLVALUE".bright_blue(), hex);
     }
@@ -129,7 +128,7 @@ pub fn calldataload(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(calldata);
         println!("{:<14} 👉 [ {} ]", "CALLDATALOAD".bright_blue(), hex);
     }
@@ -151,7 +150,7 @@ pub fn calldatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(calldatasize);
         println!("{:<14} 👉 [ {} ]", "CALLDATASIZE".bright_blue(), hex);
     }
@@ -173,7 +172,7 @@ pub fn calldatacopy(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         println!("{}", "CALLDATACOPY".bright_blue());
     }
 
@@ -190,7 +189,7 @@ pub fn codesize(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(codesize);
         println!("{:<14} 👉 [ {} ]", "CODESIZE".bright_blue(), hex);
     }
@@ -209,7 +208,7 @@ pub fn codecopy(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     unsafe {runner.stack.push(code)?};
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(code);
         println!("{:<14} 👉 [ {} ]", "CODECOPY".bright_blue(), hex);
     }
@@ -234,7 +233,7 @@ pub fn gasprice(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(gasprice);
         println!("{:<14} 👉 [ {} ]", "GASPRICE".bright_blue(), hex);
     }
@@ -254,7 +253,7 @@ pub fn extcodesize(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(codesize);
         println!("{:<14} 👉 [ {} ]", "EXTCODESIZE".bright_blue(), hex);
     }
@@ -274,7 +273,7 @@ pub fn extcodecopy(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     unsafe {runner.stack.push(code)?};
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         println!("{}", "EXTCODECOPY".bright_blue());
     }
 
@@ -295,7 +294,7 @@ pub fn returndatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(returndatasize);
         println!("{:<14} 👉 [ {} ]", "RETURNDATASIZE".bright_blue(), hex);
     }
@@ -317,7 +316,7 @@ pub fn returndatacopy(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         println!("{}", "RETURNDATACOPY".bright_blue());
     }
 
@@ -338,7 +337,7 @@ pub fn extcodehash(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(codehash);
         println!("{:<14} 👉 [ {} ]", "EXTCODEHASH".bright_blue(), hex);
     }
@@ -361,7 +360,7 @@ pub fn blockhash(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(blockhash);
         println!("{:<14} 👉 [ {} ]", "BLOCKHASH".bright_blue(), hex);
     }
@@ -383,7 +382,7 @@ pub fn coinbase(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(coinbase);
         println!("{:<14} 👉 [ {} ]", "COINBASE".bright_blue(), hex);
     }
@@ -413,7 +412,7 @@ pub fn timestamp(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(bytes);
         println!("{:<14} 👉 [ {} ]", "TIMESTAMP".bright_blue(), hex);
     }
@@ -432,7 +431,7 @@ pub fn number(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(number);
         println!("{:<14} 👉 [ {} ]", "NUMBER".bright_blue(), hex);
     }
@@ -451,7 +450,7 @@ pub fn difficulty(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(difficulty);
         println!("{:<14} 👉 [ {} ]", "DIFFICULTY".bright_blue(), hex);
     }
@@ -470,7 +469,7 @@ pub fn gaslimit(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(gaslimit);
         println!("{:<14} 👉 [ {} ]", "GASLIMIT".bright_blue(), hex);
     }
@@ -489,7 +488,7 @@ pub fn chainid(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(chainid);
         println!("{:<14} 👉 [ {} ]", "CHAINID".bright_blue(), hex);
     }
@@ -499,7 +498,6 @@ pub fn chainid(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn selfbalance(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let balance_slot = keccak256([utils::constants::balance_slot().to_vec(), runner.address.to_vec()].concat());
     let balance = get_balance(runner.address, runner)?;
 
     let result = unsafe { runner.stack.push(balance) };
@@ -508,7 +506,7 @@ pub fn selfbalance(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(balance);
         println!("{:<14} 👉 [ {} ]", "SELFBALANCE".bright_blue(), hex);
     }
@@ -526,7 +524,7 @@ pub fn basefee(runner: &mut Runner) -> Result<(), ExecutionError> {
         return Err(result.unwrap_err());
     }
 
-    if runner.debug.is_some() && runner.debug.unwrap() {
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(basefee);
         println!("{:<14} 👉 [ {} ]", "BASEFEE".bright_blue(), hex);
     }

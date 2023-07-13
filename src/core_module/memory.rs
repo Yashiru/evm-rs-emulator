@@ -76,3 +76,11 @@ impl Memory {
         self.heap.len()
     }
 }
+
+impl Clone for Memory {
+    fn clone(&self) -> Self {
+        Memory {
+            heap: self.heap.clone(),
+        }
+    }
+}

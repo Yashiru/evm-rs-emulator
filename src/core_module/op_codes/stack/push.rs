@@ -24,7 +24,7 @@ pub fn push(runner: &mut Runner, data_len: usize) -> Result<(), ExecutionError> 
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(padded);
             println!(
                 "{}{:<10} 👉 [ {} ]",
@@ -46,7 +46,7 @@ mod tests {
     #[test]
     fn test_push() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
-        let _ = runner.interpret(vec![0x60, 0xff], Some(true));
+        let _ = runner.interpret(vec![0x60, 0xff], Some(2));
 
         assert_eq!(runner.stack.stack.len(), 1);
         assert_eq!(unsafe { runner.stack.pop().unwrap() }, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255]);

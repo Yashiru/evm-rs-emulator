@@ -36,7 +36,7 @@ pub fn add(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
                 "{:<14} 👉 [ {} ]",
@@ -79,7 +79,7 @@ pub fn mul(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
                 "{:<14} 👉 [ {} ]",
@@ -121,7 +121,7 @@ pub fn sub(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
                 "{:<14} 👉 [ {} ]",
@@ -165,7 +165,7 @@ pub fn modulo(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
                 "{:<14} 👉 [ {} ]",
@@ -210,7 +210,7 @@ pub fn div(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
                 "{:<14} 👉 [ {} ]",
@@ -257,7 +257,7 @@ pub fn addmod(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
                 "{:<14} 👉 [ {} ]",
@@ -304,7 +304,7 @@ pub fn mulmod(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
                 "{:<14} 👉 [ {} ]",
@@ -346,7 +346,7 @@ pub fn exp(runner: &mut Runner) -> Result<(), ExecutionError> {
             return Err(result.unwrap_err());
         }
 
-        if runner.debug.is_some() && runner.debug.unwrap() {
+        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
             println!(
                 "{:<14} 👉 [ {} ]",
