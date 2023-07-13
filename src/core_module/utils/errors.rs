@@ -14,7 +14,6 @@ pub enum ExecutionError {
 
     // Flow errors
     NotEmptyStack,
-    ContractCreationFailed,
 
     // Stack errors
     StackTooSmall,
@@ -47,7 +46,6 @@ impl fmt::Display for ExecutionError {
             ExecutionError::RevertWithoutData => write!(f, "Execution revert without data"),
             ExecutionError::InsufficientBalance => write!(f, "Insufficient balance to transfer"),
             ExecutionError::NotEmptyStack => write!(f, "Stack is not empty after the call"),
-            ExecutionError::ContractCreationFailed => write!(f, "Contract creation failed, the constructor reverted"),
             ExecutionError::NotImplemented(op_code) => write!(f, "Op code 0x{:X} not implemented", op_code),
             ExecutionError::Revert(data) => {
                 let hex = super::debug::vec_to_hex_string(data.to_owned());

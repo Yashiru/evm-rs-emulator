@@ -58,7 +58,9 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     // Check if the call failed
     if call_result.is_err() {
-        return Err(ExecutionError::ContractCreationFailed);
+        unsafe { runner.stack.push(pad_to_32_bytes(&[0x00]))? };
+    } else {
+        unsafe { runner.stack.push(pad_to_32_bytes(&[0x01]))? };
     }
 
     // Get the return data to store the real contract code
