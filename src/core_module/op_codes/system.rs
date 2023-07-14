@@ -2,7 +2,9 @@ use crate::core_module::runner::Runner;
 use crate::core_module::utils;
 use crate::core_module::utils::bytes32;
 use crate::core_module::utils::bytes32::{bytes32_to_address, pad_to_32_bytes};
-use crate::core_module::utils::environment::{get_nonce, init_account};
+use crate::core_module::utils::environment::{
+    delete_account, get_balance, get_nonce, init_account,
+};
 use crate::core_module::utils::errors::ExecutionError;
 
 // Primitive types
@@ -31,7 +33,7 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
     if offset.as_usize() + size.as_usize() > runner.memory.heap.len() {
         return Err(ExecutionError::OutOfBoundsMemory);
     }
- 
+
     // Load the init code from memory
     let init_code = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
 
@@ -94,7 +96,7 @@ pub fn create2(runner: &mut Runner) -> Result<(), ExecutionError> {
     if offset.as_usize() + size.as_usize() > runner.memory.heap.len() {
         return Err(ExecutionError::OutOfBoundsMemory);
     }
- 
+
     // Load the init code from memory
     let init_code = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
 
@@ -108,7 +110,7 @@ pub fn create2(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     let hash = keccak256(input);
     let contract_address: [u8; 20] = hash[12..].try_into().unwrap();
-    
+
     // Create the contract with init code as code
     init_account(contract_address, runner)?;
     runner.state.put_code_at(contract_address, init_code)?;
@@ -155,7 +157,12 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
     // Get the values on the stack
     let gas = unsafe { runner.stack.pop()? };
     let to = unsafe { runner.stack.pop()? };
-    let value = unsafe { runner.stack.pop()? };
+
+    let value = if bypass_static {
+        [0u8; 32]
+    } else {
+        unsafe { runner.stack.pop()? }
+    };
     let calldata_offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let calldata_size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let returndata_offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
@@ -178,7 +185,11 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
         let calldata_hex: String = utils::debug::vec_to_hex_string(calldata.clone());
         println!(
             "\n{} 👉 {}\n  {}: {}\n",
-            "CALL".yellow(),
+            if bypass_static {
+                "STATICCALL".yellow()
+            } else {
+                "CALL".yellow()
+            },
             address_hex,
             "Calldata".bright_blue(),
             calldata_hex
@@ -191,7 +202,7 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
         value,
         calldata,
         U256::from_big_endian(&gas).as_u64(),
-        false
+        false,
     );
 
     if call_result.is_err() {
@@ -208,9 +219,17 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
         println!(
             "\n{} {} {}\n  {}: {}\n",
             if call_result.is_err() {
-                "CALL FAILED".red()
+                if bypass_static {
+                    "STATICCALL FAILED".red()
+                } else {
+                    "CALL FAILED".red()
+                }
             } else {
-                "CALL SUCCEEDED".green()
+                if bypass_static {
+                    "STATICCALL SUCCEEDED".green()
+                } else {
+                    "CALL SUCCEEDED".green()
+                }
             },
             if call_result.is_err() { "❌" } else { "✅" },
             address_hex,
@@ -225,7 +244,6 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
     if return_data.len() < returndata_size.as_usize() {
         return_data.extend(vec![0; returndata_size.as_usize() - return_data.len()]);
     }
-
     return_data = return_data[0..returndata_size.as_usize()].to_vec();
 
     // Write the return data to memory
@@ -282,7 +300,7 @@ pub fn delegatecall(runner: &mut Runner) -> Result<(), ExecutionError> {
         [0u8; 32],
         calldata,
         U256::from_big_endian(&gas).as_u64(),
-        true
+        true,
     );
 
     if call_result.is_err() {
@@ -334,11 +352,30 @@ pub fn staticcall(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.state.static_mode = true;
     let result = call(runner, true);
     runner.state.static_mode = false;
-    
+
     result
 }
 
-// return
+pub fn selfdestruct(runner: &mut Runner) -> Result<(), ExecutionError> {
+    // Get the values on the stack
+    let address = unsafe { runner.stack.pop()? };
+
+    let contract_balance = get_balance(runner.address, runner)?;
+
+    // Transfer the balance
+    runner.state.transfer(
+        runner.address,
+        bytes32_to_address(&address),
+        contract_balance,
+    )?;
+
+    // Delete the account
+    delete_account(runner.address, runner)?;
+
+    // Increment PC
+    runner.increment_pc(1)
+}
+
 pub fn return_(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Get the values on the stack
     let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });

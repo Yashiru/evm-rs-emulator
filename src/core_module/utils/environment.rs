@@ -30,6 +30,11 @@ pub fn init_account(address: [u8; 20], runner: &mut Runner) -> Result<(), Execut
     }
 }
 
+pub fn delete_account(address: [u8; 20], runner: &mut Runner) -> Result<(), ExecutionError> {
+    runner.state.accounts.remove(&address);
+    Ok(())
+}
+
 // Increment nonce
 pub fn increment_nonce(address: [u8; 20], runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.state.accounts.get_mut(&address);

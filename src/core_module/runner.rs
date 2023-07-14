@@ -41,7 +41,7 @@ impl Runner {
         address: Option<[u8; 20]>,
         callvalue: Option<[u8; 32]>,
         calldata: Option<Vec<u8>>,
-        state: Option<EvmState>
+        state: Option<EvmState>,
     ) -> Self {
         let mut instance = Self {
             // Set the program counter to 0
@@ -95,11 +95,31 @@ impl Runner {
         // Set caller balance to 1000
         let mut result_bytes = [0u8; 32];
         U256::from("3635C9ADC5DEA00000").to_big_endian(&mut result_bytes);
-        instance.state.accounts.get_mut(&instance.caller).unwrap().balance = result_bytes;
+        instance
+            .state
+            .accounts
+            .get_mut(&instance.caller)
+            .unwrap()
+            .balance = result_bytes;
 
         // Return the instance
         instance
     }
+
+    pub fn default() -> Self {
+        Self::new(
+            [
+                0xbe, 0x86, 0x2a, 0xd9, 0xab, 0xfe, 0x6f, 0x22, 0xbc, 0xb0, 0x87, 0x71, 0x6c, 0x7d,
+                0x89, 0xa2, 0x60, 0x51, 0xf7, 0x4c,
+            ],
+            None,
+            Some([0xab; 20]),
+            None,
+            None,
+            None,
+        )
+    }
+
     // Increment the program counter
     pub fn increment_pc(&mut self, size: usize) -> Result<(), ExecutionError> {
         self.pc += size;
@@ -146,7 +166,6 @@ impl Runner {
             println!("{}: {}", "ERROR: ".red(), ExecutionError::EmptyByteCode);
             return Err(ExecutionError::EmptyByteCode);
         }
-        
 
         // Interpret the bytecode
         while self.pc < self.bytecode.len() {
@@ -182,12 +201,11 @@ impl Runner {
             self.debug_storage();
         }
 
-
         /* -------------------------------------------------------------------------- */
         /*                            Print execution error                           */
         /* -------------------------------------------------------------------------- */
 
-        if error.is_some() && debug.unwrap() >= 1 {
+        if error.is_some() {
             println!(
                 "{} {}\n  {}: 0x{:X}\n  {}: 0x{:X}\n  {}",
                 "ERROR:".red(),
@@ -198,6 +216,7 @@ impl Runner {
                 self.bytecode[self.pc],
                 error.as_ref().unwrap().to_string().red()
             );
+
             return Err(error.unwrap());
         }
 
@@ -371,9 +390,10 @@ impl Runner {
             0xf4 => op_codes::system::delegatecall(self),
             0xf5 => op_codes::system::create2(self),
             0xfa => op_codes::system::staticcall(self),
+            0xff => op_codes::system::selfdestruct(self),
 
             // Default case
-            _ => op_codes::system::invalid(self)
+            _ => op_codes::system::invalid(self),
         }
     }
 
@@ -384,7 +404,7 @@ impl Runner {
         value: [u8; 32],
         calldata: Vec<u8>,
         gas: u64,
-        delegate: bool
+        delegate: bool,
     ) -> Result<(), ExecutionError> {
         let mut error: Option<ExecutionError> = None;
 
@@ -411,13 +431,23 @@ impl Runner {
         self.memory = Memory::new(None);
         self.stack = Stack::new();
         self.pc = 0;
-        self.debug_level = if self.debug_level.is_some() && self.debug_level.unwrap() > 1 { Some(1) } else { Some (0) };
+        self.debug_level = if self.debug_level.is_some() && self.debug_level.unwrap() > 1 {
+            Some(1)
+        } else {
+            Some(0)
+        };
 
         // Set the gas
         self.gas = gas;
 
         // Interpret the bytecode
-        self.interpret(self.state.get_code_at(to)?.to_owned(), self.debug_level)?;
+        let interpret_result =
+            self.interpret(self.state.get_code_at(to)?.to_owned(), self.debug_level);
+
+        // Check if the interpretation was successful
+        if interpret_result.is_err() {
+            error = Some(interpret_result.unwrap_err());
+        }
 
         // Check if the call was successful
         if !self.stack.stack.is_empty() {
@@ -426,7 +456,7 @@ impl Runner {
 
         // Get the return data
         let return_data = self.returndata.heap.clone();
-        
+
         // Restore the initial runner state
         if !delegate {
             self.caller = initial_caller;
@@ -462,7 +492,6 @@ impl Runner {
         let footer_line =
             "╚═════════════════════════════════════════════════════════════════════════════════════════════════╝\n";
 
-
         /* -------------------------------------------------------------------------- */
         /*                                   Header                                   */
         /* -------------------------------------------------------------------------- */
@@ -485,10 +514,19 @@ impl Runner {
         /*                              Contract address                              */
         /* -------------------------------------------------------------------------- */
 
-        println!("{} {:<95} {}", "║".bright_magenta(), "ADDRESS".cyan(), "║".bright_magenta());
+        println!(
+            "{} {:<95} {}",
+            "║".bright_magenta(),
+            "ADDRESS".cyan(),
+            "║".bright_magenta()
+        );
         let hex_address = utils::debug::to_hex_string(pad_to_32_bytes(&self.address));
-        println!("{} {:<95} {}", "║".bright_magenta(), hex_address, "║".bright_magenta());
-
+        println!(
+            "{} {:<95} {}",
+            "║".bright_magenta(),
+            hex_address,
+            "║".bright_magenta()
+        );
 
         println!("{}", footer_line.clone().bright_magenta());
     }
@@ -500,7 +538,12 @@ impl Runner {
             "╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝\n";
 
         println!("\n\n{}", border_line.clone().truecolor(0, 255, 255));
-        println!("{} {:<101} {}", "║".truecolor(0, 255, 255), "Final stack".bright_yellow(), "║".truecolor(0, 255, 255));
+        println!(
+            "{} {:<101} {}",
+            "║".truecolor(0, 255, 255),
+            "Final stack".bright_yellow(),
+            "║".truecolor(0, 255, 255)
+        );
         println!("{}", footer_line.clone().truecolor(0, 255, 255));
 
         let mut reversed_stack = self.stack.stack.clone();
@@ -520,7 +563,12 @@ impl Runner {
             "╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝\n";
 
         println!("\n{}", border_line.clone().truecolor(0, 255, 150));
-        println!("{} {:<101} {}", "║".truecolor(0, 255, 150), "Final memory heap".bright_yellow(), "║".truecolor(0, 255, 150));
+        println!(
+            "{} {:<101} {}",
+            "║".truecolor(0, 255, 150),
+            "Final memory heap".bright_yellow(),
+            "║".truecolor(0, 255, 150)
+        );
         println!("{}", footer_line.clone().truecolor(0, 255, 150));
 
         // Print the memory heap 32 bytes by 32 bytes with a space between each bytes
