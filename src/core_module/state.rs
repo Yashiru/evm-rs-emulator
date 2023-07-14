@@ -55,6 +55,7 @@ impl fmt::Debug for AccountState {
 pub struct EvmState {
     pub accounts: HashMap<[u8; 20], AccountState>,
     pub codes: HashMap<[u8; 32], Vec<u8>>,
+    pub static_mode: bool,
 }
 
 impl EvmState {
@@ -62,6 +63,7 @@ impl EvmState {
         Self {
             accounts: HashMap::new(),
             codes: HashMap::new(),
+            static_mode: false
         }
     }
 
@@ -72,6 +74,11 @@ impl EvmState {
         to: [u8; 20],
         value: [u8; 32],
     ) -> Result<(), ExecutionError> {
+        // Check if static mode is enabled
+        if self.static_mode {
+            return Err(ExecutionError::StaticCallStateChanged);
+        }
+
         let value_u256 = U256::from_big_endian(&value);
 
         let from_balance = U256::from_big_endian(
@@ -132,6 +139,11 @@ impl EvmState {
         slot: [u8; 32],
         value: [u8; 32],
     ) -> Result<(), ExecutionError> {
+        // Check if static mode is enabled
+        if self.static_mode {
+            return Err(ExecutionError::StaticCallStateChanged);
+        }
+
         match self.accounts.get_mut(&account) {
             Some(account_state) => {
                 account_state.storage.insert(slot, value);
@@ -154,7 +166,7 @@ impl EvmState {
 
     // Store the code of an account
     pub fn put_code_at(&mut self, address: [u8; 20], code: Vec<u8>) -> Result<(), ExecutionError> {
-        let code_hash = self.put_code(code);
+        let code_hash = self.put_code(code)?;
 
         match self.accounts.get_mut(&address) {
             Some(account_state) => {
@@ -173,10 +185,15 @@ impl EvmState {
     }
 
     // Store contract code and return its hash
-    pub fn put_code(&mut self, code: Vec<u8>) -> [u8; 32] {
+    pub fn put_code(&mut self, code: Vec<u8>) -> Result<[u8; 32], ExecutionError> {
+        // Check if static mode is enabled
+        if self.static_mode {
+            return Err(ExecutionError::StaticCallStateChanged);
+        }
+
         let code_hash = keccak256(&code);
         self.codes.insert(code_hash, code);
-        code_hash
+        Ok(code_hash)
     }
 
     pub fn debug_state(&self) {

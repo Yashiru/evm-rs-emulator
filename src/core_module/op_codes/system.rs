@@ -83,7 +83,6 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-
 pub fn create2(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Get the values on the stack
     let value = unsafe { runner.stack.pop()? };
@@ -98,24 +97,14 @@ pub fn create2(runner: &mut Runner) -> Result<(), ExecutionError> {
  
     // Load the init code from memory
     let init_code = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
-    let hex_init_code = utils::debug::vec_to_hex_string(init_code.clone());
-    println!("init_code: {}", hex_init_code);
 
     // Compute the contract address
     let init_code_hash = keccak256(init_code.clone());
-
-    // print init code hash hex
-    let hex_init_code_hash = utils::debug::to_hex_string(init_code_hash.clone());
-    println!("init_code_hash: {}", hex_init_code_hash);
 
     let mut input = vec![0xff];
     input.extend_from_slice(&runner.caller);
     input.extend_from_slice(&salt);
     input.extend_from_slice(&init_code_hash);
-
-    // print input hex
-    let hex_input = utils::debug::vec_to_hex_string(input.clone());
-    println!("input: {}", hex_input);
 
     let hash = keccak256(input);
     let contract_address: [u8; 20] = hash[12..].try_into().unwrap();
@@ -157,7 +146,12 @@ pub fn create2(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-pub fn call(runner: &mut Runner) -> Result<(), ExecutionError> {
+pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionError> {
+    // Check if static mode is enabled
+    if runner.state.static_mode && !bypass_static {
+        return Err(ExecutionError::StaticCallStateChanged);
+    }
+
     // Get the values on the stack
     let gas = unsafe { runner.stack.pop()? };
     let to = unsafe { runner.stack.pop()? };
@@ -334,6 +328,14 @@ pub fn delegatecall(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     // Increment PC
     runner.increment_pc(1)
+}
+
+pub fn staticcall(runner: &mut Runner) -> Result<(), ExecutionError> {
+    runner.state.static_mode = true;
+    let result = call(runner, true);
+    runner.state.static_mode = false;
+    
+    result
 }
 
 // return

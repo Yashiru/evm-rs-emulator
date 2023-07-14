@@ -9,6 +9,10 @@ use ethers::types::U256;
 use colored::*;
 
 pub fn log0(runner: &mut Runner) -> Result<(), ExecutionError> {
+    // Check if static mode is enabled
+    if runner.state.static_mode {
+        return Err(ExecutionError::StaticCallStateChanged);
+    }
     let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
 
@@ -49,6 +53,10 @@ pub fn log0(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Log1
 pub fn log1(runner: &mut Runner) -> Result<(), ExecutionError> {
+    // Check if static mode is enabled
+    if runner.state.static_mode {
+        return Err(ExecutionError::StaticCallStateChanged);
+    }
     let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let size: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
 
@@ -108,6 +116,10 @@ pub fn log1(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Log2
 pub fn log2(runner: &mut Runner) -> Result<(), ExecutionError> {
+    // Check if static mode is enabled
+    if runner.state.static_mode {
+        return Err(ExecutionError::StaticCallStateChanged);
+    }
     let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let size: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
 
@@ -174,6 +186,10 @@ pub fn log2(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Log3
 pub fn log3(runner: &mut Runner) -> Result<(), ExecutionError> {
+    // Check if static mode is enabled
+    if runner.state.static_mode {
+        return Err(ExecutionError::StaticCallStateChanged);
+    }
     let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let size: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
 
@@ -253,6 +269,10 @@ pub fn log3(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Log4
 pub fn log4(runner: &mut Runner) -> Result<(), ExecutionError> {
+    // Check if static mode is enabled
+    if runner.state.static_mode {
+        return Err(ExecutionError::StaticCallStateChanged);
+    }
     let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let size: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
 
@@ -342,5 +362,3 @@ pub fn log4(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Increment PC
     runner.increment_pc(1)
 }
-
-

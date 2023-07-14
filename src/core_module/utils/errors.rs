@@ -14,6 +14,7 @@ pub enum ExecutionError {
 
     // Flow errors
     NotEmptyStack,
+    StaticCallStateChanged,
 
     // Stack errors
     StackTooSmall,
@@ -23,7 +24,7 @@ pub enum ExecutionError {
     InvalidFile,
     Revert(Vec<u8>),
     RevertWithoutData,
-    NotImplemented(u8)
+    NotImplemented(u8),
 }
 
 impl fmt::Display for ExecutionError {
@@ -41,12 +42,19 @@ impl fmt::Display for ExecutionError {
                 write!(f, "Stack too deep. Maximum stack size is 1024 words")
             }
             ExecutionError::InvalidFile => write!(f, "Invalid file"),
-            ExecutionError::AccountNotFound => write!(f, "Trying to access non-existent account state"),
+            ExecutionError::AccountNotFound => {
+                write!(f, "Trying to access non-existent account state")
+            }
             ExecutionError::CodeNotFound => write!(f, "Trying to access non-existent account code"),
             ExecutionError::RevertWithoutData => write!(f, "Execution revert without data"),
             ExecutionError::InsufficientBalance => write!(f, "Insufficient balance to transfer"),
             ExecutionError::NotEmptyStack => write!(f, "Stack is not empty after the call"),
-            ExecutionError::NotImplemented(op_code) => write!(f, "Op code 0x{:X} not implemented", op_code),
+            ExecutionError::StaticCallStateChanged => {
+                write!(f, "State changed during a static call")
+            }
+            ExecutionError::NotImplemented(op_code) => {
+                write!(f, "Op code 0x{:X} not implemented", op_code)
+            }
             ExecutionError::Revert(data) => {
                 let hex = super::debug::vec_to_hex_string(data.to_owned());
                 write!(f, "Execution revert with data: {}", hex)
