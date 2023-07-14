@@ -30,18 +30,21 @@ pub fn revert(runner: &mut Runner) -> Result<(), ExecutionError> {
     let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
 
-    // Check if the address is out of bounds
+    // Extend the memory heap if the offset + size is out of bounds
     if offset.as_usize() + size.as_usize() > runner.memory.heap.len() {
-        return Err(ExecutionError::OutOfBoundsMemory);
+        runner.memory.extend(offset.as_usize() + size.as_usize() - runner.memory.heap.len());
     }
 
     let revert_data = unsafe { runner.memory.read(offset.as_usize(), size.as_usize()) };
+
+    // Copy revert data to the returndata
+    runner.returndata.heap = revert_data.as_ref().unwrap().to_owned();
 
     let err;
     let hex;
 
     if revert_data.is_ok() && revert_data.as_ref().unwrap().len() > 0 {
-        hex = utils::debug::to_hex_string(revert_data.as_ref().unwrap().as_slice().try_into().unwrap());
+        hex = utils::debug::vec_to_hex_string(revert_data.as_ref().unwrap().as_slice().try_into().unwrap());
         err = ExecutionError::Revert(revert_data.unwrap());
     }
     else {
@@ -124,8 +127,7 @@ pub fn jumpi(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // pc
 pub fn pc(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let mut pc = runner.get_pc().to_le_bytes();
-    pc.reverse();
+    let pc = runner.get_pc().to_be_bytes();
     let bytes = [[0u8; 24].to_vec(), pc.to_vec()].concat().as_slice().try_into().unwrap();
 
     // Push the program counter to the stack
@@ -137,8 +139,7 @@ pub fn pc(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // gas
 pub fn gas(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let mut gas = runner.gas.to_le_bytes();
-    gas.reverse();
+    let gas = runner.gas.to_be_bytes();
     let bytes = [[0u8; 24].to_vec(), gas.to_vec()].concat().as_slice().try_into().unwrap();
 
     // Push the gas to the stack
@@ -152,4 +153,83 @@ pub fn gas(runner: &mut Runner) -> Result<(), ExecutionError> {
 pub fn jumpdest(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Increment the program counter
     runner.increment_pc(1)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::core_module::utils::bytes::{hex_string_to_bytes, pad_left};
+
+
+    #[test]
+    fn test_stop() {
+        let mut runner = Runner::default(3);
+        let interpret_result = runner.interpret(hex_string_to_bytes("600160026003600400600560066007"), Some(5), true);
+        assert!(interpret_result.is_ok());
+
+        let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
+        assert_eq!(result, pad_left(&[0x04]));
+        assert_eq!(runner.pc, 15);
+    }
+
+    #[test]
+    fn test_revert() {
+        let mut runner = Runner::default(3);
+        let interpret_result = runner.interpret(hex_string_to_bytes("7fff0100000000000000000000000000000000000000000000000000000000000060005260026000fd"), Some(5), true);
+
+        assert!(interpret_result.is_err());
+        assert_eq!(runner.returndata.heap, vec![0xff, 0x01]);
+    }
+
+    #[test]
+    fn test_jump() {
+        let mut runner = Runner::default(3);
+        let interpret_result = runner.interpret(hex_string_to_bytes("600456fe5b6001"), Some(5), true);
+        assert!(interpret_result.is_ok());
+
+        let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
+        assert_eq!(result, pad_left(&[0x01]));
+        assert_eq!(runner.pc, 7);
+    }
+
+    #[test]
+    fn test_jumpi() {
+        let mut runner = Runner::default(3);
+        let interpret_result = runner.interpret(hex_string_to_bytes("6000600a576001600c575bfe5b6001"), Some(5), true);
+        assert!(interpret_result.is_ok());
+
+        let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
+        assert_eq!(result, pad_left(&[0x01]));
+        assert_eq!(runner.pc, 15);
+    }
+
+    #[test]
+    fn test_pc() {
+        let mut runner = Runner::default(3);
+        let interpret_result = runner.interpret(hex_string_to_bytes("58"), Some(5), true);
+        assert!(interpret_result.is_ok());
+
+        let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
+        assert_eq!(result, pad_left(&[0x00]));
+        assert_eq!(runner.pc, 1);
+
+
+        let mut runner = Runner::default(3);
+        let interpret_result = runner.interpret(hex_string_to_bytes("60ff60ff60ff60ff60ff58"), Some(5), true);
+        assert!(interpret_result.is_ok());
+        
+        let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
+        assert_eq!(result, pad_left(&[0x0a]));
+        assert_eq!(runner.pc, 11);
+    }
+
+    #[test]
+    fn test_gas() {
+        let mut runner = Runner::default(3);
+        let interpret_result = runner.interpret(hex_string_to_bytes("5a"), Some(5), true);
+        assert!(interpret_result.is_ok());
+
+        let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
+        assert_eq!(result, pad_left(&runner.gas.to_be_bytes()));
+    }
 }

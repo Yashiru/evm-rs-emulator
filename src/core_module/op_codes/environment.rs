@@ -138,8 +138,7 @@ pub fn calldataload(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn calldatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let mut size = runner.calldata.msize().to_le_bytes();
-    size.reverse();
+    let size = runner.calldata.msize().to_be_bytes();
 
     // Convert the usize to bytes in little-endian order
     let calldatasize = pad_left(&size);
@@ -319,8 +318,7 @@ pub fn extcodecopy(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn returndatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let mut size = runner.returndata.msize().to_le_bytes();
-    size.reverse();
+    let size = runner.returndata.msize().to_be_bytes();
 
     // Convert the usize to bytes in little-endian order
     let returndatasize = pad_left(&size);
