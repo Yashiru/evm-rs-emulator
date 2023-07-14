@@ -11,7 +11,7 @@ pub fn pad_left(bytes: &[u8]) -> [u8; 32] {
 }
 
 // Pad a [u8] with no particular length to 32 bytes to return a [u8; 32]
-pub fn pad_right(bytes: &[u8]) -> [u8; 32] {
+pub fn _pad_right(bytes: &[u8]) -> [u8; 32] {
     let mut padded = [0u8; 32];
     padded[..bytes.len()].copy_from_slice(bytes);
     padded
@@ -38,7 +38,7 @@ pub fn u64_to_u256_array(n: u64) -> [u8; 32] {
     bytes
 }
 
-pub fn hex_string_to_bytes(hex: &str) -> Vec<u8> {
+pub fn _hex_string_to_bytes(hex: &str) -> Vec<u8> {
     match hex::decode(hex) {
         Ok(bytes) => bytes,
         Err(e) => {

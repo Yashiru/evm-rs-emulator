@@ -216,7 +216,7 @@ mod tests {
 
     #[test]
     fn test_not() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
 
         not(&mut runner).unwrap();
@@ -234,7 +234,7 @@ mod tests {
 
     #[test]
     fn test_xor() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
         let _ = unsafe { runner.stack.push(pad_left(&[0x08])) };
 
@@ -249,7 +249,7 @@ mod tests {
 
     #[test]
     fn or_test() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
         let _ = unsafe { runner.stack.push(pad_left(&[0x08])) };
 
@@ -264,7 +264,7 @@ mod tests {
 
     #[test]
     fn test_and() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
         let _ = unsafe { runner.stack.push(pad_left(&[0x08])) };
 
@@ -279,7 +279,7 @@ mod tests {
 
     #[test]
     fn test_shl() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
         let _ = unsafe { runner.stack.push(pad_left(&[0x02])) };
 
@@ -294,7 +294,7 @@ mod tests {
 
     #[test]
     fn test_shr() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
         let _ = unsafe { runner.stack.push(pad_left(&[0x02])) };
 
@@ -309,7 +309,7 @@ mod tests {
 
     #[test]
     fn test_sha256() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
 
         let _ = unsafe {
             runner

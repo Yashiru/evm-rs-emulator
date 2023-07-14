@@ -106,7 +106,7 @@ impl Runner {
         instance
     }
 
-    pub fn default(debug_level: u8) -> Self {
+    pub fn _default(debug_level: u8) -> Self {
         let mut runner = Self::new(
             [
                 0xbe, 0x86, 0x2a, 0xd9, 0xab, 0xfe, 0x6f, 0x22, 0xbc, 0xb0, 0x87, 0x71, 0x6c, 0x7d,

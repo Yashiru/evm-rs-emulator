@@ -71,13 +71,13 @@ pub fn msize(runner: &mut Runner) -> Result<(), ExecutionError> {
 #[cfg(test)]
 mod tests {
     use crate::core_module::runner::Runner;
-    use crate::core_module::utils::bytes::{hex_string_to_bytes, pad_left};
+    use crate::core_module::utils::bytes::{_hex_string_to_bytes, pad_left};
     use crate::core_module::utils::errors::ExecutionError;
 
     #[test]
     fn test_mload() {
-        let mut runner = Runner::default(3);
-        let interpret_result: Result<(), ExecutionError> = runner.interpret(hex_string_to_bytes("7f00000000000000000000000000000000000000000000000000000000000000ff600052600051600151"), Some(5), true);
+        let mut runner = Runner::_default(3);
+        let interpret_result: Result<(), ExecutionError> = runner.interpret(_hex_string_to_bytes("7f00000000000000000000000000000000000000000000000000000000000000ff600052600051600151"), Some(5), true);
         assert!(interpret_result.is_ok());
 
         let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
@@ -86,9 +86,9 @@ mod tests {
 
     #[test]
     fn test_mstore() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         let interpret_result: Result<(), ExecutionError> = runner.interpret(
-            hex_string_to_bytes(
+            _hex_string_to_bytes(
                 "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff600052",
             ),
             Some(5),
@@ -104,8 +104,8 @@ mod tests {
 
     #[test]
     fn test_msize() {
-        let mut runner = Runner::default(3);
-        let interpret_result: Result<(), ExecutionError> = runner.interpret(hex_string_to_bytes("5960005150596039515059"), Some(5), true);
+        let mut runner = Runner::_default(3);
+        let interpret_result: Result<(), ExecutionError> = runner.interpret(_hex_string_to_bytes("5960005150596039515059"), Some(5), true);
         assert!(interpret_result.is_ok());
 
         let result1: [u8; 32] = unsafe { runner.stack.pop().unwrap() };

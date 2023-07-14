@@ -567,11 +567,11 @@ pub fn basefee(runner: &mut Runner) -> Result<(), ExecutionError> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::core_module::utils::bytes::{hex_string_to_bytes, pad_left, pad_right};
+    use crate::core_module::utils::bytes::{_hex_string_to_bytes, pad_left, _pad_right};
 
     #[test]
     fn test_address() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         address(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop().unwrap() };
@@ -580,7 +580,7 @@ mod tests {
 
     #[test]
     fn test_balance() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         let _ = unsafe { runner.stack.push(pad_left(&runner.caller)) };
         balance(&mut runner).unwrap();
 
@@ -607,7 +607,7 @@ mod tests {
 
     #[test]
     fn test_origin() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         origin(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop().unwrap() };
@@ -616,7 +616,7 @@ mod tests {
 
     #[test]
     fn test_caller() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         caller(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop().unwrap() };
@@ -625,7 +625,7 @@ mod tests {
 
     #[test]
     fn test_callvalue() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         callvalue(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop().unwrap() };
@@ -634,25 +634,25 @@ mod tests {
 
     #[test]
     fn test_calldataload() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         runner.calldata.heap = vec![0xff, 0xff, 0xff, 0xff];
 
         let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
         calldataload(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop().unwrap() };
-        assert_eq!(result, pad_right(&[0xff, 0xff, 0xff, 0xff]));
+        assert_eq!(result, _pad_right(&[0xff, 0xff, 0xff, 0xff]));
 
         let _ = unsafe { runner.stack.push(pad_left(&[0x02])) };
         calldataload(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop().unwrap() };
-        assert_eq!(result, pad_right(&[0xff, 0xff]));
+        assert_eq!(result, _pad_right(&[0xff, 0xff]));
     }
 
     #[test]
     fn test_calldatasize() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         runner.calldata.heap = vec![0xff, 0xff, 0xff, 0xff];
 
         calldatasize(&mut runner).unwrap();
@@ -663,7 +663,7 @@ mod tests {
 
     #[test]
     fn test_calldatacopy() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         runner.calldata.heap = [0xff; 32].to_vec();
 
         let _ = unsafe { runner.stack.push(pad_left(&[0x20])) };
@@ -689,16 +689,16 @@ mod tests {
         calldatacopy(&mut runner).unwrap();
 
         let result = unsafe { runner.memory.read(0x00, 0x20).unwrap() };
-        assert_eq!(result, pad_right(&[0xff; 16]).to_vec());
+        assert_eq!(result, _pad_right(&[0xff; 16]).to_vec());
     }
 
     #[test]
     fn test_codesize() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
 
         // Interpret some code to make set the runner code to something
         runner
-            .interpret(hex_string_to_bytes("60ff6000526001601ff3"), Some(5), true)
+            .interpret(_hex_string_to_bytes("60ff6000526001601ff3"), Some(5), true)
             .unwrap();
 
         codesize(&mut runner).unwrap();
@@ -709,11 +709,11 @@ mod tests {
 
     #[test]
     fn test_codecopy() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
 
         // Create a contract with a bytecode length of 23
         let interpret_result = runner.interpret(
-            hex_string_to_bytes(
+            _hex_string_to_bytes(
                 "7dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6000",
             ),
             Some(5),
@@ -729,7 +729,7 @@ mod tests {
         let result = unsafe { runner.memory.read(0x00, 0x20).unwrap() };
         assert_eq!(
             result,
-            hex_string_to_bytes("7dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60")
+            _hex_string_to_bytes("7dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60")
         );
 
         // reset memory
@@ -741,12 +741,12 @@ mod tests {
         codecopy(&mut runner).unwrap();
 
         let result = unsafe { runner.memory.read(0x00, 0x20).unwrap() };
-        assert_eq!(result, pad_right(&hex_string_to_bytes("7dffffffff")));
+        assert_eq!(result, _pad_right(&_hex_string_to_bytes("7dffffffff")));
     }
 
     #[test]
     fn test_gasprice() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         gasprice(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop().unwrap() };
@@ -755,11 +755,11 @@ mod tests {
 
     #[test]
     fn test_extcodesize() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
 
         // Create a contract with a bytecode length of 23
         let interpret_result = runner.interpret(
-            hex_string_to_bytes("7f76ffffffffffffffffffffffffffffffffffffffffffffff60005260176009f3600052602060006000f0"),
+            _hex_string_to_bytes("7f76ffffffffffffffffffffffffffffffffffffffffffffff60005260176009f3600052602060006000f0"),
             Some(5),
             true
         );
@@ -773,11 +773,11 @@ mod tests {
 
     #[test]
     fn test_extcodecopy() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
 
         // Create a contract with a bytecode length of 23
         let interpret_result = runner.interpret(
-            hex_string_to_bytes("7f76ffffffffffffffffffffffffffffffffffffffffffffff60005260176009f3600052602060006000f0"),
+            _hex_string_to_bytes("7f76ffffffffffffffffffffffffffffffffffffffffffffff60005260176009f3600052602060006000f0"),
             Some(5),
             true
         );
@@ -795,7 +795,7 @@ mod tests {
         let result = unsafe { runner.memory.read(0x00, 0x20).unwrap() };
         assert_eq!(
             result,
-            pad_right(&hex_string_to_bytes(
+            _pad_right(&_hex_string_to_bytes(
                 "ffffffffffffffffffffffffffffffffffffffffffffff"
             ))
         );
@@ -814,17 +814,17 @@ mod tests {
         let result = unsafe { runner.memory.read(0x20, 0x20).unwrap() };
         assert_eq!(
             result,
-            pad_right(&hex_string_to_bytes("ffffffffffffffffffff"))
+            _pad_right(&_hex_string_to_bytes("ffffffffffffffffffff"))
         );
     }
 
     #[test]
     fn test_returndatasize() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
 
         // Create a contract that return 0x20 sized data and call it
         let interpret_result = runner.interpret(
-            hex_string_to_bytes("7f7f7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6000527fff6000527fff60005260206000f30000000000000000000000000000000000006020527f000000000060205260296000f300000000000000000000000000000000000000604052604d60006000f060006000600060008463fffffffffa3d"),
+            _hex_string_to_bytes("7f7f7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6000527fff6000527fff60005260206000f30000000000000000000000000000000000006020527f000000000060205260296000f300000000000000000000000000000000000000604052604d60006000f060006000600060008463fffffffffa3d"),
             Some(255),
             true
         );
@@ -836,11 +836,11 @@ mod tests {
 
     #[test]
     fn test_returndatacopy() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
 
         // Create a contract that return 0x20 sized data and call it
         let interpret_result = runner.interpret(
-            hex_string_to_bytes("7f7f7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6000527fff6000527fff60005260206000f30000000000000000000000000000000000006020527f000000000060205260296000f300000000000000000000000000000000000000604052604d60006000f060006000600060008463fffffffffa50506000600052600060205260006040526020600060003e6001601f60203e"),
+            _hex_string_to_bytes("7f7f7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6000527fff6000527fff60005260206000f30000000000000000000000000000000000006020527f000000000060205260296000f300000000000000000000000000000000000000604052604d60006000f060006000600060008463fffffffffa50506000600052600060205260006040526020600060003e6001601f60203e"),
             Some(255),
             true
         );
@@ -849,18 +849,18 @@ mod tests {
         let result = unsafe { runner.memory.read(0x00, 0x20).unwrap() };
         assert_eq!(result, [0xff; 32]);
         let result = unsafe { runner.memory.read(0x20, 0x20).unwrap() };
-        assert_eq!(result, pad_right(&[0xff]));
+        assert_eq!(result, _pad_right(&[0xff]));
         let result = unsafe { runner.memory.read(0x40, 0x20).unwrap() };
         assert_eq!(result, [0x00; 32]);
     }
 
     #[test]
     fn test_extcodehash() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
 
         // Create a contract with a bytecode length of 23
         let interpret_result = runner.interpret(
-            hex_string_to_bytes("6c63ffffffff60005260046000f3600052600d60006000f03f"),
+            _hex_string_to_bytes("6c63ffffffff60005260046000f3600052600d60006000f03f"),
             Some(5),
             true
         );
@@ -869,7 +869,7 @@ mod tests {
         let result = unsafe { runner.stack.pop().unwrap() };
         assert_eq!(
             result,
-            pad_left(&hex_string_to_bytes("c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"))
+            pad_left(&_hex_string_to_bytes("c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"))
         );
     }
 
@@ -880,7 +880,7 @@ mod tests {
 
     #[test]
     fn test_coinbase() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         coinbase(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop().unwrap() };
@@ -889,7 +889,7 @@ mod tests {
 
     #[test]
     fn test_timestamp() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         timestamp(&mut runner).unwrap();
 
         // Get the current timestamp
@@ -911,7 +911,7 @@ mod tests {
     #[test]
     fn test_number() {
         // TODO: test with a fork
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         number(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop().unwrap() };
@@ -921,7 +921,7 @@ mod tests {
     #[test]
     fn test_difficulty() {
         // TODO: test with a fork
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         difficulty(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop().unwrap() };
@@ -930,7 +930,7 @@ mod tests {
 
     #[test]
     fn test_gaslimit() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         gaslimit(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop().unwrap() };
@@ -939,7 +939,7 @@ mod tests {
 
     #[test]
     fn test_chainid() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         chainid(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop().unwrap() };
@@ -948,7 +948,7 @@ mod tests {
 
     #[test]
     fn test_selfbalance() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         selfbalance(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop().unwrap() };
@@ -966,7 +966,7 @@ mod tests {
 
     #[test]
     fn test_basefee() {
-        let mut runner = Runner::default(3);
+        let mut runner = Runner::_default(3);
         basefee(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop().unwrap() };
