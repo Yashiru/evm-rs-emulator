@@ -369,6 +369,7 @@ impl Runner {
             0xf2 => op_codes::system::callcode(self),
             0xf3 => op_codes::system::return_(self),
             0xf4 => op_codes::system::delegatecall(self),
+            0xf5 => op_codes::system::create2(self),
 
             // Default case
             _ => op_codes::system::invalid(self)

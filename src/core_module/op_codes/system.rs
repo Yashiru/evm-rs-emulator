@@ -31,7 +31,7 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
     if offset.as_usize() + size.as_usize() > runner.memory.heap.len() {
         return Err(ExecutionError::OutOfBoundsMemory);
     }
-
+ 
     // Load the init code from memory
     let init_code = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
 
@@ -77,6 +77,80 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(pad_to_32_bytes(&contract_address));
         println!("{:<14} 👉 [ {} ]", "CREATE".bright_blue(), hex);
+    }
+
+    // Increment PC
+    runner.increment_pc(1)
+}
+
+
+pub fn create2(runner: &mut Runner) -> Result<(), ExecutionError> {
+    // Get the values on the stack
+    let value = unsafe { runner.stack.pop()? };
+    let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let salt = unsafe { runner.stack.pop()? };
+
+    // Check if the offset is out of bounds
+    if offset.as_usize() + size.as_usize() > runner.memory.heap.len() {
+        return Err(ExecutionError::OutOfBoundsMemory);
+    }
+ 
+    // Load the init code from memory
+    let init_code = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
+    let hex_init_code = utils::debug::vec_to_hex_string(init_code.clone());
+    println!("init_code: {}", hex_init_code);
+
+    // Compute the contract address
+    let init_code_hash = keccak256(init_code.clone());
+
+    // print init code hash hex
+    let hex_init_code_hash = utils::debug::to_hex_string(init_code_hash.clone());
+    println!("init_code_hash: {}", hex_init_code_hash);
+
+    let mut input = vec![0xff];
+    input.extend_from_slice(&runner.caller);
+    input.extend_from_slice(&salt);
+    input.extend_from_slice(&init_code_hash);
+
+    // print input hex
+    let hex_input = utils::debug::vec_to_hex_string(input.clone());
+    println!("input: {}", hex_input);
+
+    let hash = keccak256(input);
+    let contract_address: [u8; 20] = hash[12..].try_into().unwrap();
+    
+    // Create the contract with init code as code
+    init_account(contract_address, runner)?;
+    runner.state.put_code_at(contract_address, init_code)?;
+
+    // Call the contract to run its constructor
+    let temp_debug_level = runner.debug_level;
+    runner.debug_level = Some(0);
+    let call_result = runner.call(contract_address, value, Vec::new(), runner.gas, false);
+    runner.debug_level = temp_debug_level;
+
+    // Check if the call failed
+    if call_result.is_err() {
+        unsafe { runner.stack.push(pad_to_32_bytes(&[0x00]))? };
+    } else {
+        unsafe { runner.stack.push(pad_to_32_bytes(&[0x01]))? };
+    }
+
+    // Get the return data to store the real contract code
+    let returndata = runner.returndata.heap.clone();
+    runner.state.put_code_at(contract_address, returndata)?;
+
+    // Transfer the value
+    runner
+        .state
+        .transfer(runner.caller, contract_address, value)?;
+
+    unsafe { runner.stack.push(pad_to_32_bytes(&contract_address)) }?;
+
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
+        let hex: String = utils::debug::to_hex_string(pad_to_32_bytes(&contract_address));
+        println!("{:<14} 👉 [ {} ]", "CREATE2".bright_blue(), hex);
     }
 
     // Increment PC
