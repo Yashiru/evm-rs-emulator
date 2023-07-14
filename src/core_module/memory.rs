@@ -23,9 +23,9 @@ impl Memory {
     }
 
     // Load bytes from memory
-    pub unsafe fn read(&self, address: usize, size: usize) -> Result<Vec<u8>, ExecutionError> {
+    pub unsafe fn read(&mut self, address: usize, size: usize) -> Result<Vec<u8>, ExecutionError> {
         if address + size > self.heap.len() {
-            return Err(ExecutionError::OutOfBoundsMemory);
+            self.extend(address + size - self.heap.len());
         }
 
         let ptr = self.heap.as_ptr().add(address);
@@ -49,9 +49,9 @@ impl Memory {
     }
 
     // Load 32 bytes from memory
-    pub unsafe fn mload(&self, address: usize) -> Result<[u8; 32], ExecutionError> {
+    pub unsafe fn mload(&mut self, address: usize) -> Result<[u8; 32], ExecutionError> {
         if address + 32 > self.heap.len() {
-            return Err(ExecutionError::OutOfBoundsMemory);
+            self.extend(address + 32 - self.heap.len());
         }
 
         let ptr = self.heap.as_ptr().add(address);

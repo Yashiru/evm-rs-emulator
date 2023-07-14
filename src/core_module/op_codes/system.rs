@@ -1,7 +1,7 @@
 use crate::core_module::runner::Runner;
 use crate::core_module::utils;
-use crate::core_module::utils::bytes32;
-use crate::core_module::utils::bytes32::{bytes32_to_address, pad_to_32_bytes};
+use crate::core_module::utils::bytes;
+use crate::core_module::utils::bytes::{bytes32_to_address, pad_left};
 use crate::core_module::utils::environment::{
     delete_account, get_balance, get_nonce, init_account,
 };
@@ -40,7 +40,7 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Compute the contract address
     let mut input = vec![0xd6, 0x94];
     input.extend_from_slice(&runner.caller);
-    input.extend_from_slice(&bytes32::strip_zero_padding(&get_nonce(
+    input.extend_from_slice(&bytes::strip_zero_padding(&get_nonce(
         runner.caller,
         runner,
     )?));
@@ -60,24 +60,25 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     // Check if the call failed
     if call_result.is_err() {
-        unsafe { runner.stack.push(pad_to_32_bytes(&[0x00]))? };
+        unsafe { runner.stack.push(pad_left(&[0x00]))? };
     } else {
-        unsafe { runner.stack.push(pad_to_32_bytes(&[0x01]))? };
+        unsafe { runner.stack.push(pad_left(&contract_address)) }?;
     }
 
     // Get the return data to store the real contract code
     let returndata = runner.returndata.heap.clone();
-    runner.state.put_code_at(contract_address, returndata)?;
+    runner.state.put_code_at(contract_address, returndata.clone())?;
+
+    let hex = utils::debug::vec_to_hex_string(returndata.clone());
+    println!("returndata: {}", hex);
 
     // Transfer the value
     runner
         .state
         .transfer(runner.caller, contract_address, value)?;
 
-    unsafe { runner.stack.push(pad_to_32_bytes(&contract_address)) }?;
-
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
-        let hex: String = utils::debug::to_hex_string(pad_to_32_bytes(&contract_address));
+        let hex: String = utils::debug::to_hex_string(pad_left(&contract_address));
         println!("{:<14} 👉 [ {} ]", "CREATE".bright_blue(), hex);
     }
 
@@ -117,30 +118,30 @@ pub fn create2(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     // Call the contract to run its constructor
     let temp_debug_level = runner.debug_level;
-    runner.debug_level = Some(0);
+    runner.debug_level = Some(5);
     let call_result = runner.call(contract_address, value, Vec::new(), runner.gas, false);
     runner.debug_level = temp_debug_level;
 
     // Check if the call failed
     if call_result.is_err() {
-        unsafe { runner.stack.push(pad_to_32_bytes(&[0x00]))? };
+        unsafe { runner.stack.push(pad_left(&[0x00]))? };
     } else {
-        unsafe { runner.stack.push(pad_to_32_bytes(&[0x01]))? };
+        unsafe { runner.stack.push(pad_left(&contract_address)) }?;
     }
 
     // Get the return data to store the real contract code
     let returndata = runner.returndata.heap.clone();
     runner.state.put_code_at(contract_address, returndata)?;
 
+    println!("returndata: {:?}", runner.returndata.heap.clone());   
+
     // Transfer the value
     runner
         .state
         .transfer(runner.caller, contract_address, value)?;
 
-    unsafe { runner.stack.push(pad_to_32_bytes(&contract_address)) }?;
-
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
-        let hex: String = utils::debug::to_hex_string(pad_to_32_bytes(&contract_address));
+        let hex: String = utils::debug::to_hex_string(pad_left(&contract_address));
         println!("{:<14} 👉 [ {} ]", "CREATE2".bright_blue(), hex);
     }
 
@@ -206,9 +207,9 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
     );
 
     if call_result.is_err() {
-        unsafe { runner.stack.push(pad_to_32_bytes(&[0x00]))? };
+        unsafe { runner.stack.push(pad_left(&[0x00]))? };
     } else {
-        unsafe { runner.stack.push(pad_to_32_bytes(&[0x01]))? };
+        unsafe { runner.stack.push(pad_left(&[0x01]))? };
     }
 
     let return_data = runner.returndata.heap.clone();
@@ -304,9 +305,9 @@ pub fn delegatecall(runner: &mut Runner) -> Result<(), ExecutionError> {
     );
 
     if call_result.is_err() {
-        unsafe { runner.stack.push(pad_to_32_bytes(&[0x00]))? };
+        unsafe { runner.stack.push(pad_left(&[0x00]))? };
     } else {
-        unsafe { runner.stack.push(pad_to_32_bytes(&[0x01]))? };
+        unsafe { runner.stack.push(pad_left(&[0x01]))? };
     }
 
     let return_data = runner.returndata.heap.clone();

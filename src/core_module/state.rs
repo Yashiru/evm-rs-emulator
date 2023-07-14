@@ -230,7 +230,7 @@ impl EvmState {
             // Print the code of the contract
             let code_hash = account_state.code_hash;
             if code_hash != [0u8; 32] {
-                let code = self.get_code(code_hash).unwrap();
+                let code = self.get_code_at(address.to_owned()).unwrap();
                 let code_hex: String = utils::debug::vec_to_hex_string(code.to_owned());
                 println!("{}: {}", "Code".magenta(), code_hex);
             }

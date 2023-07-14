@@ -219,27 +219,27 @@ pub fn sgt(runner: &mut Runner) -> Result<(), ExecutionError> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::core_module::utils::bytes32::pad_to_32_bytes;
+    use crate::core_module::utils::bytes::pad_left;
     #[test]
     fn iszero_test() {
-        let mut runner = Runner::default();
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x00])) };
+        let mut runner = Runner::default(3);
+        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
 
         iszero(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[1]);
+        let expected_result = pad_left(&[1]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);
 
-        let mut runner = Runner::default();
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x01])) };
+        let mut runner = Runner::default(3);
+        let _ = unsafe { runner.stack.push(pad_left(&[0x01])) };
 
         iszero(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[0]);
+        let expected_result = pad_left(&[0]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);
@@ -247,26 +247,26 @@ mod tests {
 
     #[test]
     fn eq_test() {
-        let mut runner = Runner::default();
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
+        let mut runner = Runner::default(3);
+        let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
 
         eq(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[1]);
+        let expected_result = pad_left(&[1]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);
 
-        let mut runner = Runner::default();
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x05])) };
+        let mut runner = Runner::default(3);
+        let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x05])) };
 
         eq(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[0]);
+        let expected_result = pad_left(&[0]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);
@@ -274,26 +274,26 @@ mod tests {
 
     #[test]
     fn lt_test() {
-        let mut runner = Runner::default();
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x08])) };
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
+        let mut runner = Runner::default(3);
+        let _ = unsafe { runner.stack.push(pad_left(&[0x08])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
 
         lt(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[1]);
+        let expected_result = pad_left(&[1]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);
-        let mut runner = Runner::default();
+        let mut runner = Runner::default(3);
 
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x08])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x08])) };
 
         lt(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[0]);
+        let expected_result = pad_left(&[0]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);
@@ -301,26 +301,26 @@ mod tests {
 
     #[test]
     fn gt_test() {
-        let mut runner = Runner::default();
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x08])) };
+        let mut runner = Runner::default(3);
+        let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x08])) };
 
         gt(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[1]);
+        let expected_result = pad_left(&[1]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);
 
-        let mut runner = Runner::default();
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x08])) };
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
+        let mut runner = Runner::default(3);
+        let _ = unsafe { runner.stack.push(pad_left(&[0x08])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
 
         gt(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[0]);
+        let expected_result = pad_left(&[0]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);
@@ -328,8 +328,8 @@ mod tests {
 
     #[test]
     fn slt_test() {
-        let mut runner = Runner::default();
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x09])) };
+        let mut runner = Runner::default(3);
+        let _ = unsafe { runner.stack.push(pad_left(&[0x09])) };
         let _ = unsafe {
             runner.stack.push([
                 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -341,12 +341,12 @@ mod tests {
         slt(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[1]);
+        let expected_result = pad_left(&[1]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);
 
-        let mut runner = Runner::default();
+        let mut runner = Runner::default(3);
         let _ = unsafe {
             runner.stack.push([
                 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -354,12 +354,12 @@ mod tests {
                 0xff, 0xff, 0xff, 0xff,
             ])
         };
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x09])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x09])) };
 
         slt(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[0]);
+        let expected_result = pad_left(&[0]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);
@@ -367,8 +367,8 @@ mod tests {
 
     #[test]
     fn sgt_test() {
-        let mut runner = Runner::default();
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x09])) };
+        let mut runner = Runner::default(3);
+        let _ = unsafe { runner.stack.push(pad_left(&[0x09])) };
         let _ = unsafe {
             runner.stack.push([
                 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -380,12 +380,12 @@ mod tests {
         sgt(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[0]);
+        let expected_result = pad_left(&[0]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);
 
-        let mut runner = Runner::default();
+        let mut runner = Runner::default(3);
         let _ = unsafe {
             runner.stack.push([
                 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -393,12 +393,12 @@ mod tests {
                 0xff, 0xff, 0xff, 0xff,
             ])
         };
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x09])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x09])) };
 
         sgt(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[1]);
+        let expected_result = pad_left(&[1]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);

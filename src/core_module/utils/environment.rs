@@ -1,6 +1,6 @@
 use crate::core_module::runner::Runner;
 
-use super::{errors::ExecutionError, bytes32::u64_to_u256_array};
+use super::{errors::ExecutionError, bytes::u64_to_u256_array};
 
 // Get address balance 
 pub fn get_balance(address: [u8; 20], runner: &mut Runner) -> Result<[u8; 32], ExecutionError> {

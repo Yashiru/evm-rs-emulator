@@ -1,4 +1,4 @@
-use crate::core_module::utils::bytes32::pad_to_32_bytes;
+use crate::core_module::utils::bytes::pad_left;
 
 use super::memory::Memory;
 use super::op_codes;
@@ -106,8 +106,8 @@ impl Runner {
         instance
     }
 
-    pub fn default() -> Self {
-        Self::new(
+    pub fn default(debug_level: u8) -> Self {
+        let mut runner = Self::new(
             [
                 0xbe, 0x86, 0x2a, 0xd9, 0xab, 0xfe, 0x6f, 0x22, 0xbc, 0xb0, 0x87, 0x71, 0x6c, 0x7d,
                 0x89, 0xa2, 0x60, 0x51, 0xf7, 0x4c,
@@ -117,7 +117,10 @@ impl Runner {
             None,
             None,
             None,
-        )
+        );
+        runner.debug_level = Some(debug_level);
+
+        runner
     }
 
     // Increment the program counter
@@ -140,9 +143,18 @@ impl Runner {
         &mut self,
         bytecode: Vec<u8>,
         debug: Option<u8>,
+        initial_interpretation: bool,
     ) -> Result<(), ExecutionError> {
         // Set the bytecode
         self.bytecode = bytecode;
+
+        if initial_interpretation {
+            // Set the runner address code
+            let put_code_result = self.state.put_code_at(self.address, self.bytecode.clone());
+            if put_code_result.is_err() {
+                return Err(put_code_result.unwrap_err());
+            }
+        }
 
         // Set the bytecode
         self.debug_level = debug;
@@ -403,7 +415,7 @@ impl Runner {
         to: [u8; 20],
         value: [u8; 32],
         calldata: Vec<u8>,
-        gas: u64,
+        _gas: u64,
         delegate: bool,
     ) -> Result<(), ExecutionError> {
         let mut error: Option<ExecutionError> = None;
@@ -432,17 +444,14 @@ impl Runner {
         self.stack = Stack::new();
         self.pc = 0;
         self.debug_level = if self.debug_level.is_some() && self.debug_level.unwrap() > 1 {
-            Some(1)
+            Some(self.debug_level.unwrap() - 1)
         } else {
             Some(0)
         };
 
-        // Set the gas
-        self.gas = gas;
-
         // Interpret the bytecode
         let interpret_result =
-            self.interpret(self.state.get_code_at(to)?.to_owned(), self.debug_level);
+            self.interpret(self.state.get_code_at(to)?.to_owned(), self.debug_level, false);
 
         // Check if the interpretation was successful
         if interpret_result.is_err() {
@@ -520,7 +529,7 @@ impl Runner {
             "ADDRESS".cyan(),
             "║".bright_magenta()
         );
-        let hex_address = utils::debug::to_hex_string(pad_to_32_bytes(&self.address));
+        let hex_address = utils::debug::to_hex_string(pad_left(&self.address));
         println!(
             "{} {:<95} {}",
             "║".bright_magenta(),
@@ -607,7 +616,7 @@ mod tests {
     #[test]
     fn test_push0() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
-        let _ = runner.interpret(vec![0x5f, 0x5f, 0x5f], Some(1));
+        let _ = runner.interpret(vec![0x5f, 0x5f, 0x5f], Some(1), true);
 
         assert_eq!(unsafe { runner.stack.pop().unwrap() }, [0u8; 32]);
         assert_eq!(unsafe { runner.stack.pop().unwrap() }, [0u8; 32]);
@@ -617,7 +626,7 @@ mod tests {
     #[test]
     fn test_push1() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
-        let _ = runner.interpret(vec![0x60, 0x01, 0x60, 0x02, 0x60, 0x03], Some(1));
+        let _ = runner.interpret(vec![0x60, 0x01, 0x60, 0x02, 0x60, 0x03], Some(1), true);
 
         assert_eq!(
             unsafe { runner.stack.pop().unwrap() },

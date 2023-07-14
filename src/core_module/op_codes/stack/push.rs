@@ -46,7 +46,7 @@ mod tests {
     #[test]
     fn test_push() {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
-        let _ = runner.interpret(vec![0x60, 0xff], Some(2));
+        let _ = runner.interpret(vec![0x60, 0xff], Some(2), true);
 
         assert_eq!(runner.stack.stack.len(), 1);
         assert_eq!(unsafe { runner.stack.pop().unwrap() }, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255]);

@@ -212,17 +212,17 @@ pub fn sha(runner: &mut Runner) -> Result<(), ExecutionError> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::core_module::{op_codes::memory::mstore, utils::bytes32::pad_to_32_bytes};
+    use crate::core_module::{op_codes::memory::mstore, utils::bytes::pad_left};
 
     #[test]
     fn test_not() {
-        let mut runner = Runner::default();
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
+        let mut runner = Runner::default(3);
+        let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
 
         not(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[
+        let expected_result = pad_left(&[
             0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
             0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
             0xff, 0xff, 0xff, 0xfb,
@@ -234,14 +234,14 @@ mod tests {
 
     #[test]
     fn test_xor() {
-        let mut runner = Runner::default();
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x08])) };
+        let mut runner = Runner::default(3);
+        let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x08])) };
 
         xor(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[0x04 ^ 0x08]);
+        let expected_result = pad_left(&[0x04 ^ 0x08]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);
@@ -249,14 +249,14 @@ mod tests {
 
     #[test]
     fn or_test() {
-        let mut runner = Runner::default();
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x08])) };
+        let mut runner = Runner::default(3);
+        let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x08])) };
 
         or(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[0x04 | 0x08]);
+        let expected_result = pad_left(&[0x04 | 0x08]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);
@@ -264,14 +264,14 @@ mod tests {
 
     #[test]
     fn test_and() {
-        let mut runner = Runner::default();
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x08])) };
+        let mut runner = Runner::default(3);
+        let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x08])) };
 
         and(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[0x04 & 0x08]);
+        let expected_result = pad_left(&[0x04 & 0x08]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);
@@ -279,14 +279,14 @@ mod tests {
 
     #[test]
     fn test_shl() {
-        let mut runner = Runner::default();
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x02])) };
+        let mut runner = Runner::default(3);
+        let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x02])) };
 
         shl(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[0x10]);
+        let expected_result = pad_left(&[0x10]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);
@@ -294,14 +294,14 @@ mod tests {
 
     #[test]
     fn test_shr() {
-        let mut runner = Runner::default();
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x02])) };
+        let mut runner = Runner::default(3);
+        let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x02])) };
 
         shr(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
-        let expected_result = pad_to_32_bytes(&[0x01]);
+        let expected_result = pad_left(&[0x01]);
 
         assert_eq!(result, expected_result);
         assert_eq!(runner.stack.stack.len(), 0);
@@ -309,17 +309,17 @@ mod tests {
 
     #[test]
     fn test_sha256() {
-        let mut runner = Runner::default();
+        let mut runner = Runner::default(3);
 
         let _ = unsafe {
             runner
                 .stack
-                .push(pad_to_32_bytes(&[0xff, 0xff, 0xff, 0xff]))
+                .push(pad_left(&[0xff, 0xff, 0xff, 0xff]))
         };
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x00])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
         mstore(&mut runner).unwrap();
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
-        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x00])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x04])) };
+        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
         sha(&mut runner).unwrap();
 
         let result = unsafe { runner.stack.pop() }.unwrap();
