@@ -3,7 +3,7 @@ use crate::core_module::utils;
 use crate::core_module::utils::errors::ExecutionError;
 
 // Primitive types
-use ethers::types::{U256, I256};
+use ethers::types::{I256, U256};
 
 // Colored output
 use colored::*;
@@ -214,4 +214,193 @@ pub fn sgt(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     // Increment PC
     runner.increment_pc(1)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::core_module::utils::bytes32::pad_to_32_bytes;
+    #[test]
+    fn iszero_test() {
+        let mut runner = Runner::default();
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x00])) };
+
+        iszero(&mut runner).unwrap();
+
+        let result = unsafe { runner.stack.pop() }.unwrap();
+        let expected_result = pad_to_32_bytes(&[1]);
+
+        assert_eq!(result, expected_result);
+        assert_eq!(runner.stack.stack.len(), 0);
+
+        let mut runner = Runner::default();
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x01])) };
+
+        iszero(&mut runner).unwrap();
+
+        let result = unsafe { runner.stack.pop() }.unwrap();
+        let expected_result = pad_to_32_bytes(&[0]);
+
+        assert_eq!(result, expected_result);
+        assert_eq!(runner.stack.stack.len(), 0);
+    }
+
+    #[test]
+    fn eq_test() {
+        let mut runner = Runner::default();
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
+
+        eq(&mut runner).unwrap();
+
+        let result = unsafe { runner.stack.pop() }.unwrap();
+        let expected_result = pad_to_32_bytes(&[1]);
+
+        assert_eq!(result, expected_result);
+        assert_eq!(runner.stack.stack.len(), 0);
+
+        let mut runner = Runner::default();
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x05])) };
+
+        eq(&mut runner).unwrap();
+
+        let result = unsafe { runner.stack.pop() }.unwrap();
+        let expected_result = pad_to_32_bytes(&[0]);
+
+        assert_eq!(result, expected_result);
+        assert_eq!(runner.stack.stack.len(), 0);
+    }
+
+    #[test]
+    fn lt_test() {
+        let mut runner = Runner::default();
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x08])) };
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
+
+        lt(&mut runner).unwrap();
+
+        let result = unsafe { runner.stack.pop() }.unwrap();
+        let expected_result = pad_to_32_bytes(&[1]);
+
+        assert_eq!(result, expected_result);
+        assert_eq!(runner.stack.stack.len(), 0);
+        let mut runner = Runner::default();
+
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x08])) };
+
+        lt(&mut runner).unwrap();
+
+        let result = unsafe { runner.stack.pop() }.unwrap();
+        let expected_result = pad_to_32_bytes(&[0]);
+
+        assert_eq!(result, expected_result);
+        assert_eq!(runner.stack.stack.len(), 0);
+    }
+
+    #[test]
+    fn gt_test() {
+        let mut runner = Runner::default();
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x08])) };
+
+        gt(&mut runner).unwrap();
+
+        let result = unsafe { runner.stack.pop() }.unwrap();
+        let expected_result = pad_to_32_bytes(&[1]);
+
+        assert_eq!(result, expected_result);
+        assert_eq!(runner.stack.stack.len(), 0);
+
+        let mut runner = Runner::default();
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x08])) };
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x04])) };
+
+        gt(&mut runner).unwrap();
+
+        let result = unsafe { runner.stack.pop() }.unwrap();
+        let expected_result = pad_to_32_bytes(&[0]);
+
+        assert_eq!(result, expected_result);
+        assert_eq!(runner.stack.stack.len(), 0);
+    }
+
+    #[test]
+    fn slt_test() {
+        let mut runner = Runner::default();
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x09])) };
+        let _ = unsafe {
+            runner.stack.push([
+                0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                0xff, 0xff, 0xff, 0xff,
+            ])
+        };
+
+        slt(&mut runner).unwrap();
+
+        let result = unsafe { runner.stack.pop() }.unwrap();
+        let expected_result = pad_to_32_bytes(&[1]);
+
+        assert_eq!(result, expected_result);
+        assert_eq!(runner.stack.stack.len(), 0);
+
+        let mut runner = Runner::default();
+        let _ = unsafe {
+            runner.stack.push([
+                0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                0xff, 0xff, 0xff, 0xff,
+            ])
+        };
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x09])) };
+
+        slt(&mut runner).unwrap();
+
+        let result = unsafe { runner.stack.pop() }.unwrap();
+        let expected_result = pad_to_32_bytes(&[0]);
+
+        assert_eq!(result, expected_result);
+        assert_eq!(runner.stack.stack.len(), 0);
+    }
+
+    #[test]
+    fn sgt_test() {
+        let mut runner = Runner::default();
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x09])) };
+        let _ = unsafe {
+            runner.stack.push([
+                0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                0xff, 0xff, 0xff, 0xff,
+            ])
+        };
+
+        sgt(&mut runner).unwrap();
+
+        let result = unsafe { runner.stack.pop() }.unwrap();
+        let expected_result = pad_to_32_bytes(&[0]);
+
+        assert_eq!(result, expected_result);
+        assert_eq!(runner.stack.stack.len(), 0);
+
+        let mut runner = Runner::default();
+        let _ = unsafe {
+            runner.stack.push([
+                0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                0xff, 0xff, 0xff, 0xff,
+            ])
+        };
+        let _ = unsafe { runner.stack.push(pad_to_32_bytes(&[0x09])) };
+
+        sgt(&mut runner).unwrap();
+
+        let result = unsafe { runner.stack.pop() }.unwrap();
+        let expected_result = pad_to_32_bytes(&[1]);
+
+        assert_eq!(result, expected_result);
+        assert_eq!(runner.stack.stack.len(), 0);
+    }
 }
