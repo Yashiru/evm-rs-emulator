@@ -24,8 +24,17 @@ impl Memory {
 
     // Load bytes from memory
     pub unsafe fn read(&mut self, address: usize, size: usize) -> Result<Vec<u8>, ExecutionError> {
+        // Increase memory heap to the nearest multiple of 32 if address is out of bounds
         if address + size > self.heap.len() {
-            self.extend(address + size - self.heap.len());
+            // Calculate the nearest multiple of 32
+            let nearest_multiple = if address % 32 == 0 {
+                address + 32
+            } else {
+                (address + 32) + (32 - (address + 32) % 32)
+            };
+
+            // Extend memory heap
+            self.extend(nearest_multiple - self.heap.len());
         }
 
         let ptr = self.heap.as_ptr().add(address);
@@ -39,7 +48,15 @@ impl Memory {
     pub unsafe fn write(&mut self, address: usize, data: Vec<u8>) -> Result<(), ExecutionError> {
         // check if memory should be extended
         if address + data.len() > self.heap.len() {
-            self.extend(address + data.len() - self.heap.len());
+            // Calculate the nearest multiple of 32
+            let nearest_multiple = if address % 32 == 0 {
+                address + 32
+            } else {
+                (address + 32) + (32 - (address + 32) % 32)
+            };
+
+            // Extend memory heap
+            self.extend(nearest_multiple - self.heap.len());
         }
 
         let ptr = self.heap.as_mut_ptr().add(address);
@@ -50,8 +67,20 @@ impl Memory {
 
     // Load 32 bytes from memory
     pub unsafe fn mload(&mut self, address: usize) -> Result<[u8; 32], ExecutionError> {
+        // Increase memory heap to the nearest multiple of 32 if address is out of bounds
         if address + 32 > self.heap.len() {
-            self.extend(address + 32 - self.heap.len());
+            // Calculate the nearest multiple of 32
+            let nearest_multiple = if address % 32 == 0 {
+                address + 32
+            } else {
+                (address + 32) + (32 - (address + 32) % 32)
+            };
+
+            // print the nearest multiple
+            println!("Nearest multiple: {}", nearest_multiple);
+
+            // Extend memory heap
+            self.extend(nearest_multiple - self.heap.len());
         }
 
         let ptr = self.heap.as_ptr().add(address);
