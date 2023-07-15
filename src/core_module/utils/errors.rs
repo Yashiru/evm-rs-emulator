@@ -15,6 +15,7 @@ pub enum ExecutionError {
     // Flow errors
     NotEmptyStack,
     StaticCallStateChanged,
+    InvalidOpcode(u8),
 
     // Stack errors
     StackTooSmall,
@@ -49,6 +50,9 @@ impl fmt::Display for ExecutionError {
             ExecutionError::RevertWithoutData => write!(f, "Execution revert without data"),
             ExecutionError::InsufficientBalance => write!(f, "Insufficient balance to transfer"),
             ExecutionError::NotEmptyStack => write!(f, "Stack is not empty after the call"),
+            ExecutionError::InvalidOpcode(op_code) => {
+                write!(f, "Invalid op code 0x{:X}", op_code)
+            }
             ExecutionError::StaticCallStateChanged => {
                 write!(f, "State changed during a static call")
             }
@@ -64,3 +68,27 @@ impl fmt::Display for ExecutionError {
 }
 
 impl std::error::Error for ExecutionError {}
+
+impl PartialEq for ExecutionError {
+    fn eq(&self, other: &Self) -> bool {
+        use ExecutionError::*;
+        match (self, other) {
+            (OutOfBoundsMemory, OutOfBoundsMemory)
+            | (OutOfBoundsByteCode, OutOfBoundsByteCode)
+            | (AccountNotFound, AccountNotFound)
+            | (CodeNotFound, CodeNotFound)
+            | (EmptyByteCode, EmptyByteCode)
+            | (InsufficientBalance, InsufficientBalance)
+            | (NotEmptyStack, NotEmptyStack)
+            | (StaticCallStateChanged, StaticCallStateChanged)
+            | (StackTooSmall, StackTooSmall)
+            | (StackTooDeep, StackTooDeep)
+            | (InvalidFile, InvalidFile)
+            | (RevertWithoutData, RevertWithoutData) => true,
+            (InvalidOpcode(a), InvalidOpcode(b)) => a == b,
+            (NotImplemented(a), NotImplemented(b)) => a == b,
+            (Revert(a), Revert(b)) => a == b,
+            _ => false,
+        }
+    }
+}

@@ -698,7 +698,7 @@ mod tests {
 
         // Interpret some code to make set the runner code to something
         runner
-            .interpret(_hex_string_to_bytes("60ff6000526001601ff3"), Some(5), true)
+            .interpret(_hex_string_to_bytes("60ff6000526001601ff3"), Some(2), true)
             .unwrap();
 
         codesize(&mut runner).unwrap();
@@ -716,7 +716,7 @@ mod tests {
             _hex_string_to_bytes(
                 "7dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6000",
             ),
-            Some(5),
+            Some(2),
             true
         );
         assert!(interpret_result.is_ok());
@@ -760,7 +760,7 @@ mod tests {
         // Create a contract with a bytecode length of 23
         let interpret_result = runner.interpret(
             _hex_string_to_bytes("7f76ffffffffffffffffffffffffffffffffffffffffffffff60005260176009f3600052602060006000f0"),
-            Some(5),
+            Some(2),
             true
         );
         assert!(interpret_result.is_ok());
@@ -778,7 +778,7 @@ mod tests {
         // Create a contract with a bytecode length of 23
         let interpret_result = runner.interpret(
             _hex_string_to_bytes("7f76ffffffffffffffffffffffffffffffffffffffffffffff60005260176009f3600052602060006000f0"),
-            Some(5),
+            Some(2),
             true
         );
         assert!(interpret_result.is_ok());
@@ -861,7 +861,7 @@ mod tests {
         // Create a contract with a bytecode length of 23
         let interpret_result = runner.interpret(
             _hex_string_to_bytes("6c63ffffffff60005260046000f3600052600d60006000f03f"),
-            Some(5),
+            Some(2),
             true
         );
         assert!(interpret_result.is_ok());

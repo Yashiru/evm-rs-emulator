@@ -19,8 +19,7 @@ pub fn invalid(runner: &mut Runner) -> Result<(), ExecutionError> {
         println!("{:} 0x{:X}", "INVALID".red(), runner.bytecode[runner.pc]);
     }
 
-    // Increment PC
-    runner.increment_pc(1)
+    Err(ExecutionError::InvalidOpcode(runner.bytecode[runner.pc]))
 }
 
 pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
@@ -67,10 +66,9 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     // Get the return data to store the real contract code
     let returndata = runner.returndata.heap.clone();
-    runner.state.put_code_at(contract_address, returndata.clone())?;
-
-    let hex = utils::debug::vec_to_hex_string(returndata.clone());
-    println!("returndata: {}", hex);
+    runner
+        .state
+        .put_code_at(contract_address, returndata.clone())?;
 
     // Transfer the value
     runner
@@ -118,7 +116,7 @@ pub fn create2(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     // Call the contract to run its constructor
     let temp_debug_level = runner.debug_level;
-    runner.debug_level = Some(5);
+    runner.debug_level = Some(2);
     let call_result = runner.call(contract_address, value, Vec::new(), runner.gas, false);
     runner.debug_level = temp_debug_level;
 
@@ -132,8 +130,6 @@ pub fn create2(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Get the return data to store the real contract code
     let returndata = runner.returndata.heap.clone();
     runner.state.put_code_at(contract_address, returndata)?;
-
-    println!("returndata: {:?}", runner.returndata.heap.clone());   
 
     // Transfer the value
     runner
@@ -395,4 +391,217 @@ pub fn return_(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     // Increment PC
     runner.increment_pc(1)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::core_module::runner::Runner;
+    use crate::core_module::utils::bytes::{_hex_string_to_bytes, bytes32_to_address, pad_left};
+    use crate::core_module::utils::environment::get_balance;
+    use crate::core_module::utils::errors::ExecutionError;
+
+    #[test]
+    fn test_invalid() {
+        let mut runner = Runner::_default(3);
+        let interpret_result: Result<(), ExecutionError> =
+            runner.interpret(_hex_string_to_bytes("60fffe50fe60fffe"), Some(2), true);
+        assert!(interpret_result.is_err());
+
+        let result = unsafe { runner.stack.pop().unwrap() };
+        assert_eq!(result, pad_left(&[0xff]));
+    }
+
+    #[test]
+    fn test_create() {
+        let mut runner = Runner::_default(3);
+        let interpret_result: Result<(), ExecutionError> = runner.interpret(
+            _hex_string_to_bytes("6c63ffffffff6000526004601cf3600052600d601360fff0"),
+            Some(2),
+            true,
+        );
+        assert!(interpret_result.is_ok());
+
+        let result = unsafe { runner.stack.pop().unwrap() };
+        assert_eq!(
+            result,
+            pad_left(&[
+                0x9b, 0xbf, 0xed, 0x68, 0x89, 0x32, 0x2e, 0x01, 0x6e, 0x0a, 0x02, 0xee, 0x45, 0x9d,
+                0x30, 0x6f, 0xc1, 0x95, 0x45, 0xd8
+            ])
+        );
+
+        let stored_code = runner.state.get_code_at(bytes32_to_address(&result));
+
+        assert_eq!(stored_code.unwrap(), &_hex_string_to_bytes("ffffffff"));
+
+        let balance = get_balance(bytes32_to_address(&result), &mut runner).unwrap();
+        assert_eq!(balance, pad_left(&[0xff]));
+    }
+
+    #[test]
+    fn test_create2() {
+        let mut runner = Runner::_default(3);
+        let interpret_result: Result<(), ExecutionError> = runner.interpret(
+            _hex_string_to_bytes("6c63ffffffff6000526004601cf360005263aaa4aaaf600d601360aff5"),
+            Some(2),
+            true,
+        );
+        assert!(interpret_result.is_ok());
+
+        let result = unsafe { runner.stack.pop().unwrap() };
+        assert_eq!(
+            result,
+            pad_left(&[
+                0x5b, 0xad, 0x4e, 0xb0, 0xa4, 0xc4, 0xcf, 0xb7, 0x7d, 0x6c, 0x3f, 0x9d, 0x56, 0xa8,
+                0x49, 0x03, 0x2f, 0x22, 0x47, 0xd2
+            ])
+        );
+
+        let stored_code = runner.state.get_code_at(bytes32_to_address(&result));
+
+        assert_eq!(stored_code.unwrap(), &_hex_string_to_bytes("ffffffff"));
+
+        let balance = get_balance(bytes32_to_address(&result), &mut runner).unwrap();
+        assert_eq!(balance, pad_left(&[0xaf]));
+    }
+
+    #[test]
+    fn test_call() {
+        let mut runner = Runner::_default(3);
+        // Create a contract that creates an exception if first word of calldata is 0.
+        // Call it two time with no calldata and with calldata.
+        let interpret_result: Result<(), ExecutionError> = runner.interpret(
+            _hex_string_to_bytes("7067600035600757fe5b60005260086018f36000526011600f6000f0600060006000600060008561fffff1600060006020600060008661fffff1"),
+            Some(2),
+            true,
+        );
+        assert!(interpret_result.is_ok());
+
+        // Second call succeeded
+        let result = unsafe { runner.stack.pop().unwrap() };
+        assert!(result == pad_left(&[0x01]));
+
+        // First call failed
+        let result = unsafe { runner.stack.pop().unwrap() };
+        assert!(result == pad_left(&[0x00]));
+    }
+
+    #[test]
+    fn test_callcode() {
+        let mut runner = Runner::_default(3);
+        // Create a contract that creates an exception if first word of calldata is 0.
+        // Call it two time with no calldata and with calldata.
+        let interpret_result: Result<(), ExecutionError> =
+            runner.interpret(_hex_string_to_bytes("f2"), Some(2), true);
+        assert!(interpret_result.is_err());
+        assert_eq!(
+            interpret_result.unwrap_err(),
+            ExecutionError::NotImplemented(0xF2)
+        );
+    }
+
+    #[test]
+    fn test_delegatecall() {
+        let mut runner = Runner::_default(3);
+        // Create a contract that creates an exception if first slot of storage is 0
+        // Call it two time with no calldata and with calldata.
+        let interpret_result: Result<(), ExecutionError> = runner.interpret(
+            _hex_string_to_bytes("7067600054600757fe5b60005260086018f36000526011600f6000f060006000600060008461fffff4600160005560006000602060008561fffff4"),
+            Some(2),
+            true,
+        );
+        assert!(interpret_result.is_ok());
+
+        // Second call succeeded
+        let result = unsafe { runner.stack.pop().unwrap() };
+        assert!(result == pad_left(&[0x01]));
+
+        // First call failed
+        let result = unsafe { runner.stack.pop().unwrap() };
+        assert!(result == pad_left(&[0x00]));
+    }
+
+    #[test]
+    fn test_staticcall() {
+        let mut runner = Runner::_default(3);
+        // Create a contract that creates an exception if first word of calldata is 0.
+        // Call it two time with storage to 0 and storage to 1 (in the caller contract).
+        let interpret_result: Result<(), ExecutionError> = runner.interpret(
+            _hex_string_to_bytes("746b600035600b5760ff6000555b600052600c6014f36000526015600b6000f060006000600060008461fffffa60006000602060008561fffffa"),
+            Some(2),
+            true,
+        );
+        assert!(interpret_result.is_ok());
+
+        // Second call succeeded
+        let result = unsafe { runner.stack.pop().unwrap() };
+        assert!(result == pad_left(&[0x01]));
+
+        // First call failed
+        let result = unsafe { runner.stack.pop().unwrap() };
+        assert!(result == pad_left(&[0x00]));
+    }
+
+    #[test]
+    fn test_selfdestruct() {
+        let mut runner = Runner::_default(3);
+
+        // Create a contract that has ff as code
+        let interpret_result: Result<(), ExecutionError> = runner.interpret(
+            _hex_string_to_bytes("6960ff6000526001601ff3600052600a601660aaf0"),
+            Some(2),
+            true,
+        );
+        assert!(interpret_result.is_ok());
+
+        let address = unsafe { runner.stack.pop().unwrap() };
+        assert_eq!(
+            address,
+            pad_left(&[
+                0x9b, 0xbf, 0xed, 0x68, 0x89, 0x32, 0x2e, 0x01, 0x6e, 0x0a, 0x02, 0xee, 0x45, 0x9d,
+                0x30, 0x6f, 0xc1, 0x95, 0x45, 0xd8
+            ])
+        );
+
+        let stored_code = runner.state.get_code_at(bytes32_to_address(&address));
+
+        assert_eq!(stored_code.unwrap(), &_hex_string_to_bytes("ff"));
+
+        let balance = get_balance(bytes32_to_address(&address), &mut runner).unwrap();
+        assert_eq!(balance, pad_left(&[0xaa]));
+
+        // Set the code to the new contract to CALLER SELFDESTRUCT
+        let put_code_result = runner
+            .state
+            .put_code_at(bytes32_to_address(&address), _hex_string_to_bytes("33ff"));
+        assert!(put_code_result.is_ok());
+
+        let mut string_address = String::new();
+        for &byte in bytes32_to_address(&address).iter() {
+            string_address.push_str(&format!("{:02x}", byte));
+        }
+        let bytecode = format!("73{}600060006000600060008561fffff1", string_address);
+        let bytecode: &str = &bytecode;
+
+        runner.pc = 0;
+        // Self destruct the contract by calling it
+        let selfdestruct_result: Result<(), ExecutionError> =
+            runner.interpret(_hex_string_to_bytes(bytecode), Some(2), true);
+        assert!(selfdestruct_result.is_ok());
+
+        let result = unsafe { runner.stack.pop().unwrap() };
+        assert_eq!(result, pad_left(&[0x01]));
+
+        let stored_code = runner.state.get_code_at(bytes32_to_address(&result));
+
+        assert!(stored_code.is_err());
+        assert_eq!(stored_code.unwrap_err(), ExecutionError::AccountNotFound);
+
+        let balance_result = get_balance(bytes32_to_address(&result), &mut runner);
+        assert!(balance_result.is_err());
+        assert_eq!(balance_result.unwrap_err(), ExecutionError::AccountNotFound);
+
+        let receiver_balance = get_balance(runner.address, &mut runner).unwrap();
+        assert_eq!(receiver_balance, balance);
+    }
 }
