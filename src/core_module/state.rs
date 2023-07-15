@@ -9,6 +9,11 @@ use super::utils::errors::ExecutionError;
 // Colored output
 use colored::*;
 
+
+/* -------------------------------------------------------------------------- */
+/*                             AccountState struct                            */
+/* -------------------------------------------------------------------------- */
+
 pub struct AccountState {
     pub nonce: u64,
     pub balance: [u8; 32],
@@ -51,10 +56,47 @@ impl fmt::Debug for AccountState {
     }
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                 Log struct                                 */
+/* -------------------------------------------------------------------------- */
+
+pub struct Log {
+    pub address: [u8; 20],
+    pub topics: Vec<[u8; 32]>,
+    pub data: Vec<u8>,
+}
+
+impl fmt::Debug for Log {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "{}: {}", "Address".magenta(), utils::debug::to_hex_address(self.address))?;
+
+        write!(f, "{}: ", "Topics".magenta())?;
+        if !self.topics.is_empty() {
+            for (idx, topic) in self.topics.iter().enumerate() {
+                println!("\n┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐");
+                let hex: String = utils::debug::to_hex_string(topic.to_owned());
+                println!("│ {}: {} {} │", "Topic".bright_blue(), idx, hex);
+                println!("└────────────────────────────────────────────────────────────────────────────────────────────────────────┘");
+            }
+        } else {
+            writeln!(f, "{}", "No topics".red())?;
+        }
+
+        writeln!(f, "{}: {}", "Data".magenta(), utils::debug::vec_to_hex_string(self.data.clone()))?;
+
+        Ok(())
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              EVM state struct                              */
+/* -------------------------------------------------------------------------- */
+
 #[derive(Debug)]
 pub struct EvmState {
     pub accounts: HashMap<[u8; 20], AccountState>,
     pub codes: HashMap<[u8; 32], Vec<u8>>,
+    pub logs: Vec<Log>,
     pub static_mode: bool,
 }
 
@@ -63,6 +105,7 @@ impl EvmState {
         Self {
             accounts: HashMap::new(),
             codes: HashMap::new(),
+            logs: Vec::new(),
             static_mode: false
         }
     }
