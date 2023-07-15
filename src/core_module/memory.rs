@@ -76,9 +76,6 @@ impl Memory {
                 (address + 32) + (32 - (address + 32) % 32)
             };
 
-            // print the nearest multiple
-            println!("Nearest multiple: {}", nearest_multiple);
-
             // Extend memory heap
             self.extend(nearest_multiple - self.heap.len());
         }

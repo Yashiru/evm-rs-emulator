@@ -28,11 +28,6 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
     let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
 
-    // Check if the address is out of bounds
-    if offset.as_usize() + size.as_usize() > runner.memory.heap.len() {
-        return Err(ExecutionError::OutOfBoundsMemory);
-    }
-
     // Load the init code from memory
     let init_code = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
 
@@ -90,11 +85,6 @@ pub fn create2(runner: &mut Runner) -> Result<(), ExecutionError> {
     let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let salt = unsafe { runner.stack.pop()? };
-
-    // Check if the offset is out of bounds
-    if offset.as_usize() + size.as_usize() > runner.memory.heap.len() {
-        return Err(ExecutionError::OutOfBoundsMemory);
-    }
 
     // Load the init code from memory
     let init_code = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
@@ -164,11 +154,6 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
     let calldata_size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let returndata_offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let returndata_size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-
-    // Check if the address is out of bounds
-    if calldata_offset.as_usize() + calldata_size.as_usize() > runner.memory.heap.len() {
-        return Err(ExecutionError::OutOfBoundsMemory);
-    }
 
     // Load the input data from memory
     let calldata = unsafe {
@@ -266,11 +251,6 @@ pub fn delegatecall(runner: &mut Runner) -> Result<(), ExecutionError> {
     let calldata_size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let returndata_offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let returndata_size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-
-    // Check if the address is out of bounds
-    if calldata_offset.as_usize() + calldata_size.as_usize() > runner.memory.heap.len() {
-        return Err(ExecutionError::OutOfBoundsMemory);
-    }
 
     // Load the input data from memory
     let calldata = unsafe {
@@ -377,11 +357,6 @@ pub fn return_(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Get the values on the stack
     let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-
-    // Check if the address is out of bounds
-    if offset.as_usize() + size.as_usize() > runner.memory.heap.len() {
-        return Err(ExecutionError::OutOfBoundsMemory);
-    }
 
     // Load the return data from memory
     let returndata = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };

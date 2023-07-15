@@ -30,11 +30,6 @@ pub fn revert(runner: &mut Runner) -> Result<(), ExecutionError> {
     let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
     let size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
 
-    // Extend the memory heap if the offset + size is out of bounds
-    if offset.as_usize() + size.as_usize() > runner.memory.heap.len() {
-        runner.memory.extend(offset.as_usize() + size.as_usize() - runner.memory.heap.len());
-    }
-
     let revert_data = unsafe { runner.memory.read(offset.as_usize(), size.as_usize()) };
 
     // Copy revert data to the returndata

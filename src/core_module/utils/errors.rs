@@ -3,7 +3,6 @@ use std::fmt;
 #[derive(Debug)]
 pub enum ExecutionError {
     // Memory errors
-    OutOfBoundsMemory,
     OutOfBoundsByteCode,
 
     // Account errors
@@ -31,9 +30,6 @@ pub enum ExecutionError {
 impl fmt::Display for ExecutionError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            ExecutionError::OutOfBoundsMemory => {
-                write!(f, "Attempted to access out of bounds memory bytes")
-            }
             ExecutionError::OutOfBoundsByteCode => {
                 write!(f, "Attempted to access out of bounds bytecode bytes")
             }
@@ -73,8 +69,7 @@ impl PartialEq for ExecutionError {
     fn eq(&self, other: &Self) -> bool {
         use ExecutionError::*;
         match (self, other) {
-            (OutOfBoundsMemory, OutOfBoundsMemory)
-            | (OutOfBoundsByteCode, OutOfBoundsByteCode)
+            (OutOfBoundsByteCode, OutOfBoundsByteCode)
             | (AccountNotFound, AccountNotFound)
             | (CodeNotFound, CodeNotFound)
             | (EmptyByteCode, EmptyByteCode)
