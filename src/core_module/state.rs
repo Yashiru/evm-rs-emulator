@@ -28,15 +28,15 @@ impl fmt::Debug for AccountState {
             code_hash = format!("{}", "Empty code".red()).to_string()
         }
 
-        writeln!(f, "{}: {}", "Nonce".magenta(), self.nonce)?;
+        writeln!(f, "  {}: {}", "Nonce".magenta(), self.nonce)?;
         writeln!(
             f,
-            "{}: {}",
+            "  {}: {}",
             "Balance".magenta(),
             U256::from(self.balance).to_string()
         )?;
-        writeln!(f, "{}: {}", "Code Hash".magenta(), code_hash)?;
-        write!(f, "{}: ", "Storage".magenta())?;
+        writeln!(f, "  {}: {}", "Code Hash".magenta(), code_hash)?;
+        write!(f, "  {}: ", "Storage".magenta())?;
         for (slot, value) in &self.storage {
             println!("\n┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐");
             // Print the slot
@@ -50,7 +50,7 @@ impl fmt::Debug for AccountState {
             println!("└────────────────────────────────────────────────────────────────────────────────────────────────────────┘");
         }
         if self.storage.is_empty() {
-            write!(f, "{}", "Empty storage".red())?;
+            write!(f, "  {}", "Empty storage".red())?;
         }
         Ok(())
     }
@@ -246,37 +246,31 @@ impl EvmState {
             "╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝";
 
         // Print out the storage
-        println!("\n{}", border_line.clone().truecolor(0, 150, 255));
+        println!("\n{}", border_line.clone().red());
         println!(
             "{} {:<101} {}",
-            "║".truecolor(0, 150, 255),
-            "Final storage".bright_yellow(),
-            "║".truecolor(0, 150, 255)
+            "║".red(),
+            "Final storage".yellow(),
+            "║".red()
         );
-        println!("{}", footer_line.clone().truecolor(0, 150, 255));
+        println!("{}", footer_line.clone().red());
 
         for (address, account_state) in &self.accounts {
-            let border_line =
-                "\n┌──────────────────────────────────────────────────────────────────────────┐";
-            let footer_line =
-                "└──────────────────────────────────────────────────────────────────────────┘\n";
             let hex: String = utils::debug::to_hex_address(address.to_owned());
-            println!("\n{}", border_line.clone().truecolor(0, 255, 150));
             println!(
-                "{} {:<94} {}",
-                "│".truecolor(0, 255, 150),
-                hex,
-                "│".truecolor(0, 255, 150)
+                "{}",
+                hex.blue()
             );
-            println!("{}", footer_line.clone().truecolor(0, 255, 150));
             println!("{:?}", account_state);
             // Print the code of the contract
             let code_hash = account_state.code_hash;
             if code_hash != [0u8; 32] {
                 let code = self.get_code_at(address.to_owned()).unwrap();
                 let code_hex: String = utils::debug::vec_to_hex_string(code.to_owned());
-                println!("{}: {}", "Code".magenta(), code_hex);
+                println!("  {}: {}", "Code".magenta(), code_hex);
             }
+
+            println!("\n");
         }
 
         if self.accounts.is_empty() {

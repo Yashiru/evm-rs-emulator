@@ -1,5 +1,6 @@
 use crate::core_module::runner::Runner;
 use crate::core_module::utils;
+use crate::core_module::utils::bytes::pad_left;
 use crate::core_module::utils::errors::ExecutionError;
 
 // Primitive types
@@ -13,13 +14,12 @@ pub fn stop(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Set the program counter to the end of the bytecode
     runner.set_pc(runner.bytecode.len());
 
-
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
-        println!(
+        runner.print_debug(&format!(
             "{:<14} {}",
             "STOP".bright_blue(),
             "🛑 STOP 🛑".red()
-        );
+        ));
     }
 
     Ok(())
@@ -39,20 +39,17 @@ pub fn revert(runner: &mut Runner) -> Result<(), ExecutionError> {
     let hex;
 
     if revert_data.is_ok() && revert_data.as_ref().unwrap().len() > 0 {
-        hex = utils::debug::vec_to_hex_string(revert_data.as_ref().unwrap().as_slice().try_into().unwrap());
+        hex = utils::debug::vec_to_hex_string(
+            revert_data.as_ref().unwrap().as_slice().try_into().unwrap(),
+        );
         err = ExecutionError::Revert(revert_data.unwrap());
-    }
-    else {
+    } else {
         hex = utils::debug::to_hex_string([0u8; 32]);
         err = ExecutionError::RevertWithoutData;
     }
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
-        println!(
-            "\n{:<14} 💥 [ {} ]",
-            "REVERT".red(),
-            hex
-        );
+        runner.print_debug(&format!("\n{:<14} 💥 [ {} ]", "REVERT".red(), hex));
     }
 
     Err(err)
@@ -71,12 +68,7 @@ pub fn jump(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex = utils::debug::to_hex_string(bytes);
-
-        println!(
-            "{:<14} 〰️ [ {} ]",
-            "JUMP".bright_green(),
-            hex
-        );
+        runner.print_debug(&format!("{:<14} 〰️ [ {} ]", "JUMP".bright_green(), hex));
     }
 
     // Set the program counter to the jump address
@@ -101,8 +93,7 @@ pub fn jumpi(runner: &mut Runner) -> Result<(), ExecutionError> {
     if !condition.is_zero() {
         // Set the program counter to the jump address
         runner.set_pc(jump_address.as_usize());
-    }
-    else{
+    } else {
         // Increment the program counter
         let _ = runner.increment_pc(1);
     }
@@ -110,11 +101,15 @@ pub fn jumpi(runner: &mut Runner) -> Result<(), ExecutionError> {
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex = utils::debug::to_hex_string(bytes);
 
-        println!(
+        runner.print_debug(&format!(
             "{:<14} 〰️ [ {} ]",
-            if condition.is_zero() { "JUMPI".green() } else { "JUMPI".bright_red() },
+            if condition.is_zero() {
+                "JUMPI".green()
+            } else {
+                "JUMPI".bright_red()
+            },
             hex
-        );
+        ));
     }
 
     Ok(())
@@ -123,11 +118,16 @@ pub fn jumpi(runner: &mut Runner) -> Result<(), ExecutionError> {
 // pc
 pub fn pc(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pc = runner.get_pc().to_be_bytes();
-    let bytes = [[0u8; 24].to_vec(), pc.to_vec()].concat().as_slice().try_into().unwrap();
+    let pc = pad_left(&pc.to_vec());
 
     // Push the program counter to the stack
-    unsafe { runner.stack.push(bytes)? };
+    unsafe { runner.stack.push(pc)? };
 
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
+        let hex = utils::debug::to_hex_string(pc);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "PC".bright_blue(), hex));
+    }
+    
     // Increment the program counter
     runner.increment_pc(1)
 }
@@ -135,11 +135,15 @@ pub fn pc(runner: &mut Runner) -> Result<(), ExecutionError> {
 // gas
 pub fn gas(runner: &mut Runner) -> Result<(), ExecutionError> {
     let gas = runner.gas.to_be_bytes();
-    let bytes = [[0u8; 24].to_vec(), gas.to_vec()].concat().as_slice().try_into().unwrap();
+    let gas = pad_left(&gas.to_vec());
 
     // Push the gas to the stack
-    unsafe { runner.stack.push(bytes)? };
+    unsafe { runner.stack.push(gas)? };
 
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
+        let hex = utils::debug::to_hex_string(gas);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "GAS".bright_blue(), hex));
+    }
     // Increment the program counter
     runner.increment_pc(1)
 }
@@ -155,11 +159,14 @@ mod tests {
     use super::*;
     use crate::core_module::utils::bytes::{_hex_string_to_bytes, pad_left};
 
-
     #[test]
     fn test_stop() {
         let mut runner = Runner::_default(3);
-        let interpret_result = runner.interpret(_hex_string_to_bytes("600160026003600400600560066007"), Some(2), true);
+        let interpret_result = runner.interpret(
+            _hex_string_to_bytes("600160026003600400600560066007"),
+            Some(2),
+            true,
+        );
         assert!(interpret_result.is_ok());
 
         let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
@@ -179,7 +186,8 @@ mod tests {
     #[test]
     fn test_jump() {
         let mut runner = Runner::_default(3);
-        let interpret_result = runner.interpret(_hex_string_to_bytes("600456fe5b6001"), Some(2), true);
+        let interpret_result =
+            runner.interpret(_hex_string_to_bytes("600456fe5b6001"), Some(2), true);
         assert!(interpret_result.is_ok());
 
         let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
@@ -190,7 +198,11 @@ mod tests {
     #[test]
     fn test_jumpi() {
         let mut runner = Runner::_default(3);
-        let interpret_result = runner.interpret(_hex_string_to_bytes("6000600a576001600c575bfe5b6001"), Some(2), true);
+        let interpret_result = runner.interpret(
+            _hex_string_to_bytes("6000600a576001600c575bfe5b6001"),
+            Some(2),
+            true,
+        );
         assert!(interpret_result.is_ok());
 
         let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
@@ -208,11 +220,14 @@ mod tests {
         assert_eq!(result, pad_left(&[0x00]));
         assert_eq!(runner.pc, 1);
 
-
         let mut runner = Runner::_default(3);
-        let interpret_result = runner.interpret(_hex_string_to_bytes("60ff60ff60ff60ff60ff58"), Some(2), true);
+        let interpret_result = runner.interpret(
+            _hex_string_to_bytes("60ff60ff60ff60ff60ff58"),
+            Some(2),
+            true,
+        );
         assert!(interpret_result.is_ok());
-        
+
         let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
         assert_eq!(result, pad_left(&[0x0a]));
         assert_eq!(runner.pc, 11);

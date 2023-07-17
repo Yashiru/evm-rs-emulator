@@ -1,6 +1,6 @@
+use crate::core_module::runner::Runner;
 use crate::core_module::utils;
 use crate::core_module::utils::errors::ExecutionError;
-use crate::core_module::runner::Runner;
 
 // Primitive types
 use ethers::types::U256;
@@ -38,18 +38,13 @@ pub fn add(runner: &mut Runner) -> Result<(), ExecutionError> {
 
         if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
-            println!(
-                "{:<14} 👉 [ {} ]",
-                "ADD".bright_blue(),
-                hex
-            );
+            runner.print_debug(&format!("{:<14} 👉 [ {} ]", "ADD".bright_blue(), hex));
         }
     }
 
     // Increment PC
     runner.increment_pc(1)
 }
-
 
 /// Multiplies the top two elements of the stack and pushes the result onto the stack.
 ///
@@ -81,11 +76,7 @@ pub fn mul(runner: &mut Runner) -> Result<(), ExecutionError> {
 
         if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
-            println!(
-                "{:<14} 👉 [ {} ]",
-                "MUL".bright_blue(),
-                hex
-            );
+            runner.print_debug(&format!("{:<14} 👉 [ {} ]", "MUL".bright_blue(), hex));
         }
     }
 
@@ -123,11 +114,7 @@ pub fn sub(runner: &mut Runner) -> Result<(), ExecutionError> {
 
         if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
-            println!(
-                "{:<14} 👉 [ {} ]",
-                "SUB".bright_blue(),
-                hex
-            );
+            runner.print_debug(&format!("{:<14} 👉 [ {} ]", "SUB".bright_blue(), hex));
         }
     }
 
@@ -167,18 +154,13 @@ pub fn modulo(runner: &mut Runner) -> Result<(), ExecutionError> {
 
         if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
-            println!(
-                "{:<14} 👉 [ {} ]",
-                "MOD".bright_blue(),
-                hex
-            );
+            runner.print_debug(&format!("{:<14} 👉 [ {} ]", "MOD".bright_blue(), hex));
         }
     }
 
     // Increment PC
     runner.increment_pc(1)
 }
-
 
 /// Divides the top two elements of the stack and pushes the result onto the stack.
 ///
@@ -212,11 +194,7 @@ pub fn div(runner: &mut Runner) -> Result<(), ExecutionError> {
 
         if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
-            println!(
-                "{:<14} 👉 [ {} ]",
-                "DIV".bright_blue(),
-                hex
-            );
+            runner.print_debug(&format!("{:<14} 👉 [ {} ]", "DIV".bright_blue(), hex));
         }
     }
 
@@ -259,11 +237,7 @@ pub fn addmod(runner: &mut Runner) -> Result<(), ExecutionError> {
 
         if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
-            println!(
-                "{:<14} 👉 [ {} ]",
-                "ADDMOD".bright_blue(),
-                hex
-            );
+            runner.print_debug(&format!("{:<14} 👉 [ {} ]", "ADDMOD".bright_blue(), hex));
         }
     }
 
@@ -306,11 +280,7 @@ pub fn mulmod(runner: &mut Runner) -> Result<(), ExecutionError> {
 
         if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
-            println!(
-                "{:<14} 👉 [ {} ]",
-                "MULMOD".bright_blue(),
-                hex
-            );
+            runner.print_debug(&format!("{:<14} 👉 [ {} ]", "MULMOD".bright_blue(), hex));
         }
     }
 
@@ -348,11 +318,7 @@ pub fn exp(runner: &mut Runner) -> Result<(), ExecutionError> {
 
         if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
-            println!(
-                "{:<14} 👉 [ {} ]",
-                "EXP".bright_blue(),
-                hex
-            );
+            runner.print_debug(&format!("{:<14} 👉 [ {} ]", "EXP".bright_blue(), hex));
         }
     }
 

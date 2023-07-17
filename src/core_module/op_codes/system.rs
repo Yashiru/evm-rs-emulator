@@ -3,7 +3,7 @@ use crate::core_module::utils;
 use crate::core_module::utils::bytes;
 use crate::core_module::utils::bytes::{bytes32_to_address, pad_left};
 use crate::core_module::utils::environment::{
-    delete_account, get_balance, get_nonce, init_account,
+    delete_account, get_balance, get_nonce, init_account, increment_nonce,
 };
 use crate::core_module::utils::errors::ExecutionError;
 
@@ -16,7 +16,7 @@ use colored::*;
 
 pub fn invalid(runner: &mut Runner) -> Result<(), ExecutionError> {
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
-        println!("{:} 0x{:X}", "INVALID".red(), runner.bytecode[runner.pc]);
+        runner.print_debug(&format!("{:} 0x{:X}", "INVALID".red(), runner.bytecode[runner.pc]));
     }
 
     Err(ExecutionError::InvalidOpcode(runner.bytecode[runner.pc]))
@@ -35,7 +35,7 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
     let mut input = vec![0xd6, 0x94];
     input.extend_from_slice(&runner.caller);
     input.extend_from_slice(&bytes::strip_zero_padding(&get_nonce(
-        runner.caller,
+        runner.address,
         runner,
     )?));
 
@@ -72,7 +72,7 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(pad_left(&contract_address));
-        println!("{:<14} 👉 [ {} ]", "CREATE".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "CREATE".bright_blue(), hex));
     }
 
     // Increment PC
@@ -128,7 +128,7 @@ pub fn create2(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(pad_left(&contract_address));
-        println!("{:<14} 👉 [ {} ]", "CREATE2".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "CREATE2".bright_blue(), hex));
     }
 
     // Increment PC
@@ -165,7 +165,7 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let address_hex: String = utils::debug::to_hex_address(bytes32_to_address(&to));
         let calldata_hex: String = utils::debug::vec_to_hex_string(calldata.clone());
-        println!(
+        runner.print_debug(&format!(
             "\n{} 👉 {}\n  {}: {}\n",
             if bypass_static {
                 "STATICCALL".yellow()
@@ -175,7 +175,7 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
             address_hex,
             "Calldata".bright_blue(),
             calldata_hex
-        );
+        ));
     }
 
     // Call the contract
@@ -196,10 +196,9 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
     let return_data = runner.returndata.heap.clone();
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
-        let address_hex: String = utils::debug::to_hex_address(runner.address);
         let returndata_hex: String = utils::debug::vec_to_hex_string(return_data.clone());
-        println!(
-            "\n{} {} {}\n  {}: {}\n",
+        runner.print_debug(&format!(
+            "\n{} {} {:?}\n  {}: {}\n",
             if call_result.is_err() {
                 if bypass_static {
                     "STATICCALL FAILED".red()
@@ -214,10 +213,10 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
                 }
             },
             if call_result.is_err() { "❌" } else { "✅" },
-            address_hex,
+            call_result.unwrap(),
             "Returndata".bright_blue(),
             returndata_hex
-        );
+        ));
     }
 
     let mut return_data: Vec<u8> = runner.returndata.heap.clone();
@@ -262,13 +261,13 @@ pub fn delegatecall(runner: &mut Runner) -> Result<(), ExecutionError> {
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let address_hex: String = utils::debug::to_hex_address(bytes32_to_address(&to));
         let calldata_hex: String = utils::debug::vec_to_hex_string(calldata.clone());
-        println!(
+        runner.print_debug(&format!(
             "\n{} 👉 {}\n  {}: {}\n",
             "DELEGATE".yellow(),
             address_hex,
             "Calldata".bright_blue(),
             calldata_hex
-        );
+        ));
     }
 
     // Call the contract
@@ -291,7 +290,7 @@ pub fn delegatecall(runner: &mut Runner) -> Result<(), ExecutionError> {
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let address_hex: String = utils::debug::to_hex_address(runner.address);
         let returndata_hex: String = utils::debug::vec_to_hex_string(return_data.clone());
-        println!(
+        runner.print_debug(&format!(
             "\n{} {} {}\n  {}: {}\n",
             if call_result.is_err() {
                 "DELEGATECALL FAILED".red()
@@ -302,7 +301,7 @@ pub fn delegatecall(runner: &mut Runner) -> Result<(), ExecutionError> {
             address_hex,
             "Returndata".bright_blue(),
             returndata_hex
-        );
+        ));
     }
 
     let mut return_data: Vec<u8> = runner.returndata.heap.clone();
@@ -349,6 +348,13 @@ pub fn selfdestruct(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Delete the account
     delete_account(runner.address, runner)?;
 
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
+        runner.print_debug(&format!(
+            "{}",
+            "SELFDESTRUCT".bright_blue()
+        ));
+    }
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -363,6 +369,13 @@ pub fn return_(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     // Set the return data
     runner.returndata.heap = returndata;
+
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
+        runner.print_debug(&format!(
+            "{}",
+            "RETURN".red()
+        ));
+    }
 
     // Increment PC
     runner.increment_pc(1)

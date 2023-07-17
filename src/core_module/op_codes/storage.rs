@@ -21,11 +21,11 @@ pub fn sload(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(word);
-        println!(
+        runner.print_debug(&format!(
             "{:<14} 👉 [ {} ]",
             "SLOAD".bright_blue(),
             hex
-        );
+        ));
     }
 
     // Increment PC
@@ -45,11 +45,11 @@ pub fn sstore(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(word);
-        println!(
+        runner.print_debug(&format!(
             "{:<14} ⛔️ [ {} ]",
             "SSTORE".bright_blue(),
             hex
-        );
+        ));
     }
 
     // Increment PC

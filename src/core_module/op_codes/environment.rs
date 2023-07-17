@@ -27,7 +27,7 @@ pub fn address(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(address);
-        println!("{:<14} 👉 [ {} ]", "ADDRESS".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "ADDRESS".bright_blue(), hex));
     }
 
     // Increment PC
@@ -48,7 +48,7 @@ pub fn balance(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(balance);
-        println!("{:<14} 👉 [ {} ]", "BALANCE".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "BALANCE".bright_blue(), hex));
     }
 
     // Increment PC
@@ -70,7 +70,7 @@ pub fn origin(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(origin);
-        println!("{:<14} 👉 [ {} ]", "ORIGIN".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "ORIGIN".bright_blue(), hex));
     }
 
     // Increment PC
@@ -92,7 +92,7 @@ pub fn caller(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(caller);
-        println!("{:<14} 👉 [ {} ]", "CALLER".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "CALLER".bright_blue(), hex));
     }
 
     // Increment PC
@@ -104,7 +104,7 @@ pub fn callvalue(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(runner.callvalue);
-        println!("{:<14} 👉 [ {} ]", "CALLVALUE".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "CALLVALUE".bright_blue(), hex));
     }
 
     if result.is_err() {
@@ -130,7 +130,7 @@ pub fn calldataload(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(calldata);
-        println!("{:<14} 👉 [ {} ]", "CALLDATALOAD".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "CALLDATALOAD".bright_blue(), hex));
     }
 
     // Increment PC
@@ -151,7 +151,7 @@ pub fn calldatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(calldatasize);
-        println!("{:<14} 👉 [ {} ]", "CALLDATASIZE".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "CALLDATASIZE".bright_blue(), hex));
     }
 
     // Increment PC
@@ -172,7 +172,7 @@ pub fn calldatacopy(runner: &mut Runner) -> Result<(), ExecutionError> {
     }
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
-        println!("{}", "CALLDATACOPY".bright_blue());
+        runner.print_debug(&format!("{}", "CALLDATACOPY".bright_blue()));
     }
 
     // Increment PC
@@ -196,7 +196,7 @@ pub fn codesize(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(codesize);
-        println!("{:<14} 👉 [ {} ]", "CODESIZE".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "CODESIZE".bright_blue(), hex));
     }
 
     // Increment PC
@@ -226,11 +226,8 @@ pub fn codecopy(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Copy the code to memory
     unsafe { runner.memory.write(dest_offset, code) }?;
 
-    // print the memory heap
-    println!("{:?}", runner.memory.heap);
-
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
-        println!("{}", "CODECOPY".bright_blue());
+        runner.print_debug(&format!("{}", "CODECOPY".bright_blue()));
     }
 
     // Increment PC
@@ -252,7 +249,7 @@ pub fn gasprice(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(gasprice);
-        println!("{:<14} 👉 [ {} ]", "GASPRICE".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "GASPRICE".bright_blue(), hex));
     }
 
     // Increment PC
@@ -278,7 +275,7 @@ pub fn extcodesize(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(codesize);
-        println!("{:<14} 👉 [ {} ]", "EXTCODESIZE".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "EXTCODESIZE".bright_blue(), hex));
     }
 
     // Increment PC
@@ -310,7 +307,7 @@ pub fn extcodecopy(runner: &mut Runner) -> Result<(), ExecutionError> {
     unsafe { runner.memory.write(dest_offset, code) }?;
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
-        println!("{}", "EXTCODECOPY".bright_blue());
+        runner.print_debug(&format!("{}", "EXTCODECOPY".bright_blue()));
     }
 
     // Increment PC
@@ -331,7 +328,7 @@ pub fn returndatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(returndatasize);
-        println!("{:<14} 👉 [ {} ]", "RETURNDATASIZE".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "RETURNDATASIZE".bright_blue(), hex));
     }
 
     // Increment PC
@@ -352,7 +349,7 @@ pub fn returndatacopy(runner: &mut Runner) -> Result<(), ExecutionError> {
     }
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
-        println!("{}", "RETURNDATACOPY".bright_blue());
+        runner.print_debug(&format!("{}", "RETURNDATACOPY".bright_blue()));
     }
 
     // Increment PC
@@ -374,7 +371,7 @@ pub fn extcodehash(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(codehash);
-        println!("{:<14} 👉 [ {} ]", "EXTCODEHASH".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "EXTCODEHASH".bright_blue(), hex));
     }
 
     // Increment PC
@@ -396,7 +393,7 @@ pub fn blockhash(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(blockhash);
-        println!("{:<14} 👉 [ {} ]", "BLOCKHASH".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "BLOCKHASH".bright_blue(), hex));
     }
 
     // Increment PC
@@ -414,7 +411,7 @@ pub fn coinbase(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(coinbase);
-        println!("{:<14} 👉 [ {} ]", "COINBASE".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "COINBASE".bright_blue(), hex));
     }
 
     // Increment PC
@@ -445,7 +442,7 @@ pub fn timestamp(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(bytes);
-        println!("{:<14} 👉 [ {} ]", "TIMESTAMP".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "TIMESTAMP".bright_blue(), hex));
     }
 
     // Increment PC
@@ -464,7 +461,7 @@ pub fn number(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(number);
-        println!("{:<14} 👉 [ {} ]", "NUMBER".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "NUMBER".bright_blue(), hex));
     }
 
     // Increment PC
@@ -483,7 +480,7 @@ pub fn difficulty(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(difficulty);
-        println!("{:<14} 👉 [ {} ]", "DIFFICULTY".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "DIFFICULTY".bright_blue(), hex));
     }
 
     // Increment PC
@@ -502,7 +499,7 @@ pub fn gaslimit(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(gaslimit);
-        println!("{:<14} 👉 [ {} ]", "GASLIMIT".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "GASLIMIT".bright_blue(), hex));
     }
 
     // Increment PC
@@ -521,7 +518,7 @@ pub fn chainid(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(chainid);
-        println!("{:<14} 👉 [ {} ]", "CHAINID".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "CHAINID".bright_blue(), hex));
     }
 
     // Increment PC
@@ -539,7 +536,7 @@ pub fn selfbalance(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(balance);
-        println!("{:<14} 👉 [ {} ]", "SELFBALANCE".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "SELFBALANCE".bright_blue(), hex));
     }
 
     // Increment PC
@@ -557,7 +554,7 @@ pub fn basefee(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(basefee);
-        println!("{:<14} 👉 [ {} ]", "BASEFEE".bright_blue(), hex);
+        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "BASEFEE".bright_blue(), hex));
     }
 
     // Increment PC
