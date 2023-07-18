@@ -213,7 +213,7 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
                 }
             },
             if call_result.is_err() { "❌" } else { "✅" },
-            if call_result.is_err() { call_result.unwrap_err().to_string() } else { "".to_string() },
+            if call_result.is_err() { call_result.unwrap_err().to_string() } else { " ".to_string() },
             "Returndata".bright_blue(),
             returndata_hex
         ));

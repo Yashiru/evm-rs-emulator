@@ -555,14 +555,14 @@ impl Runner {
         let footer_line =
             "╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝\n";
 
-        println!("\n\n{}", border_line.clone().truecolor(100, 255, 100));
+        println!("\n\n{}", border_line.clone().green());
         println!(
             "{} {:<101} {}",
-            "║".truecolor(100, 255, 100),
-            "Final stack".bright_yellow(),
-            "║".truecolor(100, 255, 100)
+            "║".green(),
+            "Final stack".yellow(),
+            "║".green()
         );
-        println!("{}", footer_line.clone().truecolor(100, 255, 100));
+        println!("{}", footer_line.clone().green());
 
         let mut reversed_stack = self.stack.stack.clone();
         reversed_stack.reverse();
@@ -580,14 +580,14 @@ impl Runner {
         let footer_line =
             "╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝\n";
 
-        println!("\n{}", border_line.clone().truecolor(100, 100, 255));
+        println!("\n{}", border_line.clone().blue());
         println!(
             "{} {:<101} {}",
-            "║".truecolor(100, 100, 255),
-            "Final memory heap".bright_yellow(),
-            "║".truecolor(100, 100, 255)
+            "║".blue(),
+            "Final memory heap".yellow(),
+            "║".blue()
         );
-        println!("{}", footer_line.clone().truecolor(100, 100, 255));
+        println!("{}", footer_line.clone().blue());
 
         // Print the memory heap 32 bytes by 32 bytes with a space between each bytes
         for chunk in self.memory.heap.chunks(32) {
