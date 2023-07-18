@@ -1,5 +1,6 @@
 use std::{collections::HashMap, fmt};
 
+use ethers::prelude::*;
 use ethers::{types::U256, utils::keccak256};
 
 use crate::core_module::utils;
@@ -8,7 +9,6 @@ use super::utils::errors::ExecutionError;
 
 // Colored output
 use colored::*;
-
 
 /* -------------------------------------------------------------------------- */
 /*                             AccountState struct                            */
@@ -68,7 +68,12 @@ pub struct Log {
 
 impl fmt::Debug for Log {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        writeln!(f, "{}: {}", "Address".magenta(), utils::debug::to_hex_address(self.address))?;
+        writeln!(
+            f,
+            "{}: {}",
+            "Address".magenta(),
+            utils::debug::to_hex_address(self.address)
+        )?;
 
         write!(f, "{}: ", "Topics".magenta())?;
         if !self.topics.is_empty() {
@@ -82,7 +87,12 @@ impl fmt::Debug for Log {
             writeln!(f, "{}", "No topics".red())?;
         }
 
-        writeln!(f, "{}: {}", "Data".magenta(), utils::debug::vec_to_hex_string(self.data.clone()))?;
+        writeln!(
+            f,
+            "{}: {}",
+            "Data".magenta(),
+            utils::debug::vec_to_hex_string(self.data.clone())
+        )?;
 
         Ok(())
     }
@@ -98,15 +108,21 @@ pub struct EvmState {
     pub codes: HashMap<[u8; 32], Vec<u8>>,
     pub logs: Vec<Log>,
     pub static_mode: bool,
+    pub provider: Option<Provider<Http>>,
 }
 
 impl EvmState {
-    pub fn new() -> Self {
+    pub fn new(fork_url: Option<String>) -> Self {
         Self {
             accounts: HashMap::new(),
             codes: HashMap::new(),
             logs: Vec::new(),
-            static_mode: false
+            static_mode: false,
+            provider: if fork_url.is_some() {
+                Some(Provider::<Http>::try_from(fork_url.unwrap()).unwrap())
+            } else {
+                None
+            },
         }
     }
 
@@ -164,14 +180,43 @@ impl EvmState {
         Ok(())
     }
 
-    // Load a 32 bytes word from storage of a specific account
-    pub fn sload(&self, account: [u8; 20], slot: [u8; 32]) -> Result<[u8; 32], ExecutionError> {
+    pub fn sload(&mut self, account: [u8; 20], slot: [u8; 32]) -> Result<[u8; 32], ExecutionError> {
         match self.accounts.get(&account) {
-            Some(account_state) => match account_state.storage.get(&slot) {
-                Some(value) => Ok(*value),
-                None => Ok([0u8; 32]),
-            },
-            None => Ok([0u8; 32]),
+            Some(account_state) => {
+                match account_state.storage.get(&slot) {
+                    Some(value) => Ok(*value),
+                    None => Ok([0u8; 32])
+                }
+            }
+            None => {
+                let provider = self.provider.as_ref();
+
+                if provider.is_none() {
+                    return Ok([0u8; 32]);
+                }
+
+                let contract_address = Address::from(account);
+                let future = provider.unwrap().get_storage_at(contract_address, H256::from(&slot), None);
+
+                // Block on the future and get the result
+                let storage_result = tokio::runtime::Runtime::new()
+                    .expect("Could not create a Runtime")
+                    .block_on(future);
+
+                match storage_result {
+                    Ok(storage) => {
+                        let storage_bytes = storage.to_fixed_bytes();
+
+                        // Save the fetched storage data locally
+                        if let Some(account_state) = self.accounts.get_mut(&account) {
+                            account_state.storage.insert(slot, storage_bytes);
+                        }
+
+                        Ok(storage_bytes)
+                    }
+                    Err(_) => Ok([0u8; 32]),
+                }
+            }
         }
     }
 
@@ -197,13 +242,41 @@ impl EvmState {
     }
 
     // Get the code of an account
-    pub fn get_code_at(&self, address: [u8; 20]) -> Result<&Vec<u8>, ExecutionError> {
+    pub fn get_code_at(&mut self, address: [u8; 20]) -> Result<&Vec<u8>, ExecutionError> {
         match self.accounts.get(&address) {
             Some(account_state) => {
                 let code_hash = account_state.code_hash;
                 self.get_code(code_hash)
             }
-            None => Err(ExecutionError::AccountNotFound),
+            None => {
+                let provider = self.provider.as_ref();
+
+                if provider.is_none() {
+                    return Err(ExecutionError::CodeNotFound);
+                }
+
+                // Asynchronously fetch the code from the blockchain
+                let contract_address = Address::from(address);
+
+                let future = provider.unwrap().get_code(contract_address, None);
+
+                // Block on the future and get the result
+                let code_result = tokio::runtime::Runtime::new()
+                    .expect("Could not create a Runtime")
+                    .block_on(future);
+
+                match code_result {
+                    Ok(code) => {
+                        let code_hash = keccak256(&code.0);
+                        if let Some(account) = self.accounts.get_mut(&address) {
+                            account.code_hash = code_hash;
+                        }
+                        self.codes.insert(code_hash, code.to_vec());
+                        Ok(&self.codes[&code_hash])
+                    }
+                    Err(_) => Err(ExecutionError::CodeNotFound),
+                }
+            }
         }
     }
 
@@ -239,7 +312,7 @@ impl EvmState {
         Ok(code_hash)
     }
 
-    pub fn debug_state(&self) {
+    pub fn debug_state(&mut self) {
         let border_line =
             "\n╔═══════════════════════════════════════════════════════════════════════════════════════════════════════╗";
         let footer_line =
@@ -255,21 +328,23 @@ impl EvmState {
         );
         println!("{}", footer_line.clone().red());
 
-        for (address, account_state) in &self.accounts {
+        // ... other code ...
+
+        // Create a vector of all addresses
+        let addresses: Vec<_> = self.accounts.keys().cloned().collect();
+
+        // Iterate over the vector of addresses
+        for address in addresses {
+            let account_state = &self.accounts[&address];
             let hex: String = utils::debug::to_hex_address(address.to_owned());
-            println!(
-                "{}",
-                hex.blue()
-            );
+            println!("{}", hex.blue());
             println!("{:?}", account_state);
-            // Print the code of the contract
             let code_hash = account_state.code_hash;
             if code_hash != [0u8; 32] {
                 let code = self.get_code_at(address.to_owned()).unwrap();
                 let code_hex: String = utils::debug::vec_to_hex_string(code.to_owned());
                 println!("  {}: {}", "Code".magenta(), code_hex);
             }
-
             println!("\n");
         }
 

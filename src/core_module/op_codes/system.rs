@@ -381,8 +381,10 @@ pub fn return_(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{}", "RETURN".red()));
     }
 
-    // Increment PC
-    runner.increment_pc(1)
+    // Set the program counter to the end of the bytecode
+    runner.set_pc(runner.bytecode.len());
+
+    Ok(())
 }
 
 #[cfg(test)]
