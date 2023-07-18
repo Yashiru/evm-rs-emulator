@@ -26,12 +26,12 @@ pub fn push(runner: &mut Runner, data_len: usize) -> Result<(), ExecutionError> 
 
         if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(padded);
-            println!(
+            runner.print_debug(&format!(
                 "{}{:<10} 👉 [ {} ]",
                 "PUSH".bright_blue(),
                 data_len.to_string().magenta(),
                 hex
-            );
+            ));
         }
     }
 

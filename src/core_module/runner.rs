@@ -5,7 +5,7 @@ use super::op_codes;
 use super::stack::Stack;
 use super::state::EvmState;
 use super::utils;
-use super::utils::environment::init_account;
+use super::utils::environment::{init_account, increment_nonce};
 use super::utils::errors::ExecutionError;
 
 use ethers::types::U256;
@@ -18,6 +18,7 @@ pub struct Runner {
     pub pc: usize,
     pub bytecode: Vec<u8>,
     pub debug_level: Option<u8>,
+    pub call_depth: u32,
 
     // Environment
     pub gas: u64,
@@ -85,6 +86,8 @@ impl Runner {
             bytecode: Vec::new(),
             // Set debug mode to false
             debug_level: None,
+            // Set the call depth to 0
+            call_depth: 0
         };
 
         // Initialize accounts in the EVM state
@@ -163,7 +166,7 @@ impl Runner {
         /*                             Print debug header                             */
         /* -------------------------------------------------------------------------- */
 
-        if debug.is_some() && debug.unwrap() >= 2 {
+        if debug.is_some() && debug.unwrap() >= 2 && self.call_depth == 0 {
             self.debug_header();
         }
 
@@ -196,11 +199,7 @@ impl Runner {
         /*                             Print debug footer                             */
         /* -------------------------------------------------------------------------- */
 
-        if debug.is_some() && debug.unwrap() >= 2 {
-            println!("{}\n", "END".red())
-        }
-
-        if debug.is_some() && debug.unwrap() >= 3 {
+        if debug.is_some() && debug.unwrap() >= 3 && self.call_depth == 0  {
             // Debug stack
             self.debug_stack();
 
@@ -208,7 +207,7 @@ impl Runner {
             self.debug_memory();
         }
 
-        if debug.is_some() && debug.unwrap() >= 4 {
+        if debug.is_some() && debug.unwrap() >= 4 && self.call_depth == 0  {
             // Debug storage
             self.debug_storage();
         }
@@ -438,6 +437,7 @@ impl Runner {
             self.callvalue = value;
             self.address = to;
         }
+        self.call_depth += 1;
         self.calldata = Memory::new(Some(calldata));
         self.returndata = Memory::new(None);
         self.memory = Memory::new(None);
@@ -479,9 +479,13 @@ impl Runner {
         self.pc = initial_pc;
         self.debug_level = initial_debug_level;
         self.bytecode = initial_bytecode;
+        self.call_depth -= 1;
 
         // Write the return data to the initial state
         self.returndata.heap = return_data;
+
+        // Increment the nonce of the caller
+        increment_nonce(self.address, self)?;
 
         if error.is_some() {
             return Err(error.unwrap());
@@ -494,6 +498,11 @@ impl Runner {
     /* -------------------------------------------------------------------------- */
     /*                               Debug functions                              */
     /* -------------------------------------------------------------------------- */
+
+    pub fn print_debug(&self, s: &str) {
+        let prefix = "    ".repeat(self.call_depth as usize);
+        println!("{}{}", prefix, s);
+    }
 
     fn debug_header(&self) {
         let border_line =
@@ -546,14 +555,14 @@ impl Runner {
         let footer_line =
             "╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝\n";
 
-        println!("\n\n{}", border_line.clone().truecolor(0, 255, 255));
+        println!("\n\n{}", border_line.clone().green());
         println!(
             "{} {:<101} {}",
-            "║".truecolor(0, 255, 255),
-            "Final stack".bright_yellow(),
-            "║".truecolor(0, 255, 255)
+            "║".green(),
+            "Final stack".yellow(),
+            "║".green()
         );
-        println!("{}", footer_line.clone().truecolor(0, 255, 255));
+        println!("{}", footer_line.clone().green());
 
         let mut reversed_stack = self.stack.stack.clone();
         reversed_stack.reverse();
@@ -571,14 +580,14 @@ impl Runner {
         let footer_line =
             "╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝\n";
 
-        println!("\n{}", border_line.clone().truecolor(0, 255, 150));
+        println!("\n{}", border_line.clone().blue());
         println!(
             "{} {:<101} {}",
-            "║".truecolor(0, 255, 150),
-            "Final memory heap".bright_yellow(),
-            "║".truecolor(0, 255, 150)
+            "║".blue(),
+            "Final memory heap".yellow(),
+            "║".blue()
         );
-        println!("{}", footer_line.clone().truecolor(0, 255, 150));
+        println!("{}", footer_line.clone().blue());
 
         // Print the memory heap 32 bytes by 32 bytes with a space between each bytes
         for chunk in self.memory.heap.chunks(32) {

@@ -17,7 +17,7 @@ pub fn to_hex_address(bytes: [u8; 20]) -> String {
         s => s.to_string(),
     })
     .collect::<Vec<String>>()
-    .join("")).truecolor(80, 180, 255).to_string()
+    .join(""))
 }
 
 pub fn vec_to_hex_string(bytes: Vec<u8>) -> String {

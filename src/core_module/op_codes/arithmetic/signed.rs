@@ -1,7 +1,6 @@
-
-use crate::core_module::utils::errors::ExecutionError;
 use crate::core_module::runner::Runner;
 use crate::core_module::utils;
+use crate::core_module::utils::errors::ExecutionError;
 
 // Primitive types
 use ethers::types::I256;
@@ -50,11 +49,7 @@ pub fn sdiv(runner: &mut Runner) -> Result<(), ExecutionError> {
 
         if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
-            println!(
-                "{:<14} 👉 [ {} ]",
-                "SDIV".bright_blue(),
-                hex
-            );
+            runner.print_debug(&format!("{:<14} 👉 [ {} ]", "SDIV".bright_blue(), hex));
         }
     }
 
@@ -96,18 +91,13 @@ pub fn smodulo(runner: &mut Runner) -> Result<(), ExecutionError> {
 
         let result = runner.stack.push(result_bytes);
 
-
         if result.is_err() {
             return Err(result.unwrap_err());
         }
 
         if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
             let hex: String = utils::debug::to_hex_string(result_bytes);
-            println!(
-                "{:<14} 👉 [ {} ]",
-                "SMOD".bright_blue(),
-                hex
-            );
+            runner.print_debug(&format!("{:<14} 👉 [ {} ]", "SMOD".bright_blue(), hex));
         }
     }
 
