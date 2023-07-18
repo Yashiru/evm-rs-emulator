@@ -14,8 +14,8 @@ pub fn log0(runner: &mut Runner) -> Result<(), ExecutionError> {
     if runner.state.static_mode {
         return Err(ExecutionError::StaticCallStateChanged);
     }
-    let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let offset = U256::from_big_endian(&runner.stack.pop()?);
+    let size = U256::from_big_endian(&runner.stack.pop()?);
 
     let log_data = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
     
@@ -61,10 +61,10 @@ pub fn log1(runner: &mut Runner) -> Result<(), ExecutionError> {
     if runner.state.static_mode {
         return Err(ExecutionError::StaticCallStateChanged);
     }
-    let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let size: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let offset = U256::from_big_endian(&runner.stack.pop()?);
+    let size: U256 = U256::from_big_endian(&runner.stack.pop()?);
 
-    let raw_topic1: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let raw_topic1: U256 = U256::from_big_endian(&runner.stack.pop()?);
     let mut topic1 = [0u8; 32];
     raw_topic1.to_big_endian(&mut topic1);
 
@@ -122,14 +122,14 @@ pub fn log2(runner: &mut Runner) -> Result<(), ExecutionError> {
     if runner.state.static_mode {
         return Err(ExecutionError::StaticCallStateChanged);
     }
-    let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let size: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let offset = U256::from_big_endian(&runner.stack.pop()?);
+    let size: U256 = U256::from_big_endian(&runner.stack.pop()?);
 
-    let raw_topic1: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let raw_topic1: U256 = U256::from_big_endian(&runner.stack.pop()?);
     let mut topic1 = [0u8; 32];
     raw_topic1.to_big_endian(&mut topic1);
 
-    let raw_topic2: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let raw_topic2: U256 = U256::from_big_endian(&runner.stack.pop()?);
     let mut topic2 = [0u8; 32];
     raw_topic2.to_big_endian(&mut topic2);
 
@@ -195,18 +195,18 @@ pub fn log3(runner: &mut Runner) -> Result<(), ExecutionError> {
     if runner.state.static_mode {
         return Err(ExecutionError::StaticCallStateChanged);
     }
-    let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let size: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let offset = U256::from_big_endian(&runner.stack.pop()?);
+    let size: U256 = U256::from_big_endian(&runner.stack.pop()?);
 
-    let raw_topic1: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let raw_topic1: U256 = U256::from_big_endian(&runner.stack.pop()?);
     let mut topic1 = [0u8; 32];
     raw_topic1.to_big_endian(&mut topic1);
 
-    let raw_topic2: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let raw_topic2: U256 = U256::from_big_endian(&runner.stack.pop()?);
     let mut topic2 = [0u8; 32];
     raw_topic2.to_big_endian(&mut topic2);
 
-    let raw_topic3: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let raw_topic3: U256 = U256::from_big_endian(&runner.stack.pop()?);
     let mut topic3 = [0u8; 32];
     raw_topic3.to_big_endian(&mut topic3);
 
@@ -281,22 +281,22 @@ pub fn log4(runner: &mut Runner) -> Result<(), ExecutionError> {
     if runner.state.static_mode {
         return Err(ExecutionError::StaticCallStateChanged);
     }
-    let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let size: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let offset = U256::from_big_endian(&runner.stack.pop()?);
+    let size: U256 = U256::from_big_endian(&runner.stack.pop()?);
 
-    let raw_topic1: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let raw_topic1: U256 = U256::from_big_endian(&runner.stack.pop()?);
     let mut topic1 = [0u8; 32];
     raw_topic1.to_big_endian(&mut topic1);
 
-    let raw_topic2: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let raw_topic2: U256 = U256::from_big_endian(&runner.stack.pop()?);
     let mut topic2 = [0u8; 32];
     raw_topic2.to_big_endian(&mut topic2);
 
-    let raw_topic3: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let raw_topic3: U256 = U256::from_big_endian(&runner.stack.pop()?);
     let mut topic3 = [0u8; 32];
     raw_topic3.to_big_endian(&mut topic3);
 
-    let raw_topic4: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let raw_topic4: U256 = U256::from_big_endian(&runner.stack.pop()?);
     let mut topic4 = [0u8; 32];
     raw_topic4.to_big_endian(&mut topic4);
 

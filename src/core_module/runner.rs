@@ -627,9 +627,9 @@ mod tests {
         let mut runner = Runner::new([0xaa; 20], None, None, None, None, None);
         let _ = runner.interpret(vec![0x5f, 0x5f, 0x5f], Some(1), true);
 
-        assert_eq!(unsafe { runner.stack.pop().unwrap() }, [0u8; 32]);
-        assert_eq!(unsafe { runner.stack.pop().unwrap() }, [0u8; 32]);
-        assert_eq!(unsafe { runner.stack.pop().unwrap() }, [0u8; 32]);
+        assert_eq!(runner.stack.pop().unwrap(), [0u8; 32]);
+        assert_eq!(runner.stack.pop().unwrap(), [0u8; 32]);
+        assert_eq!(runner.stack.pop().unwrap(), [0u8; 32]);
     }
 
     #[test]
@@ -638,21 +638,21 @@ mod tests {
         let _ = runner.interpret(vec![0x60, 0x01, 0x60, 0x02, 0x60, 0x03], Some(1), true);
 
         assert_eq!(
-            unsafe { runner.stack.pop().unwrap() },
+            runner.stack.pop().unwrap(),
             [
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 3
             ]
         );
         assert_eq!(
-            unsafe { runner.stack.pop().unwrap() },
+            runner.stack.pop().unwrap(),
             [
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 2
             ]
         );
         assert_eq!(
-            unsafe { runner.stack.pop().unwrap() },
+            runner.stack.pop().unwrap(),
             [
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 1

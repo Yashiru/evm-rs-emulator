@@ -16,7 +16,11 @@ use colored::*;
 
 pub fn invalid(runner: &mut Runner) -> Result<(), ExecutionError> {
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
-        runner.print_debug(&format!("{:} 0x{:X}", "INVALID".red(), runner.bytecode[runner.pc]));
+        runner.print_debug(&format!(
+            "{:} 0x{:X}",
+            "INVALID".red(),
+            runner.bytecode[runner.pc]
+        ));
     }
 
     Err(ExecutionError::InvalidOpcode(runner.bytecode[runner.pc]))
@@ -24,9 +28,9 @@ pub fn invalid(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Get the values on the stack
-    let value = unsafe { runner.stack.pop()? };
-    let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let value = runner.stack.pop()?;
+    let offset = U256::from_big_endian(&runner.stack.pop()?);
+    let size = U256::from_big_endian(&runner.stack.pop()?);
 
     // Load the init code from memory
     let init_code = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
@@ -54,9 +58,9 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     // Check if the call failed
     if call_result.is_err() {
-        unsafe { runner.stack.push(pad_left(&[0x00]))? };
+        runner.stack.push(pad_left(&[0x00]))?;
     } else {
-        unsafe { runner.stack.push(pad_left(&contract_address)) }?;
+        runner.stack.push(pad_left(&contract_address))?;
     }
 
     // Get the return data to store the real contract code
@@ -81,10 +85,10 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 pub fn create2(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Get the values on the stack
-    let value = unsafe { runner.stack.pop()? };
-    let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let salt = unsafe { runner.stack.pop()? };
+    let value = runner.stack.pop()?;
+    let offset = U256::from_big_endian(&runner.stack.pop()?);
+    let size = U256::from_big_endian(&runner.stack.pop()?);
+    let salt = runner.stack.pop()?;
 
     // Load the init code from memory
     let init_code = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
@@ -112,9 +116,9 @@ pub fn create2(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     // Check if the call failed
     if call_result.is_err() {
-        unsafe { runner.stack.push(pad_left(&[0x00]))? };
+        runner.stack.push(pad_left(&[0x00]))?;
     } else {
-        unsafe { runner.stack.push(pad_left(&contract_address)) }?;
+        runner.stack.push(pad_left(&contract_address))?;
     }
 
     // Get the return data to store the real contract code
@@ -142,25 +146,26 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
     }
 
     // Get the values on the stack
-    let gas = unsafe { runner.stack.pop()? };
-    let to = unsafe { runner.stack.pop()? };
+    let gas = runner.stack.pop()?;
+    let to = runner.stack.pop()?;
 
     let value = if bypass_static {
         [0u8; 32]
     } else {
-        unsafe { runner.stack.pop()? }
+        runner.stack.pop()?
     };
-    let calldata_offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let calldata_size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let returndata_offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let returndata_size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let calldata_offset = U256::from_big_endian(&runner.stack.pop()?);
+    let calldata_size = U256::from_big_endian(&runner.stack.pop()?);
+    let returndata_offset = U256::from_big_endian(&runner.stack.pop()?);
+    let returndata_size = U256::from_big_endian(&runner.stack.pop()?);
 
     // Load the input data from memory
     let calldata = unsafe {
         runner
             .memory
             .read(calldata_offset.as_usize(), calldata_size.as_usize())?
-    };
+    };        
+    
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let address_hex: String = utils::debug::to_hex_address(bytes32_to_address(&to));
@@ -172,7 +177,7 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
             } else {
                 "CALL".yellow()
             },
-            address_hex,
+            address_hex.blue(),
             "Calldata".bright_blue(),
             calldata_hex
         ));
@@ -188,17 +193,18 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
     );
 
     if call_result.is_err() {
-        unsafe { runner.stack.push(pad_left(&[0x00]))? };
+        runner.stack.push(pad_left(&[0x00]))?;
     } else {
-        unsafe { runner.stack.push(pad_left(&[0x01]))? };
+        runner.stack.push(pad_left(&[0x01]))?;
     }
 
     let return_data = runner.returndata.heap.clone();
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
+        let caller_hex: String = utils::debug::to_hex_address(runner.address);
         let returndata_hex: String = utils::debug::vec_to_hex_string(return_data.clone());
         runner.print_debug(&format!(
-            "\n{} {} {:?}\n  {}: {}\n",
+            "\n{} {} {}\n  {}: {}\n",
             if call_result.is_err() {
                 if bypass_static {
                     "STATICCALL FAILED".red()
@@ -213,7 +219,11 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
                 }
             },
             if call_result.is_err() { "❌" } else { "✅" },
-            if call_result.is_err() { call_result.unwrap_err().to_string() } else { " ".to_string() },
+            if call_result.is_err() {
+                call_result.unwrap_err().to_string().red()
+            } else {
+                format!("Back to {}", caller_hex.magenta()).white()
+            },
             "Returndata".bright_blue(),
             returndata_hex
         ));
@@ -244,12 +254,12 @@ pub fn callcode(_: &mut Runner) -> Result<(), ExecutionError> {
 
 pub fn delegatecall(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Get the values on the stack
-    let gas = unsafe { runner.stack.pop()? };
-    let to = unsafe { runner.stack.pop()? };
-    let calldata_offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let calldata_size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let returndata_offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let returndata_size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let gas = runner.stack.pop()?;
+    let to = runner.stack.pop()?;
+    let calldata_offset = U256::from_big_endian(&runner.stack.pop()?);
+    let calldata_size = U256::from_big_endian(&runner.stack.pop()?);
+    let returndata_offset = U256::from_big_endian(&runner.stack.pop()?);
+    let returndata_size = U256::from_big_endian(&runner.stack.pop()?);
 
     // Load the input data from memory
     let calldata = unsafe {
@@ -280,9 +290,9 @@ pub fn delegatecall(runner: &mut Runner) -> Result<(), ExecutionError> {
     );
 
     if call_result.is_err() {
-        unsafe { runner.stack.push(pad_left(&[0x00]))? };
+        runner.stack.push(pad_left(&[0x00]))?;
     } else {
-        unsafe { runner.stack.push(pad_left(&[0x01]))? };
+        runner.stack.push(pad_left(&[0x01]))?;
     }
 
     let return_data = runner.returndata.heap.clone();
@@ -334,7 +344,7 @@ pub fn staticcall(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 pub fn selfdestruct(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Get the values on the stack
-    let address = unsafe { runner.stack.pop()? };
+    let address = runner.stack.pop()?;
 
     let contract_balance = get_balance(runner.address, runner)?;
 
@@ -349,10 +359,7 @@ pub fn selfdestruct(runner: &mut Runner) -> Result<(), ExecutionError> {
     delete_account(runner.address, runner)?;
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
-        runner.print_debug(&format!(
-            "{}",
-            "SELFDESTRUCT".bright_blue()
-        ));
+        runner.print_debug(&format!("{}", "SELFDESTRUCT".bright_blue()));
     }
 
     // Increment PC
@@ -361,8 +368,8 @@ pub fn selfdestruct(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 pub fn return_(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Get the values on the stack
-    let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let offset = U256::from_big_endian(&runner.stack.pop()?);
+    let size = U256::from_big_endian(&runner.stack.pop()?);
 
     // Load the return data from memory
     let returndata = unsafe { runner.memory.read(offset.as_usize(), size.as_usize())? };
@@ -371,10 +378,7 @@ pub fn return_(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.returndata.heap = returndata;
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
-        runner.print_debug(&format!(
-            "{}",
-            "RETURN".red()
-        ));
+        runner.print_debug(&format!("{}", "RETURN".red()));
     }
 
     // Increment PC
@@ -395,7 +399,7 @@ mod tests {
             runner.interpret(_hex_string_to_bytes("60fffe50fe60fffe"), Some(2), true);
         assert!(interpret_result.is_err());
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0xff]));
     }
 
@@ -409,7 +413,7 @@ mod tests {
         );
         assert!(interpret_result.is_ok());
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(
             result,
             pad_left(&[
@@ -436,7 +440,7 @@ mod tests {
         );
         assert!(interpret_result.is_ok());
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(
             result,
             pad_left(&[
@@ -466,11 +470,11 @@ mod tests {
         assert!(interpret_result.is_ok());
 
         // Second call succeeded
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert!(result == pad_left(&[0x01]));
 
         // First call failed
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert!(result == pad_left(&[0x00]));
     }
 
@@ -501,11 +505,11 @@ mod tests {
         assert!(interpret_result.is_ok());
 
         // Second call succeeded
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert!(result == pad_left(&[0x01]));
 
         // First call failed
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert!(result == pad_left(&[0x00]));
     }
 
@@ -522,11 +526,11 @@ mod tests {
         assert!(interpret_result.is_ok());
 
         // Second call succeeded
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert!(result == pad_left(&[0x01]));
 
         // First call failed
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert!(result == pad_left(&[0x00]));
     }
 
@@ -542,7 +546,7 @@ mod tests {
         );
         assert!(interpret_result.is_ok());
 
-        let address = unsafe { runner.stack.pop().unwrap() };
+        let address = runner.stack.pop().unwrap();
         assert_eq!(
             address,
             pad_left(&[
@@ -577,7 +581,7 @@ mod tests {
             runner.interpret(_hex_string_to_bytes(bytecode), Some(2), true);
         assert!(selfdestruct_result.is_ok());
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0x01]));
 
         let stored_code = runner.state.get_code_at(bytes32_to_address(&result));

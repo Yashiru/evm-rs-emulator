@@ -27,8 +27,8 @@ pub fn stop(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Revert data from memory heap
 pub fn revert(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let size = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let offset = U256::from_big_endian(&runner.stack.pop()?);
+    let size = U256::from_big_endian(&runner.stack.pop()?);
 
     let revert_data = unsafe { runner.memory.read(offset.as_usize(), size.as_usize()) };
 
@@ -58,7 +58,7 @@ pub fn revert(runner: &mut Runner) -> Result<(), ExecutionError> {
 // jump
 pub fn jump(runner: &mut Runner) -> Result<(), ExecutionError> {
     let mut bytes = [0u8; 32];
-    let jump_address = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let jump_address = U256::from_big_endian(&runner.stack.pop()?);
     jump_address.to_big_endian(&mut bytes);
 
     // Check if the address is out of bounds
@@ -79,10 +79,10 @@ pub fn jump(runner: &mut Runner) -> Result<(), ExecutionError> {
 // jumpi
 pub fn jumpi(runner: &mut Runner) -> Result<(), ExecutionError> {
     let mut bytes = [0u8; 32];
-    let jump_address = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let jump_address = U256::from_big_endian(&runner.stack.pop()?);
     jump_address.to_big_endian(&mut bytes);
 
-    let condition = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let condition = U256::from_big_endian(&runner.stack.pop()?);
 
     // Check if the address is out of bounds
     if jump_address.as_usize() > runner.bytecode.len() {
@@ -121,7 +121,7 @@ pub fn pc(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pc = pad_left(&pc.to_vec());
 
     // Push the program counter to the stack
-    unsafe { runner.stack.push(pc)? };
+    runner.stack.push(pc)?;
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex = utils::debug::to_hex_string(pc);
@@ -138,7 +138,7 @@ pub fn gas(runner: &mut Runner) -> Result<(), ExecutionError> {
     let gas = pad_left(&gas.to_vec());
 
     // Push the gas to the stack
-    unsafe { runner.stack.push(gas)? };
+    runner.stack.push(gas)?;
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex = utils::debug::to_hex_string(gas);
@@ -169,7 +169,7 @@ mod tests {
         );
         assert!(interpret_result.is_ok());
 
-        let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
+        let result: [u8; 32] = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0x04]));
         assert_eq!(runner.pc, 15);
     }
@@ -190,7 +190,7 @@ mod tests {
             runner.interpret(_hex_string_to_bytes("600456fe5b6001"), Some(2), true);
         assert!(interpret_result.is_ok());
 
-        let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
+        let result: [u8; 32] = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0x01]));
         assert_eq!(runner.pc, 7);
     }
@@ -205,7 +205,7 @@ mod tests {
         );
         assert!(interpret_result.is_ok());
 
-        let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
+        let result: [u8; 32] = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0x01]));
         assert_eq!(runner.pc, 15);
     }
@@ -216,7 +216,7 @@ mod tests {
         let interpret_result = runner.interpret(_hex_string_to_bytes("58"), Some(2), true);
         assert!(interpret_result.is_ok());
 
-        let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
+        let result: [u8; 32] = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0x00]));
         assert_eq!(runner.pc, 1);
 
@@ -228,7 +228,7 @@ mod tests {
         );
         assert!(interpret_result.is_ok());
 
-        let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
+        let result: [u8; 32] = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0x0a]));
         assert_eq!(runner.pc, 11);
     }
@@ -239,7 +239,7 @@ mod tests {
         let interpret_result = runner.interpret(_hex_string_to_bytes("5a"), Some(2), true);
         assert!(interpret_result.is_ok());
 
-        let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
+        let result: [u8; 32] = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&runner.gas.to_be_bytes()));
     }
 }
