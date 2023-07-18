@@ -19,7 +19,7 @@ pub fn address(runner: &mut Runner) -> Result<(), ExecutionError> {
         .try_into()
         .unwrap();
 
-    let result = unsafe { runner.stack.push(address) };
+    let result = runner.stack.push(address);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -35,12 +35,12 @@ pub fn address(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn balance(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let address: [u8; 32] = unsafe { runner.stack.pop()? };
+    let address: [u8; 32] = runner.stack.pop()?;
     let address: [u8; 20] = address[12..].try_into().unwrap();
 
     let balance = get_balance(address, runner)?;
 
-    let result = unsafe { runner.stack.push(pad_left(&balance)) };
+    let result = runner.stack.push(pad_left(&balance));
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -62,7 +62,7 @@ pub fn origin(runner: &mut Runner) -> Result<(), ExecutionError> {
         .try_into()
         .unwrap();
 
-    let result = unsafe { runner.stack.push(origin) };
+    let result = runner.stack.push(origin);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -84,7 +84,7 @@ pub fn caller(runner: &mut Runner) -> Result<(), ExecutionError> {
         .try_into()
         .unwrap();
 
-    let result = unsafe { runner.stack.push(caller) };
+    let result = runner.stack.push(caller);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -100,7 +100,7 @@ pub fn caller(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn callvalue(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.push(runner.callvalue) };
+    let result = runner.stack.push(runner.callvalue);
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(runner.callvalue);
@@ -116,13 +116,13 @@ pub fn callvalue(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn calldataload(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let address = unsafe { runner.stack.pop()? };
+    let address = runner.stack.pop()?;
     let address = U256::from_big_endian(&address).as_usize();
 
     let calldata = unsafe { runner.calldata.read(address, 32)? };
     let calldata = calldata.as_slice().try_into().unwrap();
 
-    let result = unsafe { runner.stack.push(calldata) };
+    let result = runner.stack.push(calldata);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -143,7 +143,7 @@ pub fn calldatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Convert the usize to bytes in little-endian order
     let calldatasize = pad_left(&size);
 
-    let result = unsafe { runner.stack.push(calldatasize) };
+    let result = runner.stack.push(calldatasize);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -159,9 +159,9 @@ pub fn calldatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn calldatacopy(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let dest_offset = U256::from_big_endian(&unsafe { runner.stack.pop()? }).as_usize();
-    let _offset = U256::from_big_endian(&unsafe { runner.stack.pop()? }).as_usize();
-    let _size = U256::from_big_endian(&unsafe { runner.stack.pop()? }).as_usize();
+    let dest_offset = U256::from_big_endian(&runner.stack.pop()?).as_usize();
+    let _offset = U256::from_big_endian(&runner.stack.pop()?).as_usize();
+    let _size = U256::from_big_endian(&runner.stack.pop()?).as_usize();
 
     let calldata = unsafe { runner.calldata.read(_offset, _size)? };
 
@@ -188,7 +188,7 @@ pub fn codesize(runner: &mut Runner) -> Result<(), ExecutionError> {
         pad_left(&code.unwrap().len().to_be_bytes())
     };
 
-    let result = unsafe { runner.stack.push(codesize) };
+    let result = runner.stack.push(codesize);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -205,9 +205,9 @@ pub fn codesize(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Can be mocked with a fork
 pub fn codecopy(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let dest_offset = U256::from_big_endian(&unsafe { runner.stack.pop()? }).as_usize();
-    let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? }).as_usize();
-    let size = U256::from_big_endian(&unsafe { runner.stack.pop()? }).as_usize();
+    let dest_offset = U256::from_big_endian(&runner.stack.pop()?).as_usize();
+    let offset = U256::from_big_endian(&runner.stack.pop()?).as_usize();
+    let size = U256::from_big_endian(&runner.stack.pop()?).as_usize();
 
     let code = runner.state.get_code_at(runner.address);
 
@@ -241,7 +241,7 @@ pub fn gasprice(runner: &mut Runner) -> Result<(), ExecutionError> {
         .try_into()
         .unwrap();
 
-    let result = unsafe { runner.stack.push(gasprice) };
+    let result = runner.stack.push(gasprice);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -257,7 +257,7 @@ pub fn gasprice(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn extcodesize(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let address = unsafe { runner.stack.pop()? };
+    let address = runner.stack.pop()?;
 
     let code = runner.state.get_code_at(bytes32_to_address(&address));
 
@@ -267,7 +267,7 @@ pub fn extcodesize(runner: &mut Runner) -> Result<(), ExecutionError> {
         pad_left(&code.unwrap().len().to_be_bytes())
     };
 
-    let result = unsafe { runner.stack.push(codesize) };
+    let result = runner.stack.push(codesize);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -284,10 +284,10 @@ pub fn extcodesize(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Can be mocked with a fork
 pub fn extcodecopy(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let address = unsafe { runner.stack.pop()? };
-    let dest_offset = U256::from_big_endian(&unsafe { runner.stack.pop()? }).as_usize();
-    let offset = U256::from_big_endian(&unsafe { runner.stack.pop()? }).as_usize();
-    let size = U256::from_big_endian(&unsafe { runner.stack.pop()? }).as_usize();
+    let address = runner.stack.pop()?;
+    let dest_offset = U256::from_big_endian(&runner.stack.pop()?).as_usize();
+    let offset = U256::from_big_endian(&runner.stack.pop()?).as_usize();
+    let size = U256::from_big_endian(&runner.stack.pop()?).as_usize();
 
     let code = runner.state.get_code_at(bytes32_to_address(&address));
 
@@ -320,7 +320,7 @@ pub fn returndatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Convert the usize to bytes in little-endian order
     let returndatasize = pad_left(&size);
 
-    let result = unsafe { runner.stack.push(returndatasize) };
+    let result = runner.stack.push(returndatasize);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -336,9 +336,9 @@ pub fn returndatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn returndatacopy(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let dest_offset = U256::from_big_endian(&unsafe { runner.stack.pop()? }).as_usize();
-    let _offset = U256::from_big_endian(&unsafe { runner.stack.pop()? }).as_usize();
-    let _size = U256::from_big_endian(&unsafe { runner.stack.pop()? }).as_usize();
+    let dest_offset = U256::from_big_endian(&runner.stack.pop()?).as_usize();
+    let _offset = U256::from_big_endian(&runner.stack.pop()?).as_usize();
+    let _size = U256::from_big_endian(&runner.stack.pop()?).as_usize();
 
     let returndata = unsafe { runner.returndata.read(_offset, _size)? };
 
@@ -358,12 +358,12 @@ pub fn returndatacopy(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Can be mocked with a fork
 pub fn extcodehash(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let address = unsafe { runner.stack.pop()? };
+    let address = runner.stack.pop()?;
 
     let code = runner.state.get_code_at(bytes32_to_address(&address))?;
     let codehash = keccak256(&code);
 
-    let result = unsafe { runner.stack.push(codehash) };
+    let result = runner.stack.push(codehash);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -379,13 +379,13 @@ pub fn extcodehash(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn blockhash(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let block: U256 = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let block: U256 = U256::from_big_endian(&runner.stack.pop()?);
     let mut bytes = [0; 32];
     block.to_big_endian(&mut bytes);
 
     let blockhash = keccak256(bytes);
 
-    let result = unsafe { runner.stack.push(blockhash) };
+    let result = runner.stack.push(blockhash);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -403,7 +403,7 @@ pub fn blockhash(runner: &mut Runner) -> Result<(), ExecutionError> {
 pub fn coinbase(runner: &mut Runner) -> Result<(), ExecutionError> {
     let coinbase = pad_left(&[0xc0u8; 20]);
 
-    let result = unsafe { runner.stack.push(coinbase) };
+    let result = runner.stack.push(coinbase);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -434,7 +434,7 @@ pub fn timestamp(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     let bytes = pad_left(&timestamp_bytes);
 
-    let result = unsafe { runner.stack.push(bytes) };
+    let result = runner.stack.push(bytes);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -453,7 +453,7 @@ pub fn timestamp(runner: &mut Runner) -> Result<(), ExecutionError> {
 pub fn number(runner: &mut Runner) -> Result<(), ExecutionError> {
     let number = pad_left(&[0xff; 4]);
 
-    let result = unsafe { runner.stack.push(number) };
+    let result = runner.stack.push(number);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -472,7 +472,7 @@ pub fn number(runner: &mut Runner) -> Result<(), ExecutionError> {
 pub fn difficulty(runner: &mut Runner) -> Result<(), ExecutionError> {
     let difficulty = pad_left(&[0x45; 8]);
 
-    let result = unsafe { runner.stack.push(difficulty) };
+    let result = runner.stack.push(difficulty);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -491,7 +491,7 @@ pub fn difficulty(runner: &mut Runner) -> Result<(), ExecutionError> {
 pub fn gaslimit(runner: &mut Runner) -> Result<(), ExecutionError> {
     let gaslimit = pad_left(&[0x01, 0xC9, 0xC3, 0x80]);
 
-    let result = unsafe { runner.stack.push(gaslimit) };
+    let result = runner.stack.push(gaslimit);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -510,7 +510,7 @@ pub fn gaslimit(runner: &mut Runner) -> Result<(), ExecutionError> {
 pub fn chainid(runner: &mut Runner) -> Result<(), ExecutionError> {
     let chainid = pad_left(&[0x01]);
 
-    let result = unsafe { runner.stack.push(chainid) };
+    let result = runner.stack.push(chainid);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -528,7 +528,7 @@ pub fn chainid(runner: &mut Runner) -> Result<(), ExecutionError> {
 pub fn selfbalance(runner: &mut Runner) -> Result<(), ExecutionError> {
     let balance = get_balance(runner.address, runner)?;
 
-    let result = unsafe { runner.stack.push(balance) };
+    let result = runner.stack.push(balance);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -546,7 +546,7 @@ pub fn selfbalance(runner: &mut Runner) -> Result<(), ExecutionError> {
 pub fn basefee(runner: &mut Runner) -> Result<(), ExecutionError> {
     let basefee = pad_left(&[0x0a]);
 
-    let result = unsafe { runner.stack.push(basefee) };
+    let result = runner.stack.push(basefee);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -571,17 +571,17 @@ mod tests {
         let mut runner = Runner::_default(3);
         address(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&runner.address));
     }
 
     #[test]
     fn test_balance() {
         let mut runner = Runner::_default(3);
-        let _ = unsafe { runner.stack.push(pad_left(&runner.caller)) };
+        let _ = runner.stack.push(pad_left(&runner.caller));
         balance(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(
             result,
             pad_left(&[0x36, 0x35, 0xC9, 0xAD, 0xC5, 0xDE, 0xA0, 0x00, 0x00])
@@ -592,10 +592,10 @@ mod tests {
             .state
             .transfer(runner.caller, runner.address, pad_left(&[0x01]));
 
-        let _ = unsafe { runner.stack.push(pad_left(&runner.caller)) };
+        let _ = runner.stack.push(pad_left(&runner.caller));
         balance(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(
             result,
             pad_left(&[0x36, 0x35, 0xC9, 0xAD, 0xC5, 0xDE, 0x9F, 0xFF, 0xFF])
@@ -607,7 +607,7 @@ mod tests {
         let mut runner = Runner::_default(3);
         origin(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&runner.origin));
     }
 
@@ -616,7 +616,7 @@ mod tests {
         let mut runner = Runner::_default(3);
         caller(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&runner.caller));
     }
 
@@ -625,7 +625,7 @@ mod tests {
         let mut runner = Runner::_default(3);
         callvalue(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0x00]));
     }
 
@@ -634,16 +634,16 @@ mod tests {
         let mut runner = Runner::_default(3);
         runner.calldata.heap = vec![0xff, 0xff, 0xff, 0xff];
 
-        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
+        let _ = runner.stack.push(pad_left(&[0x00]));
         calldataload(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, _pad_right(&[0xff, 0xff, 0xff, 0xff]));
 
-        let _ = unsafe { runner.stack.push(pad_left(&[0x02])) };
+        let _ = runner.stack.push(pad_left(&[0x02]));
         calldataload(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, _pad_right(&[0xff, 0xff]));
     }
 
@@ -654,7 +654,7 @@ mod tests {
 
         calldatasize(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0x04]));
     }
 
@@ -663,26 +663,26 @@ mod tests {
         let mut runner = Runner::_default(3);
         runner.calldata.heap = [0xff; 32].to_vec();
 
-        let _ = unsafe { runner.stack.push(pad_left(&[0x20])) };
-        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
-        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
+        let _ = runner.stack.push(pad_left(&[0x20]));
+        let _ = runner.stack.push(pad_left(&[0x00]));
+        let _ = runner.stack.push(pad_left(&[0x00]));
         calldatacopy(&mut runner).unwrap();
 
         let result = unsafe { runner.memory.read(0x00, 0x20).unwrap() };
         assert_eq!(result, [0xff; 32].to_vec());
 
-        let _ = unsafe { runner.stack.push(pad_left(&[0x10])) };
-        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
-        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
+        let _ = runner.stack.push(pad_left(&[0x10]));
+        let _ = runner.stack.push(pad_left(&[0x00]));
+        let _ = runner.stack.push(pad_left(&[0x00]));
         calldatacopy(&mut runner).unwrap();
 
         let result = unsafe { runner.memory.read(0x00, 0x20).unwrap() };
         assert_eq!(result, [0xff; 32].to_vec());
 
         runner.memory.heap = vec![0x00; 32];
-        let _ = unsafe { runner.stack.push(pad_left(&[0x10])) };
-        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
-        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
+        let _ = runner.stack.push(pad_left(&[0x10]));
+        let _ = runner.stack.push(pad_left(&[0x00]));
+        let _ = runner.stack.push(pad_left(&[0x00]));
         calldatacopy(&mut runner).unwrap();
 
         let result = unsafe { runner.memory.read(0x00, 0x20).unwrap() };
@@ -700,7 +700,7 @@ mod tests {
 
         codesize(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0xa]));
     }
 
@@ -718,9 +718,9 @@ mod tests {
         );
         assert!(interpret_result.is_ok());
 
-        let _ = unsafe { runner.stack.push(pad_left(&[0x20])) };
-        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
-        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
+        let _ = runner.stack.push(pad_left(&[0x20]));
+        let _ = runner.stack.push(pad_left(&[0x00]));
+        let _ = runner.stack.push(pad_left(&[0x00]));
         codecopy(&mut runner).unwrap();
 
         let result = unsafe { runner.memory.read(0x00, 0x20).unwrap() };
@@ -732,9 +732,9 @@ mod tests {
         // reset memory
         runner.memory.heap = vec![];
 
-        let _ = unsafe { runner.stack.push(pad_left(&[0x05])) };
-        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
-        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
+        let _ = runner.stack.push(pad_left(&[0x05]));
+        let _ = runner.stack.push(pad_left(&[0x00]));
+        let _ = runner.stack.push(pad_left(&[0x00]));
         codecopy(&mut runner).unwrap();
 
         let result = unsafe { runner.memory.read(0x00, 0x20).unwrap() };
@@ -746,7 +746,7 @@ mod tests {
         let mut runner = Runner::_default(3);
         gasprice(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0xff]));
     }
 
@@ -764,7 +764,7 @@ mod tests {
 
         extcodesize(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0x17]));
     }
 
@@ -783,10 +783,10 @@ mod tests {
         // reset memory
         runner.memory.heap = vec![];
 
-        let _ = unsafe { runner.stack.push(pad_left(&[0x17])) };
-        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
-        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
-        let _ = unsafe { runner.stack.dup(4) };
+        let _ = runner.stack.push(pad_left(&[0x17]));
+        let _ = runner.stack.push(pad_left(&[0x00]));
+        let _ = runner.stack.push(pad_left(&[0x00]));
+        let _ = runner.stack.dup(4);
         extcodecopy(&mut runner).unwrap();
 
         let result = unsafe { runner.memory.read(0x00, 0x20).unwrap() };
@@ -800,10 +800,10 @@ mod tests {
         // reset memory
         runner.memory.heap = vec![];
 
-        let _ = unsafe { runner.stack.push(pad_left(&[0xa])) };
-        let _ = unsafe { runner.stack.push(pad_left(&[0x00])) };
-        let _ = unsafe { runner.stack.push(pad_left(&[0x20])) };
-        let _ = unsafe { runner.stack.dup(4) };
+        let _ = runner.stack.push(pad_left(&[0xa]));
+        let _ = runner.stack.push(pad_left(&[0x00]));
+        let _ = runner.stack.push(pad_left(&[0x20]));
+        let _ = runner.stack.dup(4);
         extcodecopy(&mut runner).unwrap();
 
         let result = unsafe { runner.memory.read(0x00, 0x20).unwrap() };
@@ -827,7 +827,7 @@ mod tests {
         );
         assert!(interpret_result.is_ok());
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0x20]));
     }
 
@@ -863,7 +863,7 @@ mod tests {
         );
         assert!(interpret_result.is_ok());
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(
             result,
             pad_left(&_hex_string_to_bytes("c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"))
@@ -880,7 +880,7 @@ mod tests {
         let mut runner = Runner::_default(3);
         coinbase(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0xc0; 20]));
     }
 
@@ -901,7 +901,7 @@ mod tests {
         // Convert the timestamp to bytes in big-endian order
         let timestamp_bytes = timestamp_secs.to_be_bytes();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&timestamp_bytes));
     }
 
@@ -911,7 +911,7 @@ mod tests {
         let mut runner = Runner::_default(3);
         number(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0xff; 4]));
     }
 
@@ -921,7 +921,7 @@ mod tests {
         let mut runner = Runner::_default(3);
         difficulty(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0x45; 8]));
     }
 
@@ -930,7 +930,7 @@ mod tests {
         let mut runner = Runner::_default(3);
         gaslimit(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0x01, 0xC9, 0xC3, 0x80]));
     }
 
@@ -939,7 +939,7 @@ mod tests {
         let mut runner = Runner::_default(3);
         chainid(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0x01]));
     }
 
@@ -948,7 +948,7 @@ mod tests {
         let mut runner = Runner::_default(3);
         selfbalance(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0x00]));
 
         // transfer 100 wei to the contract
@@ -957,7 +957,7 @@ mod tests {
             .transfer(runner.caller, runner.address, pad_left(&[0x64]));
         selfbalance(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0x64]));
     }
 
@@ -966,7 +966,7 @@ mod tests {
         let mut runner = Runner::_default(3);
         basefee(&mut runner).unwrap();
 
-        let result = unsafe { runner.stack.pop().unwrap() };
+        let result = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0x0a]));
     }
 }

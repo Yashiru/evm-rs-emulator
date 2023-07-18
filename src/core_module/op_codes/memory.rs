@@ -10,14 +10,12 @@ use colored::*;
 
 // Load 32 bytes from memory
 pub fn mload(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let address = U256::from_big_endian(&unsafe { runner.stack.pop()? });
+    let address = U256::from_big_endian(&runner.stack.pop()?);
     let word = unsafe { runner.memory.mload(address.as_usize())? };
-    unsafe {
-        let result = runner.stack.push(word);
+    let result = runner.stack.push(word);
 
-        if result.is_err() {
-            return Err(result.unwrap_err());
-        }
+    if result.is_err() {
+        return Err(result.unwrap_err());
     }
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
@@ -31,8 +29,8 @@ pub fn mload(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Store 32 bytes in memory
 pub fn mstore(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let address = U256::from_big_endian(&unsafe { runner.stack.pop()? });
-    let data = unsafe { runner.stack.pop()? };
+    let address = U256::from_big_endian(&runner.stack.pop()?);
+    let data = runner.stack.pop()?;
 
     let result = unsafe { runner.memory.mstore(address.as_usize(), data) };
 
@@ -53,7 +51,7 @@ pub fn msize(runner: &mut Runner) -> Result<(), ExecutionError> {
     let mut bytes_msize = [0u8; 32];
     U256::from(runner.memory.msize() as u64).to_big_endian(&mut bytes_msize);
 
-    let result = unsafe { runner.stack.push(bytes_msize) };
+    let result = runner.stack.push(bytes_msize);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -80,7 +78,7 @@ mod tests {
         let interpret_result: Result<(), ExecutionError> = runner.interpret(_hex_string_to_bytes("7f00000000000000000000000000000000000000000000000000000000000000ff600052600051600151"), Some(2), true);
         assert!(interpret_result.is_ok());
 
-        let result: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
+        let result: [u8; 32] = runner.stack.pop().unwrap();
         assert_eq!(result, pad_left(&[0xff, 0x00]));
     }
 
@@ -108,9 +106,9 @@ mod tests {
         let interpret_result: Result<(), ExecutionError> = runner.interpret(_hex_string_to_bytes("5960005150596039515059"), Some(2), true);
         assert!(interpret_result.is_ok());
 
-        let result1: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
-        let result2: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
-        let result3: [u8; 32] = unsafe { runner.stack.pop().unwrap() };
+        let result1: [u8; 32] = runner.stack.pop().unwrap();
+        let result2: [u8; 32] = runner.stack.pop().unwrap();
+        let result3: [u8; 32] = runner.stack.pop().unwrap();
 
         assert_eq!(result1, pad_left(&[0x60]));
         assert_eq!(result2, pad_left(&[0x20]));

@@ -6,7 +6,7 @@ use crate::core_module::utils;
 use colored::*;
 
 pub fn pop(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.pop() };
+    let result = runner.stack.pop();
 
     if result.is_err() {
         return Err(result.unwrap_err());

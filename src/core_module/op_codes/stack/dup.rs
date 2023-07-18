@@ -7,7 +7,7 @@ use colored::*;
 
 // Dup first element
 pub fn dup1(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.dup(1) };
+    let result = runner.stack.dup(1);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -29,7 +29,7 @@ pub fn dup1(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Dup second element
 pub fn dup2(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.dup(2) };
+    let result = runner.stack.dup(2);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -51,7 +51,7 @@ pub fn dup2(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Dup third element
 pub fn dup3(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.dup(3) };
+    let result = runner.stack.dup(3);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -73,7 +73,7 @@ pub fn dup3(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Dup fourth element
 pub fn dup4(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.dup(4) };
+    let result = runner.stack.dup(4);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -95,7 +95,7 @@ pub fn dup4(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Dup fifth element
 pub fn dup5(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.dup(5) };
+    let result = runner.stack.dup(5);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -117,7 +117,7 @@ pub fn dup5(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Dup sixth element
 pub fn dup6(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.dup(6) };
+    let result = runner.stack.dup(6);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -139,7 +139,7 @@ pub fn dup6(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Dup seventh element
 pub fn dup7(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.dup(7) };
+    let result = runner.stack.dup(7);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -161,7 +161,7 @@ pub fn dup7(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Dup eighth element
 pub fn dup8(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.dup(8) };
+    let result = runner.stack.dup(8);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -183,7 +183,7 @@ pub fn dup8(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Dup ninth element
 pub fn dup9(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.dup(9) };
+    let result = runner.stack.dup(9);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -205,7 +205,7 @@ pub fn dup9(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Dup tenth element
 pub fn dup10(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.dup(10) };
+    let result = runner.stack.dup(10);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -227,7 +227,7 @@ pub fn dup10(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Dup eleventh element
 pub fn dup11(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.dup(11) };
+    let result = runner.stack.dup(11);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -249,7 +249,7 @@ pub fn dup11(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Dup twelfth element
 pub fn dup12(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.dup(12) };
+    let result = runner.stack.dup(12);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -271,7 +271,7 @@ pub fn dup12(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Dup thirteenth element
 pub fn dup13(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.dup(13) };
+    let result = runner.stack.dup(13);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -293,7 +293,7 @@ pub fn dup13(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Dup fourteenth element
 pub fn dup14(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.dup(14) };
+    let result = runner.stack.dup(14);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -315,7 +315,7 @@ pub fn dup14(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Dup fifteenth element
 pub fn dup15(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.dup(15) };
+    let result = runner.stack.dup(15);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -337,7 +337,7 @@ pub fn dup15(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Dup sixteenth element
 pub fn dup16(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.dup(16) };
+    let result = runner.stack.dup(16);
 
     if result.is_err() {
         return Err(result.unwrap_err());

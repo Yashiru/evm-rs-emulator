@@ -11,28 +11,26 @@ pub fn push(runner: &mut Runner, data_len: usize) -> Result<(), ExecutionError> 
         return Err(ExecutionError::OutOfBoundsByteCode);
     }
 
-    unsafe {
-        let data = &runner.bytecode[runner.pc + 1..runner.pc + 1 + data_len];
+    let data = &runner.bytecode[runner.pc + 1..runner.pc + 1 + data_len];
 
-        let mut padded = [0u8; 32]; // Start with an array of zeroes
-        let start = 32 - data.len(); // Calculate where to start copying
-        padded[start..].copy_from_slice(data); // Copy the slice into the end of the array
+    let mut padded = [0u8; 32]; // Start with an array of zeroes
+    let start = 32 - data.len(); // Calculate where to start copying
+    padded[start..].copy_from_slice(data); // Copy the slice into the end of the array
 
-        let result = runner.stack.push(padded);
+    let result = runner.stack.push(padded);
 
-        if result.is_err() {
-            return Err(result.unwrap_err());
-        }
+    if result.is_err() {
+        return Err(result.unwrap_err());
+    }
 
-        if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
-            let hex: String = utils::debug::to_hex_string(padded);
-            runner.print_debug(&format!(
-                "{}{:<10} 👉 [ {} ]",
-                "PUSH".bright_blue(),
-                data_len.to_string().magenta(),
-                hex
-            ));
-        }
+    if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
+        let hex: String = utils::debug::to_hex_string(padded);
+        runner.print_debug(&format!(
+            "{}{:<10} 👉 [ {} ]",
+            "PUSH".bright_blue(),
+            data_len.to_string().magenta(),
+            hex
+        ));
     }
 
     // Increment PC
@@ -49,6 +47,12 @@ mod tests {
         let _ = runner.interpret(vec![0x60, 0xff], Some(2), true);
 
         assert_eq!(runner.stack.stack.len(), 1);
-        assert_eq!(unsafe { runner.stack.pop().unwrap() }, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255]);
+        assert_eq!(
+            runner.stack.pop().unwrap(),
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 255
+            ]
+        );
     }
 }

@@ -6,7 +6,7 @@ use colored::*;
 
 // Swap first and second element
 pub fn swap1(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.swap(1) };
+    let result = runner.stack.swap(1);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -47,7 +47,7 @@ pub fn swap1(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Swap first and third element
 pub fn swap2(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.swap(2) };
+    let result = runner.stack.swap(2);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -88,7 +88,7 @@ pub fn swap2(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Swap first and fourth element
 pub fn swap3(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.swap(3) };
+    let result = runner.stack.swap(3);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -129,7 +129,7 @@ pub fn swap3(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Swap first and fifth element
 pub fn swap4(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.swap(4) };
+    let result = runner.stack.swap(4);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -170,7 +170,7 @@ pub fn swap4(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Swap first and sixth element
 pub fn swap5(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.swap(5) };
+    let result = runner.stack.swap(5);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -211,7 +211,7 @@ pub fn swap5(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Swap first and seventh element
 pub fn swap6(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.swap(6) };
+    let result = runner.stack.swap(6);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -252,7 +252,7 @@ pub fn swap6(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Swap first and eighth element
 pub fn swap7(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.swap(7) };
+    let result = runner.stack.swap(7);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -293,7 +293,7 @@ pub fn swap7(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Swap first and ninth element
 pub fn swap8(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.swap(8) };
+    let result = runner.stack.swap(8);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -334,7 +334,7 @@ pub fn swap8(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Swap first and tenth element
 pub fn swap9(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.swap(9) };
+    let result = runner.stack.swap(9);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -375,7 +375,7 @@ pub fn swap9(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Swap first and eleventh element
 pub fn swap10(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.swap(10) };
+    let result = runner.stack.swap(10);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -416,7 +416,7 @@ pub fn swap10(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Swap first and twelfth element
 pub fn swap11(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.swap(11) };
+    let result = runner.stack.swap(11);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -457,7 +457,7 @@ pub fn swap11(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Swap first and thirteenth element
 pub fn swap12(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.swap(12) };
+    let result = runner.stack.swap(12);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -498,7 +498,7 @@ pub fn swap12(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Swap first and fourteenth element
 pub fn swap13(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.swap(13) };
+    let result = runner.stack.swap(13);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -539,7 +539,7 @@ pub fn swap13(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Swap first and fifteenth element
 pub fn swap14(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.swap(14) };
+    let result = runner.stack.swap(14);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -580,7 +580,7 @@ pub fn swap14(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Swap first and sixteenth element
 pub fn swap15(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.swap(15) };
+    let result = runner.stack.swap(15);
 
     if result.is_err() {
         return Err(result.unwrap_err());
@@ -621,7 +621,7 @@ pub fn swap15(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 // Swap first and seventeenth element
 pub fn swap16(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let result = unsafe { runner.stack.swap(16) };
+    let result = runner.stack.swap(16);
 
     if result.is_err() {
         return Err(result.unwrap_err());

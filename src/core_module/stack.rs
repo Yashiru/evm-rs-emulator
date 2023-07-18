@@ -13,7 +13,7 @@ impl Stack {
     }
 
     // Push a word onto the stack
-    pub unsafe fn push(&mut self, word: [u8; 32]) -> Result<(), ExecutionError>{
+    pub fn push(&mut self, word: [u8; 32]) -> Result<(), ExecutionError>{
         // Check if the stack is too deep
         if self.stack.len() >= 1024 {
             // Return an error
@@ -24,7 +24,7 @@ impl Stack {
     }
 
     // Pop a word off the stack
-    pub unsafe fn pop(&mut self) -> Result<[u8; 32], ExecutionError> {
+    pub fn pop(&mut self) -> Result<[u8; 32], ExecutionError> {
         // Check if the stack is empty
         if self.stack.is_empty() {
             // Return an error
@@ -35,7 +35,7 @@ impl Stack {
     }
 
     // Duplicate a word on the stack
-    pub unsafe fn dup(&mut self, index: usize) -> Result<[u8; 32], ExecutionError> {
+    pub fn dup(&mut self, index: usize) -> Result<[u8; 32], ExecutionError> {
         // Check if the stack is long enough
         if self.stack.len() < index {
             return Err(ExecutionError::StackTooSmall);
@@ -48,7 +48,7 @@ impl Stack {
     }
 
     // Swap two words on the stack
-    pub unsafe fn swap(&mut self, index: usize) -> Result<[[u8; 32]; 2], ExecutionError> {
+    pub fn swap(&mut self, index: usize) -> Result<[[u8; 32]; 2], ExecutionError> {
         // Check if the stack is long enough
         if self.stack.len() < index {
             return Err(ExecutionError::StackTooSmall);
