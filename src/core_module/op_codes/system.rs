@@ -164,7 +164,8 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
         runner
             .memory
             .read(calldata_offset.as_usize(), calldata_size.as_usize())?
-    };
+    };        
+    
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let address_hex: String = utils::debug::to_hex_address(bytes32_to_address(&to));
@@ -176,7 +177,7 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
             } else {
                 "CALL".yellow()
             },
-            address_hex,
+            address_hex.blue(),
             "Calldata".bright_blue(),
             calldata_hex
         ));
@@ -200,9 +201,10 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
     let return_data = runner.returndata.heap.clone();
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
+        let caller_hex: String = utils::debug::to_hex_address(runner.address);
         let returndata_hex: String = utils::debug::vec_to_hex_string(return_data.clone());
         runner.print_debug(&format!(
-            "\n{} {} {:?}\n  {}: {}\n",
+            "\n{} {} {}\n  {}: {}\n",
             if call_result.is_err() {
                 if bypass_static {
                     "STATICCALL FAILED".red()
@@ -218,9 +220,9 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
             },
             if call_result.is_err() { "❌" } else { "✅" },
             if call_result.is_err() {
-                call_result.unwrap_err().to_string()
+                call_result.unwrap_err().to_string().red()
             } else {
-                " ".to_string()
+                format!("Back to {}", caller_hex.magenta()).white()
             },
             "Returndata".bright_blue(),
             returndata_hex

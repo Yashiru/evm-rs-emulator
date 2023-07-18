@@ -221,14 +221,14 @@ impl EvmState {
     }
 
     // Load contract code
-    pub fn get_code(&self, code_hash: [u8; 32]) -> Result<&Vec<u8>, ExecutionError> {
+    fn get_code(&self, code_hash: [u8; 32]) -> Result<&Vec<u8>, ExecutionError> {
         self.codes
             .get(&code_hash)
             .ok_or(ExecutionError::CodeNotFound)
     }
 
     // Store contract code and return its hash
-    pub fn put_code(&mut self, code: Vec<u8>) -> Result<[u8; 32], ExecutionError> {
+    fn put_code(&mut self, code: Vec<u8>) -> Result<[u8; 32], ExecutionError> {
         // Check if static mode is enabled
         if self.static_mode {
             return Err(ExecutionError::StaticCallStateChanged);
