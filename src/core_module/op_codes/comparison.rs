@@ -1,4 +1,4 @@
-use crate::core_module::runner::Runner;
+use crate::core_module::{runner::Runner, utils::bytes::pad_left};
 use crate::core_module::utils;
 use crate::core_module::utils::errors::ExecutionError;
 
@@ -15,14 +15,7 @@ pub fn iszero(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     let bool = a.is_zero();
 
-    let result_bytes = [
-        [0u8; 31].to_vec(),
-        [if bool { 1u8 } else { 0u8 }; 1].to_vec(),
-    ]
-    .concat()
-    .as_slice()
-    .try_into()
-    .unwrap();
+    let result_bytes = pad_left(&[if bool { 1u8 } else { 0u8 }; 1]);
 
     let result = runner.stack.push(result_bytes);
 
@@ -48,14 +41,7 @@ pub fn eq(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     let bool = a.eq(&b);
 
-    let result_bytes = [
-        [0u8; 31].to_vec(),
-        [if bool { 1u8 } else { 0u8 }; 1].to_vec(),
-    ]
-    .concat()
-    .as_slice()
-    .try_into()
-    .unwrap();
+    let result_bytes = pad_left(&[if bool { 1u8 } else { 0u8 }; 1]);
 
     let result = runner.stack.push(result_bytes);
 
@@ -81,14 +67,7 @@ pub fn lt(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     let bool = a.lt(&b);
 
-    let result_bytes = [
-        [0u8; 31].to_vec(),
-        [if bool { 1u8 } else { 0u8 }; 1].to_vec(),
-    ]
-    .concat()
-    .as_slice()
-    .try_into()
-    .expect("Wrong length");
+    let result_bytes = pad_left(&[if bool { 1u8 } else { 0u8 }; 1]);
 
     let result = runner.stack.push(result_bytes);
 
@@ -114,14 +93,7 @@ pub fn gt(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     let bool = a.gt(&b);
 
-    let result_bytes = [
-        [0u8; 31].to_vec(),
-        [if bool { 1u8 } else { 0u8 }; 1].to_vec(),
-    ]
-    .concat()
-    .as_slice()
-    .try_into()
-    .unwrap();
+    let result_bytes = pad_left(&[if bool { 1u8 } else { 0u8 }; 1]);
 
     let result = runner.stack.push(result_bytes);
 
@@ -147,14 +119,7 @@ pub fn slt(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     let bool = a.lt(&b);
 
-    let result_bytes = [
-        [0u8; 31].to_vec(),
-        [if bool { 1u8 } else { 0u8 }; 1].to_vec(),
-    ]
-    .concat()
-    .as_slice()
-    .try_into()
-    .unwrap();
+    let result_bytes = pad_left(&[if bool { 1u8 } else { 0u8 }; 1]);
 
     let result = runner.stack.push(result_bytes);
 
@@ -180,14 +145,7 @@ pub fn sgt(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     let bool = a.gt(&b);
 
-    let result_bytes = [
-        [0u8; 31].to_vec(),
-        [if bool { 1u8 } else { 0u8 }; 1].to_vec(),
-    ]
-    .concat()
-    .as_slice()
-    .try_into()
-    .unwrap();
+    let result_bytes = pad_left(&[if bool { 1u8 } else { 0u8 }; 1]);
 
     let result = runner.stack.push(result_bytes);
 

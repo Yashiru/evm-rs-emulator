@@ -13,11 +13,7 @@ use ethers::utils::keccak256;
 use colored::*;
 
 pub fn address(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let address = [[0; 12].to_vec(), runner.address.to_vec()]
-        .concat()
-        .as_slice()
-        .try_into()
-        .unwrap();
+    let address = pad_left(&runner.address);
 
     let result = runner.stack.push(address);
 
@@ -56,11 +52,7 @@ pub fn balance(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn origin(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let origin = [[0; 12].to_vec(), runner.origin.to_vec()]
-        .concat()
-        .as_slice()
-        .try_into()
-        .unwrap();
+    let origin = pad_left(&runner.origin);
 
     let result = runner.stack.push(origin);
 
@@ -78,11 +70,7 @@ pub fn origin(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn caller(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let caller = [[0; 12].to_vec(), runner.caller.to_vec()]
-        .concat()
-        .as_slice()
-        .try_into()
-        .unwrap();
+    let caller = pad_left(&runner.caller);
 
     let result = runner.stack.push(caller);
 
@@ -235,11 +223,7 @@ pub fn codecopy(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 pub fn gasprice(runner: &mut Runner) -> Result<(), ExecutionError> {
-    let gasprice = [[0; 31].to_vec(), [0xff].to_vec()]
-        .concat()
-        .as_slice()
-        .try_into()
-        .unwrap();
+    let gasprice = pad_left(&[0xff]);
 
     let result = runner.stack.push(gasprice);
 
