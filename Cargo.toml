@@ -14,4 +14,4 @@ primitive-types = "0.12.1"
 hex = "0.4"
 
 [package.metadata.commands]
-coverage = "cargo test && export LLVM_PROFILE_FILE='llvm/evm-rs-emulator-%p-%m.profraw' && grcov . -s . --binary-path ./target/debug/ -t html --branch --ignore-not-existing -o ./coverage/ && google-chrome ./coverage/index.html"
+coverage = "cargo test && export LLVM_PROFILE_FILE='llvm/evm-rs-emulator-%p-%m.profraw' && grcov . -s . --binary-path ./target/debug/ -t html --branch --ignore-not-existing -o ./coverage/ && google-chrome ./coverage/index.html && cp ./coverage/html/badges/flat.svg ./coverage/badges/"

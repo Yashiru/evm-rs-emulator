@@ -16,7 +16,11 @@ Cargo.lock
 
 
 # Added by cargo
-/coverage
+/coverage/src
+/coverage/*.html
+/coverage/*.json
+/coverage/badges/*.svg
+!/coverage/badges/flat.svg
 /target
 
 *.bin
