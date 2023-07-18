@@ -3,7 +3,7 @@ use crate::core_module::utils;
 use crate::core_module::utils::bytes;
 use crate::core_module::utils::bytes::{bytes32_to_address, pad_left};
 use crate::core_module::utils::environment::{
-    delete_account, get_balance, get_nonce, init_account, increment_nonce,
+    delete_account, get_balance, get_nonce, init_account,
 };
 use crate::core_module::utils::errors::ExecutionError;
 
@@ -213,7 +213,7 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
                 }
             },
             if call_result.is_err() { "❌" } else { "✅" },
-            call_result.unwrap(),
+            if call_result.is_err() { call_result.unwrap_err().to_string() } else { "".to_string() },
             "Returndata".bright_blue(),
             returndata_hex
         ));
