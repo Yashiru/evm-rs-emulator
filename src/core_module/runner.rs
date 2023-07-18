@@ -52,7 +52,7 @@ impl Runner {
             state: if state.is_some() {
                 state.unwrap()
             } else {
-                EvmState::new()
+                EvmState::new(Some("https://mainnet.infura.io/v3/48de6103d9864b9bb17cf47d6cacf6ed".to_owned()))
             },
             // Create an empty memory
             memory: Memory::new(None),
@@ -450,17 +450,12 @@ impl Runner {
         };
 
         // Interpret the bytecode
-        let interpret_result =
-            self.interpret(self.state.get_code_at(to)?.to_owned(), self.debug_level, false);
+        let code = self.state.get_code_at(to)?.to_owned();
+        let interpret_result = self.interpret(code, self.debug_level, false);
 
         // Check if the interpretation was successful
         if interpret_result.is_err() {
             error = Some(interpret_result.unwrap_err());
-        }
-
-        // Check if the call was successful
-        if !self.stack.stack.is_empty() {
-            error = Some(ExecutionError::NotEmptyStack);
         }
 
         // Get the return data
@@ -613,7 +608,7 @@ impl Runner {
         println!();
     }
 
-    fn debug_storage(&self) {
+    fn debug_storage(&mut self) {
         self.state.debug_state();
     }
 }

@@ -12,7 +12,6 @@ pub enum ExecutionError {
     InsufficientBalance,
 
     // Flow errors
-    NotEmptyStack,
     StaticCallStateChanged,
     InvalidOpcode(u8),
 
@@ -45,7 +44,6 @@ impl fmt::Display for ExecutionError {
             ExecutionError::CodeNotFound => write!(f, "Trying to access non-existent account code"),
             ExecutionError::RevertWithoutData => write!(f, "Execution revert without data"),
             ExecutionError::InsufficientBalance => write!(f, "Insufficient balance to transfer"),
-            ExecutionError::NotEmptyStack => write!(f, "Stack is not empty after the call"),
             ExecutionError::InvalidOpcode(op_code) => {
                 write!(f, "Invalid op code 0x{:X}", op_code)
             }
@@ -74,7 +72,6 @@ impl PartialEq for ExecutionError {
             | (CodeNotFound, CodeNotFound)
             | (EmptyByteCode, EmptyByteCode)
             | (InsufficientBalance, InsufficientBalance)
-            | (NotEmptyStack, NotEmptyStack)
             | (StaticCallStateChanged, StaticCallStateChanged)
             | (StackTooSmall, StackTooSmall)
             | (StackTooDeep, StackTooDeep)

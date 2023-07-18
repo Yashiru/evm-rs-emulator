@@ -381,8 +381,10 @@ pub fn return_(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{}", "RETURN".red()));
     }
 
-    // Increment PC
-    runner.increment_pc(1)
+    // Set the program counter to the end of the bytecode
+    runner.set_pc(runner.bytecode.len());
+
+    Ok(())
 }
 
 #[cfg(test)]
@@ -585,9 +587,8 @@ mod tests {
         assert_eq!(result, pad_left(&[0x01]));
 
         let stored_code = runner.state.get_code_at(bytes32_to_address(&result));
-
-        assert!(stored_code.is_err());
-        assert_eq!(stored_code.unwrap_err(), ExecutionError::AccountNotFound);
+        assert!(!stored_code.is_err());
+        assert_eq!(stored_code.unwrap().len(), 0);
 
         let balance_result = get_balance(bytes32_to_address(&result), &mut runner);
         assert!(balance_result.is_err());
