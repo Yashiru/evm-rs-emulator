@@ -24,7 +24,7 @@ fn main() -> Result<(), ExecutionError> {
             let bytecode = hex::decode(file_content.trim()).expect("Decoding failed");
 
             // Interpret the bytecode
-            let _ = interpreter.interpret(bytecode, Some(3), true);
+            let _ = interpreter.interpret(bytecode, Some(255), true);
         }
         Err(_) => {
             return Err(ExecutionError::InvalidFile);
