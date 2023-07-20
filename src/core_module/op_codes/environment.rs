@@ -206,7 +206,7 @@ pub fn codecopy(runner: &mut Runner) -> Result<(), ExecutionError> {
         // complete the code with 0s
         let code = code.unwrap();
         let mut code_vec = code.to_vec();
-        code_vec.resize(32, 0);
+        code_vec.resize(offset + size, 0);
         let code = code_vec.as_slice();
         code[offset..offset + size].to_vec()
     };
