@@ -6,6 +6,12 @@ The EVM Rust Emulator is a simple in-memory Ethereum Virtual Machine (EVM) emula
 
 ![Github action](https://github.com/Yashiru/evm-rs-emulator/workflows/CI/badge.svg)
 
+## Run some bytecode
+Put the bytecode to run in `bytecode.bin` file and run the following command.
+```bash
+cargo run
+```
+
 ## Disclaimer
 This crate is in development and it is at this point only a bytecode interpreter with a full EVM emulation. It require a lib module with all external accessible features to make this crate a real lib crate that can be used as an external crate in other projects.
 
