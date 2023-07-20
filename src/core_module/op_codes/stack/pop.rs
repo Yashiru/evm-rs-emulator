@@ -1,6 +1,6 @@
-use crate::core_module::utils::errors::ExecutionError;
 use crate::core_module::runner::Runner;
 use crate::core_module::utils;
+use crate::core_module::utils::errors::ExecutionError;
 
 // Colored output
 use colored::*;

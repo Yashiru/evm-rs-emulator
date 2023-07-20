@@ -182,12 +182,10 @@ impl EvmState {
 
     pub fn sload(&mut self, account: [u8; 20], slot: [u8; 32]) -> Result<[u8; 32], ExecutionError> {
         match self.accounts.get(&account) {
-            Some(account_state) => {
-                match account_state.storage.get(&slot) {
-                    Some(value) => Ok(*value),
-                    None => Ok([0u8; 32])
-                }
-            }
+            Some(account_state) => match account_state.storage.get(&slot) {
+                Some(value) => Ok(*value),
+                None => Ok([0u8; 32]),
+            },
             None => {
                 let provider = self.provider.as_ref();
 
@@ -196,7 +194,10 @@ impl EvmState {
                 }
 
                 let contract_address = Address::from(account);
-                let future = provider.unwrap().get_storage_at(contract_address, H256::from(&slot), None);
+                let future =
+                    provider
+                        .unwrap()
+                        .get_storage_at(contract_address, H256::from(&slot), None);
 
                 // Block on the future and get the result
                 let storage_result = tokio::runtime::Runtime::new()

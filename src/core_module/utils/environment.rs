@@ -1,16 +1,26 @@
 use crate::core_module::runner::Runner;
 
-use super::{errors::ExecutionError, bytes::u64_to_u256_array};
+use super::{bytes::u64_to_u256_array, errors::ExecutionError};
 
-// Get address balance 
+// Get address balance
 pub fn get_balance(address: [u8; 20], runner: &mut Runner) -> Result<[u8; 32], ExecutionError> {
-    let balance = runner.state.accounts.get(&address).map(|account| account.balance).ok_or(ExecutionError::AccountNotFound);
+    let balance = runner
+        .state
+        .accounts
+        .get(&address)
+        .map(|account| account.balance)
+        .ok_or(ExecutionError::AccountNotFound);
     Ok(balance?)
 }
 
-// Get address nonce 
+// Get address nonce
 pub fn get_nonce(address: [u8; 20], runner: &mut Runner) -> Result<[u8; 32], ExecutionError> {
-    let nonce = runner.state.accounts.get(&address).map(|account| account.nonce).ok_or(ExecutionError::AccountNotFound);
+    let nonce = runner
+        .state
+        .accounts
+        .get(&address)
+        .map(|account| account.nonce)
+        .ok_or(ExecutionError::AccountNotFound);
     Ok(u64_to_u256_array(nonce?))
 }
 
@@ -19,14 +29,17 @@ pub fn init_account(address: [u8; 20], runner: &mut Runner) -> Result<(), Execut
     match account {
         Some(_) => Ok(()),
         None => {
-            runner.state.accounts.insert(address, super::super::state::AccountState {
-                nonce: 0,
-                balance: [0; 32],
-                storage: std::collections::HashMap::new(),
-                code_hash: [0u8; 32],
-            });
+            runner.state.accounts.insert(
+                address,
+                super::super::state::AccountState {
+                    nonce: 0,
+                    balance: [0; 32],
+                    storage: std::collections::HashMap::new(),
+                    code_hash: [0u8; 32],
+                },
+            );
             increment_nonce(address, runner)
-        },
+        }
     }
 }
 
@@ -42,8 +55,8 @@ pub fn increment_nonce(address: [u8; 20], runner: &mut Runner) -> Result<(), Exe
         Some(account) => account,
         None => {
             println!("{:?}", ExecutionError::AccountNotFound);
-            return Err(ExecutionError::AccountNotFound)
-        },
+            return Err(ExecutionError::AccountNotFound);
+        }
     };
     nonce.nonce += 1;
     Ok(())

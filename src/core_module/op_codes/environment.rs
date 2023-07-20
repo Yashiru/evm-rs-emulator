@@ -118,7 +118,11 @@ pub fn calldataload(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(calldata);
-        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "CALLDATALOAD".bright_blue(), hex));
+        runner.print_debug(&format!(
+            "{:<14} 👉 [ {} ]",
+            "CALLDATALOAD".bright_blue(),
+            hex
+        ));
     }
 
     // Increment PC
@@ -139,7 +143,11 @@ pub fn calldatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(calldatasize);
-        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "CALLDATASIZE".bright_blue(), hex));
+        runner.print_debug(&format!(
+            "{:<14} 👉 [ {} ]",
+            "CALLDATASIZE".bright_blue(),
+            hex
+        ));
     }
 
     // Increment PC
@@ -259,7 +267,11 @@ pub fn extcodesize(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(codesize);
-        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "EXTCODESIZE".bright_blue(), hex));
+        runner.print_debug(&format!(
+            "{:<14} 👉 [ {} ]",
+            "EXTCODESIZE".bright_blue(),
+            hex
+        ));
     }
 
     // Increment PC
@@ -312,7 +324,11 @@ pub fn returndatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(returndatasize);
-        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "RETURNDATASIZE".bright_blue(), hex));
+        runner.print_debug(&format!(
+            "{:<14} 👉 [ {} ]",
+            "RETURNDATASIZE".bright_blue(),
+            hex
+        ));
     }
 
     // Increment PC
@@ -355,7 +371,11 @@ pub fn extcodehash(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(codehash);
-        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "EXTCODEHASH".bright_blue(), hex));
+        runner.print_debug(&format!(
+            "{:<14} 👉 [ {} ]",
+            "EXTCODEHASH".bright_blue(),
+            hex
+        ));
     }
 
     // Increment PC
@@ -406,9 +426,7 @@ pub fn coinbase(runner: &mut Runner) -> Result<(), ExecutionError> {
 pub fn timestamp(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Get the current timestamp
     let now = SystemTime::now();
-    let since_the_epoch = now
-        .duration_since(UNIX_EPOCH)
-        .expect("Time went backwards");
+    let since_the_epoch = now.duration_since(UNIX_EPOCH).expect("Time went backwards");
 
     // Convert the timestamp to seconds
     let timestamp_secs = since_the_epoch.as_secs();
@@ -464,7 +482,11 @@ pub fn difficulty(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(difficulty);
-        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "DIFFICULTY".bright_blue(), hex));
+        runner.print_debug(&format!(
+            "{:<14} 👉 [ {} ]",
+            "DIFFICULTY".bright_blue(),
+            hex
+        ));
     }
 
     // Increment PC
@@ -520,7 +542,11 @@ pub fn selfbalance(runner: &mut Runner) -> Result<(), ExecutionError> {
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex: String = utils::debug::to_hex_string(balance);
-        runner.print_debug(&format!("{:<14} 👉 [ {} ]", "SELFBALANCE".bright_blue(), hex));
+        runner.print_debug(&format!(
+            "{:<14} 👉 [ {} ]",
+            "SELFBALANCE".bright_blue(),
+            hex
+        ));
     }
 
     // Increment PC
@@ -548,7 +574,7 @@ pub fn basefee(runner: &mut Runner) -> Result<(), ExecutionError> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::core_module::utils::bytes::{_hex_string_to_bytes, pad_left, _pad_right};
+    use crate::core_module::utils::bytes::{_hex_string_to_bytes, _pad_right, pad_left};
 
     #[test]
     fn test_address() {
@@ -698,7 +724,7 @@ mod tests {
                 "7dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6000",
             ),
             Some(2),
-            true
+            true,
         );
         assert!(interpret_result.is_ok());
 
@@ -710,7 +736,9 @@ mod tests {
         let result = unsafe { runner.memory.read(0x00, 0x20).unwrap() };
         assert_eq!(
             result,
-            _hex_string_to_bytes("7dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60")
+            _hex_string_to_bytes(
+                "7dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60"
+            )
         );
 
         // reset memory
@@ -843,14 +871,16 @@ mod tests {
         let interpret_result = runner.interpret(
             _hex_string_to_bytes("6c63ffffffff60005260046000f3600052600d60006000f03f"),
             Some(2),
-            true
+            true,
         );
         assert!(interpret_result.is_ok());
 
         let result = runner.stack.pop().unwrap();
         assert_eq!(
             result,
-            pad_left(&_hex_string_to_bytes("c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"))
+            pad_left(&_hex_string_to_bytes(
+                "c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"
+            ))
         );
     }
 
@@ -875,9 +905,7 @@ mod tests {
 
         // Get the current timestamp
         let now = SystemTime::now();
-        let since_the_epoch = now
-            .duration_since(UNIX_EPOCH)
-            .expect("Time went backwards");
+        let since_the_epoch = now.duration_since(UNIX_EPOCH).expect("Time went backwards");
 
         // Convert the timestamp to seconds
         let timestamp_secs = since_the_epoch.as_secs();

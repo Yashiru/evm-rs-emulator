@@ -127,7 +127,7 @@ pub fn pc(runner: &mut Runner) -> Result<(), ExecutionError> {
         let hex = utils::debug::to_hex_string(pc);
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "PC".bright_blue(), hex));
     }
-    
+
     // Increment the program counter
     runner.increment_pc(1)
 }

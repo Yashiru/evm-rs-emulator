@@ -164,8 +164,7 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
         runner
             .memory
             .read(calldata_offset.as_usize(), calldata_size.as_usize())?
-    };        
-    
+    };
 
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let address_hex: String = utils::debug::to_hex_address(bytes32_to_address(&to));
