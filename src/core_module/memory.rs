@@ -50,9 +50,9 @@ impl Memory {
         if address + data.len() > self.heap.len() {
             // Calculate the nearest multiple of 32
             let nearest_multiple = if address % 32 == 0 {
-                address + 32
+                address + data.len() + 32
             } else {
-                (address + 32) + (32 - (address + 32) % 32)
+                (address + data.len() + 32) + (32 - (address + data.len() + 32) % 32)
             };
 
             // Extend memory heap
