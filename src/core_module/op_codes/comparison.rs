@@ -1,6 +1,6 @@
-use crate::core_module::{runner::Runner, utils::bytes::pad_left};
 use crate::core_module::utils;
 use crate::core_module::utils::errors::ExecutionError;
+use crate::core_module::{runner::Runner, utils::bytes::pad_left};
 
 // Primitive types
 use ethers::types::{I256, U256};

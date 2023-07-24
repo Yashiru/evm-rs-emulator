@@ -43,7 +43,7 @@ pub fn _hex_string_to_bytes(hex: &str) -> Vec<u8> {
         Ok(bytes) => bytes,
         Err(e) => {
             panic!("Error: {}", e.to_string().red());
-        },
+        }
     }
 }
 

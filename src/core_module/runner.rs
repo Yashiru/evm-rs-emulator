@@ -5,7 +5,7 @@ use super::op_codes;
 use super::stack::Stack;
 use super::state::EvmState;
 use super::utils;
-use super::utils::environment::{init_account, increment_nonce};
+use super::utils::environment::{increment_nonce, init_account};
 use super::utils::errors::ExecutionError;
 
 use ethers::types::U256;
@@ -52,7 +52,9 @@ impl Runner {
             state: if state.is_some() {
                 state.unwrap()
             } else {
-                EvmState::new(Some("https://mainnet.infura.io/v3/48de6103d9864b9bb17cf47d6cacf6ed".to_owned()))
+                EvmState::new(Some(
+                    "https://mainnet.infura.io/v3/48de6103d9864b9bb17cf47d6cacf6ed".to_owned(),
+                ))
             },
             // Create an empty memory
             memory: Memory::new(None),
@@ -87,7 +89,7 @@ impl Runner {
             // Set debug mode to false
             debug_level: None,
             // Set the call depth to 0
-            call_depth: 0
+            call_depth: 0,
         };
 
         // Initialize accounts in the EVM state
@@ -199,7 +201,7 @@ impl Runner {
         /*                             Print debug footer                             */
         /* -------------------------------------------------------------------------- */
 
-        if debug.is_some() && debug.unwrap() >= 3 && self.call_depth == 0  {
+        if debug.is_some() && debug.unwrap() >= 3 && self.call_depth == 0 {
             // Debug stack
             self.debug_stack();
 
@@ -207,7 +209,7 @@ impl Runner {
             self.debug_memory();
         }
 
-        if debug.is_some() && debug.unwrap() >= 4 && self.call_depth == 0  {
+        if debug.is_some() && debug.unwrap() >= 4 && self.call_depth == 0 {
             // Debug storage
             self.debug_storage();
         }

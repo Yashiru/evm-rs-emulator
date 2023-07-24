@@ -7,19 +7,17 @@ pub struct Stack {
 
 impl Stack {
     pub fn new() -> Self {
-        Self {
-            stack: vec![],
-        }
+        Self { stack: vec![] }
     }
 
     // Push a word onto the stack
-    pub fn push(&mut self, word: [u8; 32]) -> Result<(), ExecutionError>{
+    pub fn push(&mut self, word: [u8; 32]) -> Result<(), ExecutionError> {
         // Check if the stack is too deep
         if self.stack.len() >= 1024 {
             // Return an error
             return Err(ExecutionError::StackTooDeep);
         }
-        
+
         Ok(self.stack.push(word))
     }
 

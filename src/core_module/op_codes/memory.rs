@@ -103,7 +103,11 @@ mod tests {
     #[test]
     fn test_msize() {
         let mut runner = Runner::_default(3);
-        let interpret_result: Result<(), ExecutionError> = runner.interpret(_hex_string_to_bytes("5960005150596039515059"), Some(2), true);
+        let interpret_result: Result<(), ExecutionError> = runner.interpret(
+            _hex_string_to_bytes("5960005150596039515059"),
+            Some(2),
+            true,
+        );
         assert!(interpret_result.is_ok());
 
         let result1: [u8; 32] = runner.stack.pop().unwrap();
