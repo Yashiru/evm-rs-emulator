@@ -23,6 +23,7 @@ coverage/badges/*.svg
 
 # llvm
 llvm/
+*.profraw
 
 # Added by cargo
 /coverage/src
