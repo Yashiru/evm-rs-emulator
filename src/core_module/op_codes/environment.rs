@@ -12,6 +12,15 @@ use ethers::utils::keccak256;
 // Colored output
 use colored::*;
 
+/// Push the address of the current executing account onto the stack.
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// Returns an `ExecutionError` if there is an error pushing the result onto the stack.
 pub fn address(runner: &mut Runner) -> Result<(), ExecutionError> {
     let address = pad_left(&runner.address);
 
@@ -30,6 +39,15 @@ pub fn address(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Push the balance of the current executing account onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// Returns an `ExecutionError` if there is an error pushing the result onto the stack.
 pub fn balance(runner: &mut Runner) -> Result<(), ExecutionError> {
     let address: [u8; 32] = runner.stack.pop()?;
     let address: [u8; 20] = address[12..].try_into().unwrap();
@@ -51,6 +69,16 @@ pub fn balance(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+
+/// Push the origin address onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// Returns an `ExecutionError` if there is an error pushing the result onto the stack.
 pub fn origin(runner: &mut Runner) -> Result<(), ExecutionError> {
     let origin = pad_left(&runner.origin);
 
@@ -69,6 +97,16 @@ pub fn origin(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+
+/// Push the caller address onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// Returns an `ExecutionError` if there is an error pushing the result onto the stack.
 pub fn caller(runner: &mut Runner) -> Result<(), ExecutionError> {
     let caller = pad_left(&runner.caller);
 
@@ -87,6 +125,16 @@ pub fn caller(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+
+/// Push the call value onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// Returns an `ExecutionError` if there is an error pushing the result onto the stack.
 pub fn callvalue(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.push(runner.callvalue);
 
@@ -103,6 +151,19 @@ pub fn callvalue(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+
+/// Load a 32-byte word from the call data onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// Returns an `ExecutionError` if:
+/// 
+/// * The stack is empty
+/// * There is an error pushing the result onto the stack
 pub fn calldataload(runner: &mut Runner) -> Result<(), ExecutionError> {
     let address = runner.stack.pop()?;
     let address = U256::from_big_endian(&address).as_usize();
@@ -129,6 +190,15 @@ pub fn calldataload(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Push the size of the call data onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// Returns an `ExecutionError` if there is an error pushing the result onto the stack.
 pub fn calldatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
     let size = runner.calldata.msize().to_be_bytes();
 
@@ -154,6 +224,19 @@ pub fn calldatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Copy the call data to memory.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// Returns an `ExecutionError` if:
+/// 
+/// * Their is not enough values on the stack
+/// * There is an error reading the call data
+/// * There is an error writing the call data to memory
 pub fn calldatacopy(runner: &mut Runner) -> Result<(), ExecutionError> {
     let dest_offset = U256::from_big_endian(&runner.stack.pop()?).as_usize();
     let _offset = U256::from_big_endian(&runner.stack.pop()?).as_usize();
@@ -175,6 +258,16 @@ pub fn calldatacopy(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+
+/// Push the size of the code onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// Returns an `ExecutionError` if there is an error pushing the result onto the stack.
 pub fn codesize(runner: &mut Runner) -> Result<(), ExecutionError> {
     let code = runner.state.get_code_at(runner.address);
 
@@ -199,7 +292,19 @@ pub fn codesize(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Can be mocked with a fork
+/// Copy the code to memory.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// Returns an `ExecutionError` if:
+/// 
+/// * Their is not enough values on the stack
+/// * There is an error reading the code
+/// * There is an error writing the code to memory
 pub fn codecopy(runner: &mut Runner) -> Result<(), ExecutionError> {
     let dest_offset = U256::from_big_endian(&runner.stack.pop()?).as_usize();
     let offset = U256::from_big_endian(&runner.stack.pop()?).as_usize();
@@ -230,6 +335,16 @@ pub fn codecopy(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+
+/// Push the gas price onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// Returns an `ExecutionError` if there is an error pushing the result onto the stack.
 pub fn gasprice(runner: &mut Runner) -> Result<(), ExecutionError> {
     let gasprice = pad_left(&[0xff]);
 
@@ -248,6 +363,15 @@ pub fn gasprice(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Push the ext code size onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// Returns an `ExecutionError` if there is an error pushing the result onto the stack.
 pub fn extcodesize(runner: &mut Runner) -> Result<(), ExecutionError> {
     let address = runner.stack.pop()?;
 
@@ -278,7 +402,19 @@ pub fn extcodesize(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Can be mocked with a fork
+/// Copy the ext code to memory.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// Returns an `ExecutionError` if:
+/// 
+/// * Their is not enough values on the stack
+/// * There is an error reading the code
+/// * There is an error writing the code to memory
 pub fn extcodecopy(runner: &mut Runner) -> Result<(), ExecutionError> {
     let address = runner.stack.pop()?;
     let dest_offset = U256::from_big_endian(&runner.stack.pop()?).as_usize();
@@ -310,6 +446,19 @@ pub fn extcodecopy(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Push the size of the ext code hash onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// returns an `ExecutionError` if:
+/// 
+/// * Their is not enough values on the stack
+/// * There is an error reading the code
+/// * There is an error pushing the result onto the stack
 pub fn returndatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
     let size = runner.returndata.msize().to_be_bytes();
 
@@ -335,6 +484,19 @@ pub fn returndatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Copy the return data to memory.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// returns an `ExecutionError` if:
+/// 
+/// * Their is not enough values on the stack
+/// * There is an error reading the return data
+/// * There is an error writing the return data to memory
 pub fn returndatacopy(runner: &mut Runner) -> Result<(), ExecutionError> {
     let dest_offset = U256::from_big_endian(&runner.stack.pop()?).as_usize();
     let _offset = U256::from_big_endian(&runner.stack.pop()?).as_usize();
@@ -356,7 +518,17 @@ pub fn returndatacopy(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Can be mocked with a fork
+/// Push the ext code hash onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// returns an `ExecutionError` if:
+/// 
+/// * Their is not enough values on the stack
 pub fn extcodehash(runner: &mut Runner) -> Result<(), ExecutionError> {
     let address = runner.stack.pop()?;
 
@@ -382,6 +554,18 @@ pub fn extcodehash(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Push the block hash onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// returns an `ExecutionError` if:
+/// 
+/// * Their is not enough values on the stack
+/// * There is an error pushing the result onto the stack
 pub fn blockhash(runner: &mut Runner) -> Result<(), ExecutionError> {
     let block: U256 = U256::from_big_endian(&runner.stack.pop()?);
     let mut bytes = [0; 32];
@@ -404,6 +588,17 @@ pub fn blockhash(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Push the coinbase onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// returns an `ExecutionError` if:
+/// 
+/// * There is an error pushing the result onto the stack
 pub fn coinbase(runner: &mut Runner) -> Result<(), ExecutionError> {
     let coinbase = pad_left(&[0xc0u8; 20]);
 
@@ -422,7 +617,17 @@ pub fn coinbase(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Can be mocked with a fork
+/// Push the timestamp onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// returns an `ExecutionError` if:
+/// 
+/// * There is an error pushing the result onto the stack
 pub fn timestamp(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Get the current timestamp
     let now = SystemTime::now();
@@ -451,7 +656,17 @@ pub fn timestamp(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Can be mocked with a fork
+/// Push the number of the current block onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// returns an `ExecutionError` if:
+/// 
+/// * There is an error pushing the result onto the stack
 pub fn number(runner: &mut Runner) -> Result<(), ExecutionError> {
     let number = pad_left(&[0xff; 4]);
 
@@ -470,7 +685,17 @@ pub fn number(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Can be mocked with a fork
+/// Push the difficulty of the current block onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// returns an `ExecutionError` if:
+/// 
+/// * There is an error pushing the result onto the stack
 pub fn difficulty(runner: &mut Runner) -> Result<(), ExecutionError> {
     let difficulty = pad_left(&[0x45; 8]);
 
@@ -493,7 +718,17 @@ pub fn difficulty(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Can be mocked with a fork
+/// Push the gas limit of the current block onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// returns an `ExecutionError` if:
+/// 
+/// * There is an error pushing the result onto the stack
 pub fn gaslimit(runner: &mut Runner) -> Result<(), ExecutionError> {
     let gaslimit = pad_left(&[0x01, 0xC9, 0xC3, 0x80]);
 
@@ -512,7 +747,17 @@ pub fn gaslimit(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Can be mocked with a fork
+/// Push the chain id onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// returns an `ExecutionError` if:
+/// 
+/// * There is an error pushing the result onto the stack
 pub fn chainid(runner: &mut Runner) -> Result<(), ExecutionError> {
     let chainid = pad_left(&[0x01]);
 
@@ -531,6 +776,17 @@ pub fn chainid(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Push the self balance of the current executing account onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// returns an `ExecutionError` if:
+/// 
+/// * There is an error pushing the result onto the stack
 pub fn selfbalance(runner: &mut Runner) -> Result<(), ExecutionError> {
     let balance = get_balance(runner.address, runner)?;
 
@@ -553,6 +809,17 @@ pub fn selfbalance(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Push the base fee onto the stack.
+/// 
+/// # Arguments
+/// 
+/// * `runner` - A mutable reference to the `Runner`
+/// 
+/// # Errors
+/// 
+/// returns an `ExecutionError` if:
+/// 
+/// * There is an error pushing the result onto the stack
 pub fn basefee(runner: &mut Runner) -> Result<(), ExecutionError> {
     let basefee = pad_left(&[0x0a]);
 
