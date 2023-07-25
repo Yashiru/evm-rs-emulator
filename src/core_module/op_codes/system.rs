@@ -29,7 +29,7 @@ pub fn invalid(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 /// Executes the CREATE opcode, which creates a new contract with the given init code and value.
-/// It put the init code at the address, call it and update the code with the return data. 
+/// It put the init code at the address, call it and update the code with the return data.
 ///
 /// # Arguments
 ///
@@ -51,7 +51,7 @@ pub fn invalid(runner: &mut Runner) -> Result<(), ExecutionError> {
 /// ```
 /// use evm_rs_emulator::core_module::op_codes::system::create;
 /// use evm_rs_emulator::core_module::runner::Runner;
-/// 
+///
 /// // Create an account with 0 wei and 4 FF as code
 /// let bytecode = vec![
 ///     // PUSH13 0x63FFFFFFFF6000526004601CF3
@@ -65,8 +65,8 @@ pub fn invalid(runner: &mut Runner) -> Result<(), ExecutionError> {
 ///     // PUSH1 0
 ///     0x60, 0x00,
 ///     // PUSH1 0
-///     0x60, 0x00, 
-///     // CREATE 
+///     0x60, 0x00,
+///     // CREATE
 ///     0xf0,
 /// ];
 /// let mut runner = Runner::default();
@@ -131,28 +131,28 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
 
 /// Executes the CREATE2 opcode, which creates a new contract with a given salt value and init code.
 /// It put the init code at the address, call it and update the code with the return data.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `runner` - A mutable reference to the `Runner` struct.
-/// 
+///
 /// # Errors
-/// 
+///
 /// Returns an `ExecutionError` if any of the following occurs:
-/// 
+///
 /// * The stack is empty or does not have enough values.
 /// * The memory read operation fails.
 /// * The `init_account` function fails.
 /// * The `put_code_at` function fails.
 /// * The `call` function fails.
 /// * The `transfer` function fails.
-/// 
+///
 /// # Examples
-/// 
+///
 /// ```
 /// use evm_rs_emulator::core_module::op_codes::system::create2;
 /// use evm_rs_emulator::core_module::runner::Runner;
-/// 
+///
 /// // Create an account with 0 wei and 4 FF as code
 /// let bytecode = vec![
 ///     // PUSH13 0x63FFFFFFFF6000526004601CF3
@@ -168,8 +168,8 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
 ///     // PUSH1 0
 ///     0x60, 0x00,
 ///     // PUSH1 0
-///     0x60, 0x00, 
-///     // CREATE2 
+///     0x60, 0x00,
+///     // CREATE2
 ///     0xf5,
 /// ];
 /// let mut runner = Runner::default();
@@ -241,7 +241,7 @@ pub fn create2(runner: &mut Runner) -> Result<(), ExecutionError> {
 /// # Errors
 ///
 /// Returns an `ExecutionError` if:
-/// 
+///
 /// * The stack is empty or does not have enough values.
 /// * The `call` function fails.
 /// * The `memory` module returns an error while reading or writing memory.
@@ -357,9 +357,9 @@ pub fn call(runner: &mut Runner, bypass_static: bool) -> Result<(), ExecutionErr
 /// Executes a message call with the same value, code, and storage as the calling environment.
 /// This opcode is similar to CALL, but the code at the target address is executed in the context of the current contract,
 /// rather than in the context of a new contract. The target address, value, and input are still taken from the stack.
-/// 
+///
 /// # ⚠️ Disclamer
-/// 
+///
 /// This opcode is not implemented yet.
 pub fn callcode(_: &mut Runner) -> Result<(), ExecutionError> {
     Err(ExecutionError::NotImplemented(0xF2))
@@ -374,7 +374,7 @@ pub fn callcode(_: &mut Runner) -> Result<(), ExecutionError> {
 /// # Errors
 ///
 /// Returns an `ExecutionError` if:
-/// 
+///
 /// * The stack is empty or does not have enough values.
 /// * The `call` function fails.
 /// * The `memory` module returns an error while reading or writing memory.
@@ -471,7 +471,7 @@ pub fn delegatecall(runner: &mut Runner) -> Result<(), ExecutionError> {
 /// # Errors
 ///
 /// Returns an `ExecutionError` if:
-/// 
+///
 /// * The stack is empty or does not have enough values.
 /// * The `call` function fails.
 /// * The `memory` module returns an error while reading or writing memory.
@@ -495,7 +495,7 @@ pub fn staticcall(runner: &mut Runner) -> Result<(), ExecutionError> {
 /// # Errors
 ///
 /// Returns an `ExecutionError` if:
-/// 
+///
 /// * The stack is empty or does not have enough values.
 /// * The `get_balance` function fails.
 /// * The `transfer` function fails.
@@ -525,15 +525,15 @@ pub fn selfdestruct(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 /// Implements the RETURN opcode, which sets the return data for the current execution context.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `runner` - A mutable reference to the `Runner` struct, which contains the current execution context.
-/// 
+///
 /// # Errors
-/// 
+///
 /// Returns an `ExecutionError` if:
-/// 
+///
 /// * The stack is empty or does not have enough values.
 /// * The `memory` module returns an error while reading or writing memory.
 pub fn return_(runner: &mut Runner) -> Result<(), ExecutionError> {
