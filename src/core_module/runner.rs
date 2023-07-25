@@ -35,7 +35,22 @@ pub struct Runner {
     pub stack: Stack,
 }
 
+/// Implementation of the Runner struct, which is responsible for executing EVM bytecode.
 impl Runner {
+    /// Creates a new instance of the EVM runner with the given parameters.
+    ///
+    /// # Arguments
+    ///
+    /// * `caller` - The address of the account that initiated the call.
+    /// * `origin` - The address of the account that originally initiated the transaction.
+    /// * `address` - The address of the account that will receive the call.
+    /// * `callvalue` - The value (in wei) that was sent along with the call.
+    /// * `calldata` - The input data for the call.
+    /// * `state` - The initial state of the EVM.
+    ///
+    /// # Returns
+    ///
+    /// A new instance of the EVM runner.
     pub fn new(
         caller: [u8; 20],
         origin: Option<[u8; 20]>,
@@ -111,6 +126,15 @@ impl Runner {
         instance
     }
 
+    /// Creates a new `Runner` instance with default values and sets the debug level to the given value.
+    ///
+    /// # Arguments
+    ///
+    /// * `debug_level` - A `u8` value representing the debug level to set.
+    ///
+    /// # Returns
+    ///
+    /// A new `Runner` instance with default values and the debug level set to the given value.
     pub fn _default(debug_level: u8) -> Self {
         let mut runner = Self::new(
             [
@@ -128,22 +152,54 @@ impl Runner {
         runner
     }
 
-    // Increment the program counter
+    /// Increments the program counter by the specified size.
+    ///
+    /// # Arguments
+    ///
+    /// * `size` - The number of bytes to increment the program counter by.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `ExecutionError` if the program counter goes out of bounds.
     pub fn increment_pc(&mut self, size: usize) -> Result<(), ExecutionError> {
         self.pc += size;
         Ok(())
     }
 
-    // Set the program counter
+    /// Sets the program counter to the specified value.
+    ///
+    /// # Arguments
+    ///
+    /// * `value` - The value to set the program counter to.
     pub fn set_pc(&mut self, value: usize) {
         self.pc = value;
     }
 
-    // Set the program counter
+    /// Returns the current value of the program counter.
     pub fn get_pc(&mut self) -> usize {
         self.pc
     }
 
+    /// Interprets the given bytecode and executes it on the EVM.
+    ///
+    /// # Arguments
+    ///
+    /// * `bytecode` - A vector of bytes representing the bytecode to be executed.
+    /// * `debug` - An optional u8 value representing the debug level. If set to 2 or higher, debug information will be printed.
+    /// * `initial_interpretation` - A boolean value indicating whether this is the initial interpretation of the bytecode.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `ExecutionError` if an error occurs during execution.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut runner = Runner::new();
+    /// let bytecode = vec![0x60, 0x01, 0x60, 0x02, 0x01, 0x00, 0x00];
+    /// let result = runner.interpret(bytecode, Some(2), true);
+    /// assert!(result.is_ok());
+    /// ```
     pub fn interpret(
         &mut self,
         bytecode: Vec<u8>,
@@ -236,7 +292,30 @@ impl Runner {
         Ok(())
     }
 
-    // Interpret a single opcode
+    /// Interpret a single opcode.
+    ///
+    /// # Arguments
+    ///
+    /// * `opcode` - A single opcode to interpret.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `ExecutionError` if the opcode is invalid or if an error occurs during execution.
+    ///
+    /// # OpCodes
+    ///
+    /// The function matches the given opcode with the corresponding function from the `op_codes` module.
+    /// The OpCodes are divided into the following categories:
+    ///
+    /// * Execution OpCodes
+    /// * Math operations OpCodes
+    /// * Push OpCodes
+    /// * Dup OpCodes
+    /// * Swap OpCodes
+    /// * Memory OpCodes
+    /// * Storage OpCodes
+    ///
+    /// For more information on each OpCode, please refer to the `op_codes` module.
     fn interpret_op_code(&mut self, opcode: u8) -> Result<(), ExecutionError> {
         match opcode {
             /* ---------------------------- Execution OpCodes --------------------------- */
@@ -410,7 +489,20 @@ impl Runner {
         }
     }
 
-    // Make a call to a contract
+    /// Executes a call to a contract.
+    /// Set up a new runner environment for the call and interpret the bytecode.
+    ///
+    /// # Arguments
+    ///
+    /// * `to` - The address of the contract to call.
+    /// * `value` - The value to send with the call.
+    /// * `calldata` - The input data to the contract.
+    /// * `_gas` - The gas limit for the call (currently unused).
+    /// * `delegate` - Whether the call is a delegate call.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `ExecutionError` if the call fails.
     pub fn call(
         &mut self,
         to: [u8; 20],
@@ -496,11 +588,14 @@ impl Runner {
     /*                               Debug functions                              */
     /* -------------------------------------------------------------------------- */
 
+    /// Prints a debug message with a tab prefix that indicates the current call depth.
+    /// The more the call depth is high, the more the tab prefix will be long.
     pub fn print_debug(&self, s: &str) {
         let prefix = "    ".repeat(self.call_depth as usize);
         println!("{}{}", prefix, s);
     }
 
+    /// Print a debug message that indicate the start of the runner interpretation with the contract address.
     fn debug_header(&self) {
         let border_line =
             "╔═════════════════════════════════════════════════════════════════════════════════════════════════╗";
@@ -546,6 +641,7 @@ impl Runner {
         println!("{}", footer_line.clone().bright_magenta());
     }
 
+    /// Print a debug message that display the final stack.
     fn debug_stack(&self) {
         let border_line =
             "\n╔═══════════════════════════════════════════════════════════════════════════════════════════════════════╗";
@@ -571,6 +667,7 @@ impl Runner {
         }
     }
 
+    /// Print a debug message that display the final memory.
     fn debug_memory(&self) {
         let border_line =
             "\n╔═══════════════════════════════════════════════════════════════════════════════════════════════════════╗";
@@ -610,6 +707,7 @@ impl Runner {
         println!();
     }
 
+    /// Print a debug message that display the final storage in depth.
     fn debug_storage(&mut self) {
         self.state.debug_state();
     }
