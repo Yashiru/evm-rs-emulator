@@ -6,13 +6,13 @@ use crate::core_module::utils::errors::ExecutionError;
 use colored::*;
 
 /// Loads 32 bytes from memory at the specified address and pushes the result onto the stack.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `runner` - A mutable reference to the `Runner` struct.
-/// 
+///
 /// # Errors
-/// 
+///
 /// Returns an `ExecutionError` if the stack is empty or if there is an error loading the value from storage.
 pub fn sload(runner: &mut Runner) -> Result<(), ExecutionError> {
     let address = runner.stack.pop()?;
@@ -34,15 +34,15 @@ pub fn sload(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 /// Store 32 bytes in memory
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `runner` - A mutable reference to the `Runner` struct.
-/// 
+///
 /// # Errors
-/// 
+///
 /// Returns an `ExecutionError` if:
-/// 
+///
 /// * The stack is empty
 /// * There is an error storing the value in storage
 /// * There is an error incrementing the program counter
