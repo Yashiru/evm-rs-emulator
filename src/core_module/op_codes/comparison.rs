@@ -39,6 +39,9 @@ pub fn iszero(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "ISZERO".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -75,6 +78,9 @@ pub fn eq(runner: &mut Runner) -> Result<(), ExecutionError> {
         let hex: String = utils::debug::to_hex_string(result_bytes);
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "EQ".bright_blue(), hex));
     }
+
+    // Decrement gas
+    runner.decrement_gas(3);
 
     // Increment PC
     runner.increment_pc(1)
@@ -113,6 +119,9 @@ pub fn lt(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "LT".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -149,6 +158,9 @@ pub fn gt(runner: &mut Runner) -> Result<(), ExecutionError> {
         let hex: String = utils::debug::to_hex_string(result_bytes);
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "GT".bright_blue(), hex));
     }
+
+    // Decrement gas
+    runner.decrement_gas(3);
 
     // Increment PC
     runner.increment_pc(1)
@@ -188,6 +200,9 @@ pub fn slt(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "SLT".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -225,6 +240,9 @@ pub fn sgt(runner: &mut Runner) -> Result<(), ExecutionError> {
         let hex: String = utils::debug::to_hex_string(result_bytes);
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "SGT".bright_blue(), hex));
     }
+
+    // Decrement gas
+    runner.decrement_gas(3);
 
     // Increment PC
     runner.increment_pc(1)
