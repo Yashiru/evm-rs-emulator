@@ -33,6 +33,9 @@ pub fn dup1(runner: &mut Runner) -> Result<(), ExecutionError> {
         ));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -64,6 +67,9 @@ pub fn dup2(runner: &mut Runner) -> Result<(), ExecutionError> {
             hex
         ));
     }
+
+    // Decrement gas
+    runner.decrement_gas(3);
 
     // Increment PC
     runner.increment_pc(1)
@@ -97,6 +103,9 @@ pub fn dup3(runner: &mut Runner) -> Result<(), ExecutionError> {
         ));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -128,6 +137,9 @@ pub fn dup4(runner: &mut Runner) -> Result<(), ExecutionError> {
             hex
         ));
     }
+
+    // Decrement gas
+    runner.decrement_gas(3);
 
     // Increment PC
     runner.increment_pc(1)
@@ -161,6 +173,9 @@ pub fn dup5(runner: &mut Runner) -> Result<(), ExecutionError> {
         ));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -192,6 +207,9 @@ pub fn dup6(runner: &mut Runner) -> Result<(), ExecutionError> {
             hex
         ));
     }
+
+    // Decrement gas
+    runner.decrement_gas(3);
 
     // Increment PC
     runner.increment_pc(1)
@@ -225,6 +243,9 @@ pub fn dup7(runner: &mut Runner) -> Result<(), ExecutionError> {
         ));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -256,6 +277,9 @@ pub fn dup8(runner: &mut Runner) -> Result<(), ExecutionError> {
             hex
         ));
     }
+
+    // Decrement gas
+    runner.decrement_gas(3);
 
     // Increment PC
     runner.increment_pc(1)
@@ -289,6 +313,9 @@ pub fn dup9(runner: &mut Runner) -> Result<(), ExecutionError> {
         ));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -320,6 +347,9 @@ pub fn dup10(runner: &mut Runner) -> Result<(), ExecutionError> {
             hex
         ));
     }
+
+    // Decrement gas
+    runner.decrement_gas(3);
 
     // Increment PC
     runner.increment_pc(1)
@@ -353,6 +383,9 @@ pub fn dup11(runner: &mut Runner) -> Result<(), ExecutionError> {
         ));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -384,6 +417,9 @@ pub fn dup12(runner: &mut Runner) -> Result<(), ExecutionError> {
             hex
         ));
     }
+
+    // Decrement gas
+    runner.decrement_gas(3);
 
     // Increment PC
     runner.increment_pc(1)
@@ -417,6 +453,9 @@ pub fn dup13(runner: &mut Runner) -> Result<(), ExecutionError> {
         ));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -448,6 +487,9 @@ pub fn dup14(runner: &mut Runner) -> Result<(), ExecutionError> {
             hex
         ));
     }
+
+    // Decrement gas
+    runner.decrement_gas(3);
 
     // Increment PC
     runner.increment_pc(1)
@@ -481,6 +523,9 @@ pub fn dup15(runner: &mut Runner) -> Result<(), ExecutionError> {
         ));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -512,6 +557,9 @@ pub fn dup16(runner: &mut Runner) -> Result<(), ExecutionError> {
             hex
         ));
     }
+
+    // Decrement gas
+    runner.decrement_gas(3);
 
     // Increment PC
     runner.increment_pc(1)

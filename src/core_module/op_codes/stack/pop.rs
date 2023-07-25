@@ -26,6 +26,9 @@ pub fn pop(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} ⛔️ [ {} ]", "POP".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(2);
+
     // Increment PC
     runner.increment_pc(1)
 }

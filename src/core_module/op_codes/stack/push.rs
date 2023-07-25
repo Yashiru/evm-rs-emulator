@@ -43,6 +43,9 @@ pub fn push(runner: &mut Runner, data_len: usize) -> Result<(), ExecutionError> 
         ));
     }
 
+    // Decrement gas
+    runner.decrement_gas(if data_len == 0 { 2 } else { 3 });
+
     // Increment PC
     runner.increment_pc(1 + data_len)
 }
