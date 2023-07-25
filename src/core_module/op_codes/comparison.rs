@@ -8,6 +8,17 @@ use ethers::types::{I256, U256};
 // Colored output
 use colored::*;
 
+/// Compare the top stack item, and push 1 onto the stack if he is equal to zero, else push 0.
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn iszero(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
 
@@ -32,6 +43,17 @@ pub fn iszero(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Compare the top two stack items, and push 1 onto the stack if they are equal, else push 0.
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn eq(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -58,6 +80,17 @@ pub fn eq(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Compare the top two stack items, and push 1 onto the stack if the second item is less than the first, else push 0.
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn lt(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -84,6 +117,17 @@ pub fn lt(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Compare the top two stack items, and push 1 onto the stack if the second item is greater than the first, else push 0.
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn gt(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -110,6 +154,18 @@ pub fn gt(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Compare the top two stack items, and push 1 onto the stack if the second item is less than the first, else push 0.
+/// It support signed integers.
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn slt(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -136,6 +192,18 @@ pub fn slt(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Compare the top two stack items, and push 1 onto the stack if the second item is greater than the first, else push 0.
+/// It support signed integers.
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn sgt(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;

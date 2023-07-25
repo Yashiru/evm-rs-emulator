@@ -9,6 +9,17 @@ use ethers::utils::keccak256;
 // Colored output
 use colored::*;
 
+/// Performs a bitwise NOT operation on the top item of the stack
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn not(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
 
@@ -34,6 +45,17 @@ pub fn not(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Performs a bitwise XOR operation on the top two items of the stack
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn xor(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -61,6 +83,17 @@ pub fn xor(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Performs a bitwise OR operation on the top two items of the stack
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn or(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -88,6 +121,17 @@ pub fn or(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Performs a bitwise AND operation on the top two items of the stack
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn and(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -115,6 +159,17 @@ pub fn and(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Performs a bitwise shift left operation on the top two items of the stack
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn shl(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -142,6 +197,17 @@ pub fn shl(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Performs a bitwise shift right operation on the top two items of the stack
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn shr(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -169,6 +235,18 @@ pub fn shr(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Performs a SHA256 hash on some data in memory
+/// The first item on the stack is the offset of the data in memory
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn sha(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;

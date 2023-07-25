@@ -8,7 +8,15 @@ use ethers::types::U256;
 // Colored output
 use colored::*;
 
-// Load 32 bytes from memory
+/// Loads a 32-byte word from memory and pushes it onto the stack.
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner` struct.
+///
+/// # Errors
+///
+/// Returns an `ExecutionError` if the stack is empty or if there is an error pushing the result onto the stack.
 pub fn mload(runner: &mut Runner) -> Result<(), ExecutionError> {
     let address = U256::from_big_endian(&runner.stack.pop()?);
     let word = unsafe { runner.memory.mload(address.as_usize())? };
@@ -27,7 +35,16 @@ pub fn mload(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Store 32 bytes in memory
+/// Stores a 32-byte word at the specified memory address.
+/// It takes two items from the stack: the first item is the memory address and the second item is the data to store.
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner` struct.
+///
+/// # Errors
+///
+/// Returns an `ExecutionError` if the memory address is out of bounds.
 pub fn mstore(runner: &mut Runner) -> Result<(), ExecutionError> {
     let address = U256::from_big_endian(&runner.stack.pop()?);
     let data = runner.stack.pop()?;
@@ -47,6 +64,15 @@ pub fn mstore(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Pushes the size of the memory onto the stack.
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner` struct.
+///
+/// # Errors
+///
+/// Returns an `ExecutionError` if there is an error pushing the result onto the stack.
 pub fn msize(runner: &mut Runner) -> Result<(), ExecutionError> {
     let mut bytes_msize = [0u8; 32];
     U256::from(runner.memory.msize() as u64).to_big_endian(&mut bytes_msize);

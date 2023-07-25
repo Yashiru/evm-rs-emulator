@@ -9,7 +9,11 @@ use ethers::types::U256;
 // Colored output
 use colored::*;
 
-// Stop execution
+/// Stop execution
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
 pub fn stop(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Set the program counter to the end of the bytecode
     runner.set_pc(runner.bytecode.len());
@@ -25,7 +29,21 @@ pub fn stop(runner: &mut Runner) -> Result<(), ExecutionError> {
     Ok(())
 }
 
-// Revert data from memory heap
+/// Revert data from memory heap.
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// Returns an `ExecutionError` if:
+/// * The revert actually revert with datas
+/// * The revert actually revert without datas
+///
+/// # Notes
+///
+/// The revert OpCode return a ExecutionError::Revert with the revert data and make the rust program stop.
 pub fn revert(runner: &mut Runner) -> Result<(), ExecutionError> {
     let offset = U256::from_big_endian(&runner.stack.pop()?);
     let size = U256::from_big_endian(&runner.stack.pop()?);
@@ -55,7 +73,17 @@ pub fn revert(runner: &mut Runner) -> Result<(), ExecutionError> {
     Err(err)
 }
 
-// jump
+/// Jump to a specific program address
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// Returns an `ExecutionError` if:
+/// * The jump address is out of bounds
+/// * The destination is not a JUMPDEST
 pub fn jump(runner: &mut Runner) -> Result<(), ExecutionError> {
     let mut bytes = [0u8; 32];
     let jump_address = U256::from_big_endian(&runner.stack.pop()?);
@@ -71,12 +99,27 @@ pub fn jump(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 〰️ [ {} ]", "JUMP".bright_green(), hex));
     }
 
+    // Check if the destination is a JUMPDEST
+    if runner.bytecode[jump_address.as_usize()] != 0x5b {
+        return Err(ExecutionError::InvalidJumpDestination);
+    }
+
     // Set the program counter to the jump address
     runner.set_pc(jump_address.as_usize());
     Ok(())
 }
 
-// jumpi
+/// Jump if condition is true to a specific program address
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// Returns an `ExecutionError` if:
+/// * The jump address is out of bounds
+/// * The destination is not a JUMPDEST
 pub fn jumpi(runner: &mut Runner) -> Result<(), ExecutionError> {
     let mut bytes = [0u8; 32];
     let jump_address = U256::from_big_endian(&runner.stack.pop()?);
@@ -98,6 +141,11 @@ pub fn jumpi(runner: &mut Runner) -> Result<(), ExecutionError> {
         let _ = runner.increment_pc(1);
     }
 
+    // Check if the destination is a JUMPDEST
+    if runner.bytecode[jump_address.as_usize()] != 0x5b {
+        return Err(ExecutionError::InvalidJumpDestination);
+    }
+
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         let hex = utils::debug::to_hex_string(bytes);
 
@@ -115,7 +163,11 @@ pub fn jumpi(runner: &mut Runner) -> Result<(), ExecutionError> {
     Ok(())
 }
 
-// pc
+/// Push the program counter to the stack
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
 pub fn pc(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pc = runner.get_pc().to_be_bytes();
     let pc = pad_left(&pc.to_vec());
@@ -132,7 +184,11 @@ pub fn pc(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// gas
+/// Push the gas to the stack
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
 pub fn gas(runner: &mut Runner) -> Result<(), ExecutionError> {
     let gas = runner.gas.to_be_bytes();
     let gas = pad_left(&gas.to_vec());
@@ -148,7 +204,7 @@ pub fn gas(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// jumpdest
+/// Does nothing but increment the program counter.
 pub fn jumpdest(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Increment the program counter
     runner.increment_pc(1)

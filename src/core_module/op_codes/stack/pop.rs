@@ -5,6 +5,15 @@ use crate::core_module::utils::errors::ExecutionError;
 // Colored output
 use colored::*;
 
+/// Removes the top item from the stack and returns it.
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner` struct.
+///
+/// # Errors
+///
+/// Returns an `ExecutionError` if the stack is empty.
 pub fn pop(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.pop();
 
