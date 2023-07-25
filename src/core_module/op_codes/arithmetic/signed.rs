@@ -9,6 +9,18 @@ use ethers::types::U256;
 // Colored output
 use colored::*;
 
+/// Divide the second item in the stack by the first item in the stack.
+/// Support signed integers.
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn sdiv(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -38,6 +50,18 @@ pub fn sdiv(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
+/// Push the remainder of the second item in the stack divided by the first item in the stack.
+/// Support signed integers.
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn smodulo(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;

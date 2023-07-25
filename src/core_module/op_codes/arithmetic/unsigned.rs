@@ -12,11 +12,13 @@ use colored::*;
 ///
 /// # Arguments
 ///
-/// * `runner` - A mutable reference to a `Runner` instance.
+/// * `runner` - A mutable reference to the `Runner`
 ///
 /// # Errors
 ///
-/// Returns an `ExecutionError` if there are not enough elements on the stack or if there is an error pushing the result onto the stack.
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn add(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -48,11 +50,13 @@ pub fn add(runner: &mut Runner) -> Result<(), ExecutionError> {
 ///
 /// # Arguments
 ///
-/// * `runner` - A mutable reference to a `Runner` instance.
+/// * `runner` - A mutable reference to the `Runner`
 ///
 /// # Errors
 ///
-/// Returns an `ExecutionError` if there are not enough elements on the stack or if there is an error pushing the result onto the stack.
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn mul(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -84,11 +88,13 @@ pub fn mul(runner: &mut Runner) -> Result<(), ExecutionError> {
 ///
 /// # Arguments
 ///
-/// * `runner` - A mutable reference to a `Runner` instance.
+/// * `runner` - A mutable reference to the `Runner`
 ///
 /// # Errors
 ///
-/// Returns an `ExecutionError` if there are not enough elements on the stack or if there is an error pushing the result onto the stack.
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn sub(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -120,11 +126,13 @@ pub fn sub(runner: &mut Runner) -> Result<(), ExecutionError> {
 ///
 /// # Arguments
 ///
-/// * `runner` - A mutable reference to a `Runner` instance.
+/// * `runner` - A mutable reference to the `Runner`
 ///
 /// # Errors
 ///
-/// Returns an `ExecutionError` if there are not enough elements on the stack or if there is an error pushing the result onto the stack.
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn modulo(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -158,11 +166,13 @@ pub fn modulo(runner: &mut Runner) -> Result<(), ExecutionError> {
 ///
 /// # Arguments
 ///
-/// * `runner` - A mutable reference to a `Runner` instance.
+/// * `runner` - A mutable reference to the `Runner`
 ///
 /// # Errors
 ///
-/// Returns an `ExecutionError` if there are not enough elements on the stack or if there is an error pushing the result onto the stack.
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn div(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -196,11 +206,13 @@ pub fn div(runner: &mut Runner) -> Result<(), ExecutionError> {
 ///
 /// # Arguments
 ///
-/// * `runner` - A mutable reference to a `Runner` instance.
+/// * `runner` - A mutable reference to the `Runner`
 ///
 /// # Errors
 ///
-/// Returns an `ExecutionError` if there are not enough elements on the stack or if there is an error pushing the result onto the stack.
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn addmod(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -237,11 +249,13 @@ pub fn addmod(runner: &mut Runner) -> Result<(), ExecutionError> {
 ///
 /// # Arguments
 ///
-/// * `runner` - A mutable reference to a `Runner` instance.
+/// * `runner` - A mutable reference to the `Runner`
 ///
 /// # Errors
 ///
-/// Returns an `ExecutionError` if there are not enough elements on the stack or if there is an error pushing the result onto the stack.
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn mulmod(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
@@ -278,11 +292,13 @@ pub fn mulmod(runner: &mut Runner) -> Result<(), ExecutionError> {
 ///
 /// # Arguments
 ///
-/// * `runner` - A mutable reference to a `Runner` instance.
+/// * `runner` - A mutable reference to the `Runner`
 ///
 /// # Errors
 ///
-/// Returns an `ExecutionError` if there are not enough elements on the stack or if there is an error pushing the result onto the stack.
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn exp(runner: &mut Runner) -> Result<(), ExecutionError> {
     let pop1 = runner.stack.pop()?;
     let pop2 = runner.stack.pop()?;
