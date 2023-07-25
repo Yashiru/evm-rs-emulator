@@ -18,7 +18,6 @@ This project is currently experimental and subject to frequent changes as we are
 It has not been audited for security purposes and should not be used in production yet.
 
 ### Missing features (Contributions welcome ❤️)
-- [ ] Docs 🤫
 - [ ] EVM gas usage
 - [ ] EVM gas refund
 - [ ] EVM gas price
