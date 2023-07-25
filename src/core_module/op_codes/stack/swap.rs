@@ -4,7 +4,17 @@ use crate::core_module::utils::errors::ExecutionError;
 // Colored output
 use colored::*;
 
-// Swap first and second element
+/// Swap first and second element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn swap1(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.swap(1);
 
@@ -45,7 +55,17 @@ pub fn swap1(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Swap first and third element
+/// Swap first and third element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn swap2(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.swap(2);
 
@@ -86,7 +106,17 @@ pub fn swap2(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Swap first and fourth element
+/// Swap first and fourth element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn swap3(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.swap(3);
 
@@ -127,7 +157,17 @@ pub fn swap3(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Swap first and fifth element
+/// Swap first and fifth element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn swap4(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.swap(4);
 
@@ -168,7 +208,17 @@ pub fn swap4(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Swap first and sixth element
+/// Swap first and sixth element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn swap5(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.swap(5);
 
@@ -209,7 +259,17 @@ pub fn swap5(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Swap first and seventh element
+/// Swap first and seventh element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn swap6(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.swap(6);
 
@@ -250,7 +310,17 @@ pub fn swap6(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Swap first and eighth element
+/// Swap first and eighth element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn swap7(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.swap(7);
 
@@ -291,7 +361,17 @@ pub fn swap7(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Swap first and ninth element
+/// Swap first and ninth element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn swap8(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.swap(8);
 
@@ -332,7 +412,17 @@ pub fn swap8(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Swap first and tenth element
+/// Swap first and tenth element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn swap9(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.swap(9);
 
@@ -373,7 +463,17 @@ pub fn swap9(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Swap first and eleventh element
+/// Swap first and eleventh element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn swap10(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.swap(10);
 
@@ -414,7 +514,17 @@ pub fn swap10(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Swap first and twelfth element
+/// Swap first and twelfth element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn swap11(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.swap(11);
 
@@ -455,7 +565,17 @@ pub fn swap11(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Swap first and thirteenth element
+/// Swap first and thirteenth element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn swap12(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.swap(12);
 
@@ -496,7 +616,17 @@ pub fn swap12(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Swap first and fourteenth element
+/// Swap first and fourteenth element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn swap13(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.swap(13);
 
@@ -537,7 +667,17 @@ pub fn swap13(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Swap first and fifteenth element
+/// Swap first and fifteenth element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn swap14(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.swap(14);
 
@@ -578,7 +718,17 @@ pub fn swap14(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Swap first and sixteenth element
+/// Swap first and sixteenth element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn swap15(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.swap(15);
 
@@ -619,7 +769,17 @@ pub fn swap15(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Swap first and seventeenth element
+/// Swap first and seventeenth element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn swap16(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.swap(16);
 

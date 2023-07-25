@@ -5,6 +5,16 @@ use crate::core_module::utils::errors::ExecutionError;
 // Colored output
 use colored::*;
 
+/// Pushes a value onto the stack.
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner` struct.
+/// * `data_len` - The length of the data to be pushed onto the stack.
+///
+/// # Errors
+///
+/// Returns an `ExecutionError` if the data length is out of bounds.
 pub fn push(runner: &mut Runner, data_len: usize) -> Result<(), ExecutionError> {
     // Check if the data length is out of bounds
     if runner.pc + 1 + data_len > runner.bytecode.len() {

@@ -45,7 +45,6 @@ pub fn not(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-
 /// Performs a bitwise XOR operation on the top two items of the stack
 ///
 /// # Arguments

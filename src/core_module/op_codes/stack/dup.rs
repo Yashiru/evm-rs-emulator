@@ -5,7 +5,17 @@ use crate::core_module::utils::errors::ExecutionError;
 // Colored output
 use colored::*;
 
-// Dup first element
+/// Duplicate the first stack element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn dup1(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.dup(1);
 
@@ -27,7 +37,17 @@ pub fn dup1(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Dup second element
+/// Duplicate the second stack element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn dup2(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.dup(2);
 
@@ -49,7 +69,17 @@ pub fn dup2(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Dup third element
+/// Duplicate the third stack element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn dup3(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.dup(3);
 
@@ -71,7 +101,17 @@ pub fn dup3(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Dup fourth element
+/// Duplicate the fourth stack element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn dup4(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.dup(4);
 
@@ -93,7 +133,17 @@ pub fn dup4(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Dup fifth element
+/// Duplicate the fifth stack element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn dup5(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.dup(5);
 
@@ -115,7 +165,17 @@ pub fn dup5(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Dup sixth element
+/// Duplicate the sixth stack element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn dup6(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.dup(6);
 
@@ -137,7 +197,17 @@ pub fn dup6(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Dup seventh element
+/// Duplicate the seventh stack element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn dup7(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.dup(7);
 
@@ -159,7 +229,17 @@ pub fn dup7(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Dup eighth element
+/// Duplicate the eighth stack element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn dup8(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.dup(8);
 
@@ -181,7 +261,17 @@ pub fn dup8(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Dup ninth element
+/// Duplicate the ninth stack element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn dup9(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.dup(9);
 
@@ -203,7 +293,17 @@ pub fn dup9(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Dup tenth element
+/// Duplicate the tenth stack element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn dup10(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.dup(10);
 
@@ -225,7 +325,17 @@ pub fn dup10(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Dup eleventh element
+/// Duplicate the eleventh stack element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn dup11(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.dup(11);
 
@@ -247,7 +357,17 @@ pub fn dup11(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Dup twelfth element
+/// Duplicate the twelfth stack element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn dup12(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.dup(12);
 
@@ -269,7 +389,17 @@ pub fn dup12(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Dup thirteenth element
+/// Duplicate the thirteenth stack element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn dup13(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.dup(13);
 
@@ -291,7 +421,17 @@ pub fn dup13(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Dup fourteenth element
+/// Duplicate the fourteenth stack element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn dup14(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.dup(14);
 
@@ -313,7 +453,17 @@ pub fn dup14(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Dup fifteenth element
+/// Duplicate the fifteenth stack element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn dup15(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.dup(15);
 
@@ -335,7 +485,17 @@ pub fn dup15(runner: &mut Runner) -> Result<(), ExecutionError> {
     runner.increment_pc(1)
 }
 
-// Dup sixteenth element
+/// Duplicate the sixteenth stack element
+///
+/// # Arguments
+///
+/// * `runner` - A mutable reference to the `Runner`
+///
+/// # Errors
+///
+/// returns an `ExecutionError` if:
+///
+/// * Their is not enough items on the stack
 pub fn dup16(runner: &mut Runner) -> Result<(), ExecutionError> {
     let result = runner.stack.dup(16);
 
