@@ -17,10 +17,6 @@ use colored::*;
 /// # Errors
 ///
 /// Returns an `ExecutionError` if the stack is empty or if there is an error pushing the result onto the stack.
-///
-/// # Safety
-///
-/// This function is marked as `unsafe` because it accesses memory directly.
 pub fn mload(runner: &mut Runner) -> Result<(), ExecutionError> {
     let address = U256::from_big_endian(&runner.stack.pop()?);
     let word = unsafe { runner.memory.mload(address.as_usize())? };

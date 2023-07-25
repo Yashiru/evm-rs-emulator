@@ -10,13 +10,13 @@ use ethers::types::U256;
 use colored::*;
 
 /// Executes the LOG0 opcode, which logs a message with no topics.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `runner` - A mutable reference to the `Runner` struct.
-/// 
+///
 /// # Errors
-/// 
+///
 /// Returns an `ExecutionError` if static mode is enabled.
 pub fn log0(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Check if static mode is enabled
@@ -65,17 +65,17 @@ pub fn log0(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 /// Executes the LOG1 opcode, which logs a single 32-byte word of data and a single topic.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `runner` - A mutable reference to the `Runner` struct.
-/// 
+///
 /// # Errors
-/// 
+///
 /// Returns an `ExecutionError` if static mode is enabled.
-/// 
+///
 /// # Panics
-/// 
+///
 /// This function panics if the `offset` or `size` values are not valid `U256` values.
 pub fn log1(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Check if static mode is enabled
@@ -137,17 +137,17 @@ pub fn log1(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 /// Executes the LOG2 opcode, which logs a message with two topics to the Ethereum event log.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `runner` - A mutable reference to the `Runner` struct.
-/// 
+///
 /// # Errors
-/// 
+///
 /// Returns an `ExecutionError` if static mode is enabled.
-/// 
+///
 /// # Panics
-/// 
+///
 /// Panics if the stack is empty or if there is an error reading from memory.
 pub fn log2(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Check if static mode is enabled
@@ -222,17 +222,17 @@ pub fn log2(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 /// Executes the LOG3 operation, which logs a message with three topics.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `runner` - A mutable reference to the `Runner` struct.
-/// 
+///
 /// # Errors
-/// 
+///
 /// Returns an `ExecutionError` if static mode is enabled.
-/// 
+///
 /// # Panics
-/// 
+///
 /// This function panics if the `offset` or `size` values are invalid.
 pub fn log3(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Check if static mode is enabled
@@ -320,17 +320,17 @@ pub fn log3(runner: &mut Runner) -> Result<(), ExecutionError> {
 }
 
 /// Executes the LOG4 operation, which logs a message with four topics.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `runner` - A mutable reference to the `Runner` struct.
-/// 
+///
 /// # Errors
-/// 
+///
 /// Returns an `ExecutionError` if static mode is enabled.
-/// 
+///
 /// # Panics
-/// 
+///
 /// This function panics if the `offset` or `size` values are invalid.
 pub fn log4(runner: &mut Runner) -> Result<(), ExecutionError> {
     // Check if static mode is enabled

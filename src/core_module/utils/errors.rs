@@ -14,6 +14,7 @@ pub enum ExecutionError {
     // Flow errors
     StaticCallStateChanged,
     InvalidOpcode(u8),
+    InvalidJumpDestination,
 
     // Stack errors
     StackTooSmall,
@@ -53,6 +54,7 @@ impl fmt::Display for ExecutionError {
             ExecutionError::NotImplemented(op_code) => {
                 write!(f, "Op code 0x{:X} not implemented", op_code)
             }
+            ExecutionError::InvalidJumpDestination => write!(f, "Invalid jump destination"),
             ExecutionError::Revert(data) => {
                 let hex = super::debug::vec_to_hex_string(data.to_owned());
                 write!(f, "Execution revert with data: {}", hex)
@@ -74,6 +76,7 @@ impl PartialEq for ExecutionError {
             | (InsufficientBalance, InsufficientBalance)
             | (StaticCallStateChanged, StaticCallStateChanged)
             | (StackTooSmall, StackTooSmall)
+            | (InvalidJumpDestination, InvalidJumpDestination)
             | (StackTooDeep, StackTooDeep)
             | (InvalidFile, InvalidFile)
             | (RevertWithoutData, RevertWithoutData) => true,
