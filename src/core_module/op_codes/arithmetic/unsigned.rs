@@ -42,6 +42,9 @@ pub fn add(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "ADD".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -80,6 +83,9 @@ pub fn mul(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "MUL".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(5);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -117,6 +123,9 @@ pub fn sub(runner: &mut Runner) -> Result<(), ExecutionError> {
         let hex: String = utils::debug::to_hex_string(result_bytes);
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "SUB".bright_blue(), hex));
     }
+
+    // Decrement gas
+    runner.decrement_gas(3);
 
     // Increment PC
     runner.increment_pc(1)
@@ -158,6 +167,9 @@ pub fn modulo(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "MOD".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(5);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -197,6 +209,9 @@ pub fn div(runner: &mut Runner) -> Result<(), ExecutionError> {
         let hex: String = utils::debug::to_hex_string(result_bytes);
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "DIV".bright_blue(), hex));
     }
+
+    // Decrement gas
+    runner.decrement_gas(5);
 
     // Increment PC
     runner.increment_pc(1)
@@ -241,6 +256,9 @@ pub fn addmod(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "ADDMOD".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(8);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -284,6 +302,9 @@ pub fn mulmod(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "MULMOD".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(8);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -321,6 +342,9 @@ pub fn exp(runner: &mut Runner) -> Result<(), ExecutionError> {
         let hex: String = utils::debug::to_hex_string(result_bytes);
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "EXP".bright_blue(), hex));
     }
+
+    // Decrement gas
+    runner.decrement_gas(10);
 
     // Increment PC
     runner.increment_pc(1)

@@ -180,6 +180,11 @@ impl Runner {
         self.pc
     }
 
+    /// Decrement gas by the specified amount.
+    pub fn decrement_gas(&mut self, amount: u64) {
+        self.gas -= amount;
+    }
+
     /// Interprets the given bytecode and executes it on the EVM.
     ///
     /// # Arguments
@@ -508,7 +513,7 @@ impl Runner {
         to: [u8; 20],
         value: [u8; 32],
         calldata: Vec<u8>,
-        _gas: u64,
+        gas: u64,
         delegate: bool,
     ) -> Result<(), ExecutionError> {
         let mut error: Option<ExecutionError> = None;
@@ -524,6 +529,7 @@ impl Runner {
         let initial_pc = self.pc.clone();
         let initial_debug_level = self.debug_level.clone();
         let initial_bytecode = self.bytecode.clone();
+        let initial_gas = self.gas.clone();
 
         // Update runner state
         if !delegate {
@@ -531,6 +537,7 @@ impl Runner {
             self.callvalue = value;
             self.address = to;
         }
+        self.gas = gas;
         self.call_depth += 1;
         self.calldata = Memory::new(Some(calldata));
         self.returndata = Memory::new(None);
@@ -569,6 +576,7 @@ impl Runner {
         self.debug_level = initial_debug_level;
         self.bytecode = initial_bytecode;
         self.call_depth -= 1;
+        self.gas = initial_gas + self.gas;
 
         // Write the return data to the initial state
         self.returndata.heap = return_data;

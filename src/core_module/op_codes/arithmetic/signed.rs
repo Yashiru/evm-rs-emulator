@@ -46,6 +46,9 @@ pub fn sdiv(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "SDIV".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(5);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -86,6 +89,9 @@ pub fn smodulo(runner: &mut Runner) -> Result<(), ExecutionError> {
         let hex: String = utils::debug::to_hex_string(result_bytes);
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "SMOD".bright_blue(), hex));
     }
+
+    // Decrement gas
+    runner.decrement_gas(5);
 
     // Increment PC
     runner.increment_pc(1)
