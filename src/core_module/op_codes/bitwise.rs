@@ -41,6 +41,9 @@ pub fn not(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "NOT".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -78,6 +81,9 @@ pub fn xor(runner: &mut Runner) -> Result<(), ExecutionError> {
         let hex: String = utils::debug::to_hex_string(result_bytes);
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "XOR".bright_blue(), hex));
     }
+
+    // Decrement gas
+    runner.decrement_gas(3);
 
     // Increment PC
     runner.increment_pc(1)
@@ -117,6 +123,9 @@ pub fn or(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "OR".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -154,6 +163,9 @@ pub fn and(runner: &mut Runner) -> Result<(), ExecutionError> {
         let hex: String = utils::debug::to_hex_string(result_bytes);
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "AND".bright_blue(), hex));
     }
+
+    // Decrement gas
+    runner.decrement_gas(3);
 
     // Increment PC
     runner.increment_pc(1)
@@ -193,6 +205,9 @@ pub fn shl(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "SHL".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -231,6 +246,9 @@ pub fn shr(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "SHR".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -268,6 +286,9 @@ pub fn sha(runner: &mut Runner) -> Result<(), ExecutionError> {
         let hex: String = utils::debug::to_hex_string(bytes);
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "SHA".bright_blue(), hex));
     }
+
+    // Decrement gas
+    runner.decrement_gas(30);
 
     // Increment PC
     runner.increment_pc(1)
