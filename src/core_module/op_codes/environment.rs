@@ -35,6 +35,9 @@ pub fn address(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "ADDRESS".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(2);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -65,6 +68,9 @@ pub fn balance(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "BALANCE".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(100);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -91,6 +97,9 @@ pub fn origin(runner: &mut Runner) -> Result<(), ExecutionError> {
         let hex: String = utils::debug::to_hex_string(origin);
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "ORIGIN".bright_blue(), hex));
     }
+
+    // Decrement gas
+    runner.decrement_gas(2);
 
     // Increment PC
     runner.increment_pc(1)
@@ -119,6 +128,9 @@ pub fn caller(runner: &mut Runner) -> Result<(), ExecutionError> {
         runner.print_debug(&format!("{:<14} 👉 [ {} ]", "CALLER".bright_blue(), hex));
     }
 
+    // Decrement gas
+    runner.decrement_gas(2);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -143,6 +155,9 @@ pub fn callvalue(runner: &mut Runner) -> Result<(), ExecutionError> {
     if result.is_err() {
         return Err(result.unwrap_err());
     }
+
+    // Decrement gas
+    runner.decrement_gas(2);
 
     // Increment PC
     runner.increment_pc(1)
@@ -182,6 +197,9 @@ pub fn calldataload(runner: &mut Runner) -> Result<(), ExecutionError> {
         ));
     }
 
+    // Decrement gas
+    runner.decrement_gas(3);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -216,6 +234,9 @@ pub fn calldatasize(runner: &mut Runner) -> Result<(), ExecutionError> {
         ));
     }
 
+    // Decrement gas
+    runner.decrement_gas(2);
+
     // Increment PC
     runner.increment_pc(1)
 }
@@ -249,6 +270,11 @@ pub fn calldatacopy(runner: &mut Runner) -> Result<(), ExecutionError> {
     if runner.debug_level.is_some() && runner.debug_level.unwrap() >= 1 {
         runner.print_debug(&format!("{}", "CALLDATACOPY".bright_blue()));
     }
+
+    // Decrement gas
+    let minimum_word_size = (size + 31) / 32;
+    let static_gas = 3;
+    let dynamic_gas = 3 * minimum_word_size + memory_expansion_cost;
 
     // Increment PC
     runner.increment_pc(1)

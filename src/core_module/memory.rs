@@ -135,9 +135,17 @@ impl Memory {
     ///
     /// A `Result` indicating whether the write operation was successful or an `ExecutionError` if it failed.
     pub unsafe fn mstore(&mut self, address: usize, data: [u8; 32]) -> Result<(), ExecutionError> {
-        // Check if memory should be extended
+        // Increase memory heap to the nearest multiple of 32 if address is out of bounds
         if address + 32 > self.heap.len() {
-            self.extend(address + 32 - self.heap.len());
+            // Calculate the nearest multiple of 32
+            let nearest_multiple = if address % 32 == 0 {
+                address + 32
+            } else {
+                (address + 32) + (32 - (address + 32) % 32)
+            };
+
+            // Extend memory heap
+            self.extend(nearest_multiple - self.heap.len());
         }
 
         let ptr = self.heap.as_mut_ptr().add(address);
@@ -153,6 +161,24 @@ impl Memory {
     /// The size of the memory heap.
     pub fn msize(&self) -> usize {
         self.heap.len()
+    }
+
+    /// Computes the gas cost to extend the memory of a certain number of bytes.
+    ///
+    /// # Arguments
+    ///
+    /// * `new_size` - The new size of the memory.
+    ///
+    /// # Returns
+    ///
+    /// The cost of the memory expansion.
+    pub fn memory_expansion_cost(&self, new_size: usize) -> usize {
+        let memory_size_word_old = (self.heap.len() + 31) / 32;
+        let memory_size_word_new = (new_size + 31) / 32;
+        let memory_cost_old = (memory_size_word_old.pow(2)) / 512 + (3 * memory_size_word_old);
+        let memory_cost_new = (memory_size_word_new.pow(2)) / 512 + (3 * memory_size_word_new);
+        
+        memory_cost_new - memory_cost_old
     }
 }
 
