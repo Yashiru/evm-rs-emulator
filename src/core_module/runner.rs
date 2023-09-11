@@ -620,14 +620,26 @@ impl Runner {
             "║".bright_magenta()
         );
 
-        /* -------------------------------------------------------------------------- */
-        /*                              Contract address                              */
-        /* -------------------------------------------------------------------------- */
-
+        /* ------------------------------ From address ------------------------------ */
         println!(
             "{} {:<95} {}",
             "║".bright_magenta(),
-            "ADDRESS".cyan(),
+            "FROM".cyan(),
+            "║".bright_magenta()
+        );
+        let hex_address = utils::debug::to_hex_string(pad_left(&self.caller));
+        println!(
+            "{} {:<95} {}",
+            "║".bright_magenta(),
+            hex_address,
+            "║".bright_magenta()
+        );
+
+        /* ------------------------------- To address ------------------------------- */
+        println!(
+            "{} {:<95} {}",
+            "║".bright_magenta(),
+            "TO".cyan(),
             "║".bright_magenta()
         );
         let hex_address = utils::debug::to_hex_string(pad_left(&self.address));
@@ -635,6 +647,36 @@ impl Runner {
             "{} {:<95} {}",
             "║".bright_magenta(),
             hex_address,
+            "║".bright_magenta()
+        );
+
+        /* ---------------------------------- Value --------------------------------- */
+        println!(
+            "{} {:<95} {}",
+            "║".bright_magenta(),
+            "VALUE".cyan(),
+            "║".bright_magenta()
+        );
+        let hex = utils::debug::to_hex_string(pad_left(&self.callvalue));
+        println!(
+            "{} {:<95} {}",
+            "║".bright_magenta(),
+            hex,
+            "║".bright_magenta()
+        );
+
+        /* ---------------------------------- Data ---------------------------------- */
+        println!(
+            "{} {:<95} {}",
+            "║".bright_magenta(),
+            "DATA".cyan(),
+            "║".bright_magenta()
+        );
+        let hex = utils::debug::to_hex_string(pad_left(&self.calldata.heap));
+        println!(
+            "{} {:<95} {}",
+            "║".bright_magenta(),
+            hex,
             "║".bright_magenta()
         );
 
