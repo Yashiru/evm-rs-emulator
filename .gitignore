@@ -32,6 +32,9 @@ llvm/
 /coverage/badges/*.svg
 !/coverage/badges/flat.svg
 /target
+evm-rs
+*.tar.gz
 
 *.bin
 !bytecode.bin
+
