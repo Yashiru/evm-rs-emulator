@@ -14,7 +14,7 @@ fn main() -> Result<(), ExecutionError> {
     let mut address: Option<[u8; 20]> = Some([0xab; 20]);
     let mut value: Option<[u8; 32]> = None;
     let mut data: Option<Vec<u8>> = None;
-    let mut bytecode_path: String;
+    let mut bytecode: String;
 
     /* -------------------------------------------------------------------------- */
     /*                               Fetch arguments                              */
@@ -145,11 +145,16 @@ fn main() -> Result<(), ExecutionError> {
     /* ------------------------- Fetch the bytecode path ------------------------ */
     // The bytecode path is not an argument, but the last argument
     if args.len() > 1 {
-        // Manage the current directory and compute the full path
-        let current_dir = env::current_dir().unwrap();
-        bytecode_path = current_dir.to_str().unwrap().to_string();
-        bytecode_path.push_str("/");
-        bytecode_path.push_str(&args[args.len() - 1]);
+        let arg = &args[args.len() - 1];
+
+        if !arg.starts_with("0x") {
+            let current_dir = env::current_dir().unwrap();
+            bytecode = current_dir.to_str().unwrap().to_string();
+            bytecode.push_str("/");
+        } else {
+            bytecode = "".to_string();
+        }
+        bytecode.push_str(arg);
     } else {
         print_help();
         return Ok(());
@@ -159,7 +164,19 @@ fn main() -> Result<(), ExecutionError> {
     let mut interpreter =
         core_module::runner::Runner::new(caller, origin, address, value, data, None);
 
-    let result = fs::read_to_string(bytecode_path.to_string());
+    // print bytecode
+    println!("{} {}", "Bytecode:".green(), bytecode);
+
+    // Check if bytecode is an hex value of a file path
+    if bytecode.starts_with("0x") {
+        let bytecode = hex::decode(&bytecode[2..]).expect("Invalid bytecode");
+
+        // Interpret the bytecode
+        let _ = interpreter.interpret(bytecode, Some(255), true);
+        return Ok(());
+    }
+
+    let result = fs::read_to_string(bytecode.to_string());
 
     match result {
         Ok(file_content) => {
@@ -202,11 +219,13 @@ fn print_help() {
         "evm-rs".green(),
         "OPTIONS".magenta(),
         "args".blue(),
-        "filePath".cyan()
+        "bytecode".cyan()
     );
     println!(
-        "       {} should be a path to a file containing the bytecode to be executed.\n",
-        "filePath".cyan()
+        "       {} can be {} or {} containing the bytecode to be executed.\n",
+        "bytecode".cyan(),
+        "a raw hex value".yellow(),
+        "a path to a file".yellow()
     );
     println!("Options:");
     println!("  --{} <{}>     Override the default address of the contract containing the bytecode to be executed", "address".magenta(), "ADDRESS".blue());
