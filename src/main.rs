@@ -14,7 +14,7 @@ fn main() -> Result<(), ExecutionError> {
     let mut address: Option<[u8; 20]> = Some([0xab; 20]);
     let mut value: Option<[u8; 32]> = None;
     let mut data: Option<Vec<u8>> = None;
-    let mut bytecodePath: String = String::from("");
+    let mut bytecode_path: String;
 
     /* -------------------------------------------------------------------------- */
     /*                               Fetch arguments                              */
@@ -30,7 +30,11 @@ fn main() -> Result<(), ExecutionError> {
 
     // Print version
     if args.contains(&"--version".to_string()) {
-        println!("evm-rs version: {}", env!("CARGO_PKG_VERSION"));
+        println!(
+            "{}: {}",
+            "evm-rs version".magenta(),
+            env!("CARGO_PKG_VERSION").green()
+        );
         return Ok(());
     }
 
@@ -41,6 +45,11 @@ fn main() -> Result<(), ExecutionError> {
         .map(|p| &args[p + 1]);
 
     if let Some(caller_arg) = caller_arg {
+        if caller_arg.len() != 42 {
+            unexpected_arg_value("Caller", "an address");
+            return Ok(());
+        }
+
         let bytes =
             hex::decode(&caller_arg[2..]).expect(&"Invalid argument: --caller".red().to_string());
         caller = bytes
@@ -55,6 +64,11 @@ fn main() -> Result<(), ExecutionError> {
         .map(|p| &args[p + 1]);
 
     if let Some(origin_arg) = origin_arg {
+        if origin_arg.len() != 42 {
+            unexpected_arg_value("Origin", "an address");
+            return Ok(());
+        }
+
         let bytes =
             hex::decode(&origin_arg[2..]).expect(&"Invalid argument: --origin".red().to_string());
         origin = Some(
@@ -71,6 +85,11 @@ fn main() -> Result<(), ExecutionError> {
         .map(|p| &args[p + 1]);
 
     if let Some(address_arg) = address_arg {
+        if address_arg.len() != 42 {
+            unexpected_arg_value("Address", "an address");
+            return Ok(());
+        }
+
         let bytes =
             hex::decode(&address_arg[2..]).expect(&"Invalid argument: --address".red().to_string());
         address = Some(
@@ -87,6 +106,11 @@ fn main() -> Result<(), ExecutionError> {
         .map(|p| &args[p + 1]);
 
     if let Some(value_arg) = value_arg {
+        if value_arg.len() < 3 || !value_arg.starts_with("0x") {
+            unexpected_arg_value("Value", "a hex value");
+            return Ok(());
+        }
+
         let bytes =
             hex::decode(&value_arg[2..]).expect(&"Invalid argument: --value".red().to_string());
 
@@ -104,6 +128,11 @@ fn main() -> Result<(), ExecutionError> {
         .map(|p| &args[p + 1]);
 
     if let Some(data_arg) = data_arg {
+        if data_arg.len() < 3 || !data_arg.starts_with("0x") {
+            unexpected_arg_value("Data", "a hex value");
+            return Ok(());
+        }
+
         let bytes =
             hex::decode(&data_arg[2..]).expect(&"Invalid argument: --data".red().to_string());
         data = Some(
@@ -118,21 +147,19 @@ fn main() -> Result<(), ExecutionError> {
     if args.len() > 1 {
         // Manage the current directory and compute the full path
         let current_dir = env::current_dir().unwrap();
-        bytecodePath = current_dir.to_str().unwrap().to_string();
-        bytecodePath.push_str("/");
-        bytecodePath.push_str(&args[args.len() - 1]);
+        bytecode_path = current_dir.to_str().unwrap().to_string();
+        bytecode_path.push_str("/");
+        bytecode_path.push_str(&args[args.len() - 1]);
     } else {
         print_help();
         return Ok(());
     }
-    // print path
-    println!("Bytecode path: {}", bytecodePath);
 
     // Create a new interpreter
     let mut interpreter =
         core_module::runner::Runner::new(caller, origin, address, value, data, None);
 
-    let result = fs::read_to_string(bytecodePath.to_string());
+    let result = fs::read_to_string(bytecode_path.to_string());
 
     match result {
         Ok(file_content) => {
@@ -142,22 +169,65 @@ fn main() -> Result<(), ExecutionError> {
             let _ = interpreter.interpret(bytecode, Some(255), true);
         }
         Err(_) => {
-            return Err(ExecutionError::InvalidFile);
+            // Print the error
+            println!("{} {}", "Error:".red(), "file not found");
+            println!(
+                "\n  Run this command with {} for more information.",
+                "--help".green()
+            );
+            return Ok(());
         }
     }
 
     Ok(())
 }
 
+fn unexpected_arg_value(arg: &str, arg_type: &str) {
+    println!(
+        "{} unexpected value for '{}' argument.",
+        "Error:".red(),
+        format!("--{}", arg.to_lowercase()).yellow()
+    );
+    println!("  {} should be {arg_type}.", arg.yellow());
+    println!(
+        "\n  Run this command with {} for more information.",
+        "--help".green()
+    );
+}
+
 fn print_help() {
     println!("Execute arbitrary bytecode on the Ethereum Virtual Machine (EVM)");
-    println!("\nUsage: evm-rs [OPTIONS] [args]...\n");
-    println!("OPTIONS:");
-    println!("  --address [<ADDRESS>]     Override the default address of the contract containing the bytecode to be executed");
-    println!("  --caller [<ADDRESS>]      Override the default caller address");
     println!(
-        "  --data [<HEX_DATA>]       Override the default call data to be passed to the contract"
+        "\nUsage: {} [{}] [{}] <{}>",
+        "evm-rs".green(),
+        "OPTIONS".magenta(),
+        "args".blue(),
+        "filePath".cyan()
     );
-    println!("  --origin [<ADDRESS>]      Override the default origin address");
-    println!("  --value [<HEX_VALUE>]     Override the default value to be sent to the contract");
+    println!(
+        "       {} should be a path to a file containing the bytecode to be executed.\n",
+        "filePath".cyan()
+    );
+    println!("Options:");
+    println!("  --{} <{}>     Override the default address of the contract containing the bytecode to be executed", "address".magenta(), "ADDRESS".blue());
+    println!(
+        "  --{} <{}>      Override the default caller address",
+        "caller".magenta(),
+        "ADDRESS".blue()
+    );
+    println!(
+        "  --{} <{}>       Override the default calldata to be passed to the callee contract",
+        "data".magenta(),
+        "HEX_DATA".blue()
+    );
+    println!(
+        "  --{} <{}>      Override the default origin address",
+        "origin".magenta(),
+        "ADDRESS".blue()
+    );
+    println!(
+        "  --{} <{}>     Override the default value to be sent to the contract",
+        "value".magenta(),
+        "HEX_VALUE".blue()
+    );
 }

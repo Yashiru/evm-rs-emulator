@@ -21,7 +21,6 @@ pub enum ExecutionError {
     StackTooDeep,
 
     // General execution errors
-    InvalidFile,
     Revert(Vec<u8>),
     RevertWithoutData,
     NotImplemented(u8),
@@ -38,7 +37,6 @@ impl fmt::Display for ExecutionError {
             ExecutionError::StackTooDeep => {
                 write!(f, "Stack too deep. Maximum stack size is 1024 words")
             }
-            ExecutionError::InvalidFile => write!(f, "Invalid file"),
             ExecutionError::AccountNotFound => {
                 write!(f, "Trying to access non-existent account state")
             }
@@ -78,7 +76,6 @@ impl PartialEq for ExecutionError {
             | (StackTooSmall, StackTooSmall)
             | (InvalidJumpDestination, InvalidJumpDestination)
             | (StackTooDeep, StackTooDeep)
-            | (InvalidFile, InvalidFile)
             | (RevertWithoutData, RevertWithoutData) => true,
             (InvalidOpcode(a), InvalidOpcode(b)) => a == b,
             (NotImplemented(a), NotImplemented(b)) => a == b,
