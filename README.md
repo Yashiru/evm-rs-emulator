@@ -7,7 +7,7 @@ The EVM Rust Emulator is a simple in-memory Ethereum Virtual Machine (EVM) emula
 ![Github action](https://github.com/Yashiru/evm-rs-emulator/workflows/CI/badge.svg)
 ![Test coverage](./coverage/badges/flat.svg)
 
-## Installation
+## Installation (UNIX-like OS)
 Clone the sources:
 ```bash
 git clone https://github.com/Yashiru/evm-rs-emulator.git && cd evm-rs-emulator
