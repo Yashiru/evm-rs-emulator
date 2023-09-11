@@ -22,8 +22,15 @@ fn main() -> Result<(), ExecutionError> {
 
     let args: Vec<String> = env::args().collect();
 
+    // Print help
     if args.contains(&"--help".to_string()) {
         print_help();
+        return Ok(());
+    }
+
+    // Print version
+    if args.contains(&"--version".to_string()) {
+        println!("evm-rs version: {}", env!("CARGO_PKG_VERSION"));
         return Ok(());
     }
 
