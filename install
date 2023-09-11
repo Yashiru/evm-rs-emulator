@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Build 
+cargo build --release
+
+# Create a Binary Tarball
+tar czvf evm-rs.tar.gz -C target/release evm-rs
+
+# Extract the tarball
+tar xzvf evm-rs.tar.gz
+
+# Move the binary to a global path
+sudo mv target/release/evm-rs /usr/local/bin/
+
+echo -e "\x1b[32mInstallation completed\x1b[0m"
+evm-rs --help
