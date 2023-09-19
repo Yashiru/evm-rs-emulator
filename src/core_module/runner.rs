@@ -316,7 +316,7 @@ impl Runner {
     /// * Storage OpCodes
     ///
     /// For more information on each OpCode, please refer to the `op_codes` module.
-    fn interpret_op_code(&mut self, opcode: u8) -> Result<(), ExecutionError> {
+    pub fn interpret_op_code(&mut self, opcode: u8) -> Result<(), ExecutionError> {
         match opcode {
             /* ---------------------------- Execution OpCodes --------------------------- */
             0x00 => op_codes::flow::stop(self),
