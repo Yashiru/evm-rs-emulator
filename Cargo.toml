@@ -2,6 +2,13 @@
 name = "evm-rs"
 version = "0.1.0"
 edition = "2021"
+license-file = "LICENSE"
+description = "A blazingly fast in-memory Ethereum Virtual Machine (EVM) emulator written in Rust"
+homepage = "https://github.com/Yashiru/evm-rs-emulator"
+repository = "https://github.com/Yashiru/evm-rs-emulator"
+readme = "https://github.com/Yashiru/evm-rs-emulator/blob/master/README.md"
+keywords = ["evm", "bytecode", "emulator"]
+categories = ["development-tools::debugging", "emulators", "memory-management"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
