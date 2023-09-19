@@ -6,7 +6,7 @@ license-file = "LICENSE"
 description = "A blazingly fast in-memory Ethereum Virtual Machine (EVM) emulator written in Rust"
 homepage = "https://github.com/Yashiru/evm-rs-emulator"
 repository = "https://github.com/Yashiru/evm-rs-emulator"
-readme = "https://github.com/Yashiru/evm-rs-emulator/blob/master/README.md"
+readme = "README.md"
 keywords = ["evm", "bytecode", "emulator"]
 categories = ["development-tools::debugging", "emulators", "memory-management"]
 
