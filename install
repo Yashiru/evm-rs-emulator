@@ -4,7 +4,7 @@
 cargo build --release
 
 # Move the binary to a global path
-sudo mv target/release/evm-rs /usr/local/bin/
+sudo mv target/release/evm-rs-emulator /usr/local/bin/evm-rs
 
 echo -e "\x1b[32mInstallation completed!\x1b[0m"
 echo -e "Run '\x1b[35mevm-rs --help\x1b[0m' to see the usage."
