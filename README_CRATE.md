@@ -9,12 +9,14 @@ The EVM Rust Emulator is a simple in-memory Ethereum Virtual Machine (EVM) emula
 
 ***
 
-## Rust crate## Install crate
+## Rust crate
+
+### Install crate
 ```bash
 cargo add evm-rs-emulator
 ```
 
-## Usage
+### Usage
 ```rust
 use evm_rs_emulator::Runner;
 
