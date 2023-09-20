@@ -195,7 +195,9 @@ impl Runner {
     /// # Examples
     ///
     /// ```
-    /// let mut runner = Runner::new();
+    /// use evm_rs_emulator::Runner;
+    ///
+    /// let mut runner = Runner::_default(255);
     /// let bytecode = vec![0x60, 0x01, 0x60, 0x02, 0x01, 0x00, 0x00];
     /// let result = runner.interpret(bytecode, Some(2), true);
     /// assert!(result.is_ok());
