@@ -49,8 +49,8 @@ pub fn invalid(runner: &mut Runner) -> Result<(), ExecutionError> {
 /// # Examples
 ///
 /// ```
-/// use evm_rs_emulator::core_module::op_codes::system::create;
-/// use evm_rs_emulator::core_module::runner::Runner;
+/// use evm_rs_emulator::op_codes::system::create;
+/// use evm_rs_emulator::Runner;
 ///
 /// // Create an account with 0 wei and 4 FF as code
 /// let bytecode = vec![
@@ -69,7 +69,7 @@ pub fn invalid(runner: &mut Runner) -> Result<(), ExecutionError> {
 ///     // CREATE
 ///     0xf0,
 /// ];
-/// let mut runner = Runner::default();
+/// let mut runner = Runner::_default(255);
 /// runner.interpret(bytecode, None, true);
 /// ```
 pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
@@ -150,8 +150,8 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
 /// # Examples
 ///
 /// ```
-/// use evm_rs_emulator::core_module::op_codes::system::create2;
-/// use evm_rs_emulator::core_module::runner::Runner;
+/// use evm_rs_emulator::op_codes::system::create2;
+/// use evm_rs_emulator::Runner;
 ///
 /// // Create an account with 0 wei and 4 FF as code
 /// let bytecode = vec![
@@ -172,7 +172,7 @@ pub fn create(runner: &mut Runner) -> Result<(), ExecutionError> {
 ///     // CREATE2
 ///     0xf5,
 /// ];
-/// let mut runner = Runner::default();
+/// let mut runner = Runner::_default(255);
 /// runner.interpret(bytecode, None, true);
 /// ```
 pub fn create2(runner: &mut Runner) -> Result<(), ExecutionError> {

@@ -14,9 +14,9 @@ use colored::*;
 /// # Example
 ///
 /// ```
-/// use core_module::utils::debug::to_hex_string;
+/// use evm_rs_emulator::debug::to_hex_string;
 ///
-/// let bytes = [15u8; 32];
+/// let bytes = [255u8; 32];
 /// let hex_string = to_hex_string(bytes);
 ///
 /// assert_eq!(hex_string, "ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff");
@@ -44,9 +44,9 @@ pub fn to_hex_string(bytes: [u8; 32]) -> String {
 /// # Example
 ///
 /// ```
-/// use core_module::utils::debug::to_hex_address;
+/// use evm_rs_emulator::debug::to_hex_address;
 ///
-/// let bytes = [15u8; 20];
+/// let bytes = [255u8; 20];
 /// let hex_address = to_hex_address(bytes);
 ///
 /// assert_eq!(hex_address, "0xffffffffffffffffffffffffffffffffffffffff");
@@ -77,10 +77,10 @@ pub fn to_hex_address(bytes: [u8; 20]) -> String {
 /// # Example
 ///
 /// ```
-/// use core_module::utils::debug::to_hex_string;
+/// use evm_rs_emulator::debug::vec_to_hex_string;
 ///
-/// let bytes = [15u8; 10].to_vec();
-/// let hex_string = to_hex_string(bytes);
+/// let bytes = [255u8; 10].to_vec();
+/// let hex_string = vec_to_hex_string(bytes);
 ///
 /// assert_eq!(hex_string, "ff ff ff ff ff ff ff ff ff ff");
 pub fn vec_to_hex_string(bytes: Vec<u8>) -> String {

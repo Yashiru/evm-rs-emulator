@@ -1,12 +1,12 @@
 [package]
 name = "evm-rs-emulator"
-version = "0.1.0"
+version = "0.1.3"
 edition = "2021"
 license-file = "LICENSE"
 description = "A blazingly fast in-memory Ethereum Virtual Machine (EVM) emulator written in Rust"
 homepage = "https://github.com/Yashiru/evm-rs-emulator"
 repository = "https://github.com/Yashiru/evm-rs-emulator"
-readme = "README.md"
+readme = "README_CRATE.md"
 keywords = ["evm", "bytecode", "emulator"]
 categories = ["development-tools::debugging", "emulators", "memory-management"]
 exclude = [
