@@ -143,7 +143,9 @@ impl Runner {
             Some([0xab; 20]),
             None,
             None,
-            None,
+            Some(EvmState::new(Some(String::from(
+                "https://eth.llamarpc.com",
+            )))),
         );
         runner.debug_level = Some(debug_level);
 
