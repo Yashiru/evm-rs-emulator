@@ -67,9 +67,7 @@ impl Runner {
             state: if state.is_some() {
                 state.unwrap()
             } else {
-                EvmState::new(Some(
-                    "https://mainnet.infura.io/v3/48de6103d9864b9bb17cf47d6cacf6ed".to_owned(),
-                ))
+                EvmState::new(None)
             },
             // Create an empty memory
             memory: Memory::new(None),
