@@ -1,4 +1,5 @@
 mod core_module;
+use core_module::state::EvmState;
 use core_module::utils::errors::ExecutionError;
 use std::{env, fs};
 
@@ -18,6 +19,7 @@ fn main() -> Result<(), ExecutionError> {
     let mut value: Option<[u8; 32]> = None;
     let mut data: Option<Vec<u8>> = None;
     let mut bytecode: String;
+    let state: EvmState;
 
     /* -------------------------------------------------------------------------- */
     /*                               Fetch arguments                              */
@@ -145,6 +147,24 @@ fn main() -> Result<(), ExecutionError> {
         );
     }
 
+    /* --------------------------- Fetch the fork url --------------------------- */
+    let fork_arg = args
+        .iter()
+        .position(|r| r == "--fork")
+        .map(|p| &args[p + 1]);
+
+    if let Some(fork_arg) = fork_arg {
+        // Check if the fork url is valid
+        if !fork_arg.starts_with("http") {
+            unexpected_arg_value("Fork", "a valid RPC url");
+            return Ok(());
+        }
+
+        state = EvmState::new(Some(fork_arg.to_string()));
+    } else {
+        state = EvmState::new(None);
+    }
+
     /* ------------------------- Fetch the bytecode path ------------------------ */
     // The bytecode path is not an argument, but the last argument
     if args.len() > 1 {
@@ -165,7 +185,7 @@ fn main() -> Result<(), ExecutionError> {
 
     // Create a new interpreter
     let mut interpreter =
-        core_module::runner::Runner::new(caller, origin, address, value, data, None);
+        core_module::runner::Runner::new(caller, origin, address, value, data, Some(state));
 
     // Check if bytecode is an hex value of a file path
     if bytecode.starts_with("0x") {
@@ -248,5 +268,10 @@ fn print_help() {
         "  --{} <{}>     Override the default value to be sent to the contract",
         "value".magenta(),
         "HEX_VALUE".blue()
+    );
+    println!(
+        "  --{} <{}>        Set the fork url",
+        "fork".magenta(),
+        "RPC_URL".blue()
     );
 }
