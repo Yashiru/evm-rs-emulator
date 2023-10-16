@@ -20,6 +20,7 @@ fn main() -> Result<(), ExecutionError> {
     let mut data: Option<Vec<u8>> = None;
     let mut bytecode: String;
     let state: EvmState;
+    let mut debug_level: Option<u8> = Some(255);
 
     /* -------------------------------------------------------------------------- */
     /*                               Fetch arguments                              */
@@ -183,6 +184,19 @@ fn main() -> Result<(), ExecutionError> {
         return Ok(());
     }
 
+    /* -------------------------- Fetch the debug level ------------------------- */
+    let debug_level_arg = args
+        .iter()
+        .position(|r| r == "--debug-level")
+        .map(|p| &args[p + 1]);
+
+    if let Some(debug_level_arg) = debug_level_arg {
+        match debug_level_arg.parse::<u8>() {
+            Ok(level) => debug_level = Some(level),
+            Err(_) => unexpected_arg_value("Debug level", "a 8 bytes usigned integer"),
+        }
+    }
+
     // Create a new interpreter
     let mut interpreter =
         core_module::runner::Runner::new(caller, origin, address, value, data, Some(state));
@@ -192,7 +206,7 @@ fn main() -> Result<(), ExecutionError> {
         let bytecode = hex::decode(&bytecode[2..]).expect("Invalid bytecode");
 
         // Interpret the bytecode
-        let _ = interpreter.interpret(bytecode, Some(255), true);
+        let _ = interpreter.interpret(bytecode, debug_level, true);
         return Ok(());
     }
 
@@ -203,7 +217,7 @@ fn main() -> Result<(), ExecutionError> {
             let bytecode = hex::decode(file_content.trim()).expect("Decoding failed");
 
             // Interpret the bytecode
-            let _ = interpreter.interpret(bytecode, Some(255), true);
+            let _ = interpreter.interpret(bytecode, debug_level, true);
         }
         Err(_) => {
             // Print the error
@@ -268,6 +282,11 @@ fn print_help() {
         "  --{} <{}>     Override the default value to be sent to the contract",
         "value".magenta(),
         "HEX_VALUE".blue()
+    );
+    println!(
+        "  --{} <{}>   Override the default debug level (0 to 255)",
+        "debug-level".magenta(),
+        "LEVEL".blue()
     );
     println!(
         "  --{} <{}>        Set the fork url",
