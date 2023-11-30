@@ -21,34 +21,34 @@ The EVM Rust Emulator is a simple in-memory Ethereum Virtual Machine (EVM) emula
 
   ## Usage
   ```rust
-  use evm_rs_emulator::Runner;
+use evm_rs_emulator::Runner;
 
-  fn main() {
-    let caller = [
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-      0x00, 0x00, 0xc4, 0x11, 0xe8,
-    ];
-    let origin: Option<[u8; 20]> = None;
-    let address: Option<[u8; 20]> = None
-    let value: Option<[u8; 32]> = None;
-    let data: Option<Vec<u8>> = None;
-    let bytecode: Vec<u8> = vec![0x60, 0xff, 0x60, 0xff];
-    
-    // Create a new interpreter
-    let mut runner =
-        Runner::new(caller, origin, address, value, data, None);
+fn main() {
+  let caller = [
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0xc4, 0x11, 0xe8,
+  ];
+  let origin: Option<[u8; 20]> = None;
+  let address: Option<[u8; 20]> = None;
+  let value: Option<[u8; 32]> = None;
+  let data: Option<Vec<u8>> = None;
+  let bytecode: Vec<u8> = vec![0x60, 0xff, 0x60, 0xff];
+  
+  // Create a new interpreter
+  let mut runner =
+      Runner::new(caller, origin, address, value, data, None);
 
-    // Run all the bytecode
-    let _ = interpreter.interpret(bytecode, Some(255), true);
+  // Run all the bytecode
+  let _ = runner.interpret(bytecode.clone(), Some(255), true);
 
-    // Or run the bytecode OPCODE by OPCODE
-    runner.bytecode = bytecode;
-    runner.debug_level = Some(255);
-    // Run the first 3 opcodes
-    let _ = runner.interpret_op_code(runner.bytecode[runner.pc]);
-    let _ = runner.interpret_op_code(runner.bytecode[runner.pc]);
-    let _ = runner.interpret_op_code(runner.bytecode[runner.pc]);
-  }
+  // Or run the bytecode OPCODE by OPCODE
+  runner.bytecode = bytecode;
+  runner.debug_level = Some(255);
+  // Run the first 3 opcodes
+  let _ = runner.interpret_op_code(runner.bytecode[runner.pc]);
+  let _ = runner.interpret_op_code(runner.bytecode[runner.pc]);
+  let _ = runner.interpret_op_code(runner.bytecode[runner.pc]);
+}
   ```
 </details>
 
