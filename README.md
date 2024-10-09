@@ -66,7 +66,7 @@ fn main() {
     ./install && cd .. && \
     rm -rf evm-rs-emulator
   ```
-  > **Note**  
+  > [!NOTE]  
   > The install script runs sudo commands.
 
   ### Uninstall
@@ -78,7 +78,7 @@ fn main() {
   ### Execute bytecode
   You can run raw bytecode or give a file containing the bytecode in parameter. 
   
-  > **Note**  
+  > [!NOTE]  
   > When running some bytecode, the bytecode is deployed at a contract address and the contract is called with the provided data.
 
   ```bash
