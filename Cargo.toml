@@ -22,11 +22,3 @@ ethers = "2.0.7"
 mem_storage = "0.1.1"
 primitive-types = "0.12.1"
 hex = "0.4"
-rusty-hook = "0.11.2"
-
-[profile.release]
-lto = "fat"
-codegen-units = 1
-panic = "abort"
-strip = "symbols"
-opt-level = 3
