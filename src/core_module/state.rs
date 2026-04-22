@@ -335,7 +335,7 @@ impl EvmState {
     ///
     /// # Returns
     ///
-    /// Returns a reference to the Vec<u8> of the code.
+    /// Returns a reference to the `Vec<u8>` of the code.
     pub fn get_code_at(&mut self, address: [u8; 20]) -> Result<&Vec<u8>, ExecutionError> {
         match self.accounts.get(&address) {
             Some(account_state) => {

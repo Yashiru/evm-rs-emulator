@@ -4,8 +4,8 @@
 
 The EVM Rust Emulator is a simple in-memory Ethereum Virtual Machine (EVM) emulator written in Rust. It is designed to be a lightweight and easy-to-use tool for developers who want to test EVM bytecode execution directly in a command line or in a Rust crate, without using a full EVM node with his RPC to interact with a blockchain.
 
-![Github action](https://github.com/Yashiru/evm-rs-emulator/workflows/CI/badge.svg)
-![Test coverage](./coverage/badges/flat.svg)
+[![CI](https://github.com/Yashiru/evm-rs-emulator/actions/workflows/CI.yml/badge.svg)](https://github.com/Yashiru/evm-rs-emulator/actions/workflows/CI.yml)
+[![codecov](https://codecov.io/gh/Yashiru/evm-rs-emulator/branch/master/graph/badge.svg)](https://codecov.io/gh/Yashiru/evm-rs-emulator)
 
 ***
 
