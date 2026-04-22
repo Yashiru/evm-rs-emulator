@@ -1,0 +1,4 @@
+msrv = "1.94.0"
+avoid-breaking-exported-api = false
+too-many-arguments-threshold = 8
+type-complexity-threshold = 500

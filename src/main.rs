@@ -1,3 +1,34 @@
+// TODO(phase-1): see src/lib.rs for the rationale. Mirrored here because
+// the binary compiles as a separate crate and does not inherit lib-level
+// attributes.
+#![allow(
+    clippy::clone_on_copy,
+    clippy::expect_fun_call,
+    clippy::get_first,
+    clippy::len_zero,
+    clippy::manual_is_multiple_of,
+    clippy::manual_strip,
+    clippy::match_single_binding,
+    clippy::missing_safety_doc,
+    clippy::needless_borrow,
+    clippy::needless_borrows_for_generic_args,
+    clippy::needless_late_init,
+    clippy::needless_question_mark,
+    clippy::new_without_default,
+    clippy::nonminimal_bool,
+    clippy::print_in_format_impl,
+    clippy::print_literal,
+    clippy::single_char_add_str,
+    clippy::to_string_in_format_args,
+    clippy::unit_arg,
+    clippy::unnecessary_fallible_conversions,
+    clippy::unnecessary_to_owned,
+    clippy::unnecessary_unwrap,
+    clippy::unused_enumerate_index,
+    clippy::useless_conversion,
+    noop_method_call
+)]
+
 mod core_module;
 use core_module::state::EvmState;
 use core_module::utils::errors::ExecutionError;
