@@ -64,11 +64,11 @@ pub fn to_hex_address(bytes: [u8; 20]) -> String {
     )
 }
 
-/// Convert a Vec<u8> to a string of hex bytes separated by spaces, with revelent bytes in green.
+/// Convert a `Vec<u8>` to a string of hex bytes separated by spaces, with revelent bytes in green.
 ///
 /// # Arguments
 ///
-/// * `bytes` - The Vec<u8> to convert
+/// * `bytes` - The `Vec<u8>` to convert
 ///
 /// # Returns
 ///
